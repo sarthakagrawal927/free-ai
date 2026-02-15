@@ -113,6 +113,26 @@ const healthSchema = z.object({
   ),
 });
 
+const keyRequestBodySchema = z
+  .object({
+    name: z.string().min(2).max(80),
+    email: z.string().email(),
+    company: z.string().max(120).optional(),
+    use_case: z.string().min(10).max(2000),
+    intended_use: z.enum(['personal', 'internal', 'production']).default('internal'),
+    expected_daily_requests: z.number().int().min(1).max(200000).optional(),
+  })
+  .openapi('KeyRequestBody');
+
+const keyRequestResponseSchema = z
+  .object({
+    ok: z.literal(true),
+    request_id: z.string(),
+    status: z.literal('queued'),
+    message: z.string(),
+  })
+  .openapi('KeyRequestResponse');
+
 const authMiddleware = bearerAuth({
   verifyToken: async (token, c) => token === c.env.GATEWAY_API_KEY,
 });
@@ -680,6 +700,112 @@ app.openapi(healthRoute, async (c) => {
   });
 });
 
+const keyRequestRoute = createRoute({
+  method: 'post',
+  path: '/access/request-key',
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: keyRequestBodySchema,
+        },
+      },
+    },
+  },
+  responses: {
+    202: {
+      description: 'Key request accepted',
+      content: {
+        'application/json': {
+          schema: keyRequestResponseSchema,
+        },
+      },
+    },
+    429: {
+      description: 'Rate limited',
+      content: {
+        'application/json': { schema: errorSchema },
+      },
+    },
+  },
+});
+
+app.openapi(keyRequestRoute, async (c) => {
+  const body = c.req.valid('json');
+  const now = Date.now();
+  const ip = c.req.header('cf-connecting-ip') ?? c.req.header('x-forwarded-for') ?? 'unknown';
+
+  const accessRate = await consumeIpRateLimit(c.env, {
+    ipKey: `access:${ip}`,
+    now,
+    capacity: 5,
+    refillPerSecond: 5 / 86400,
+  });
+
+  if (!accessRate.allowed) {
+    c.header('Retry-After', String(accessRate.retryAfter));
+    return c.json(
+      {
+        error: {
+          message: 'Too many access requests from this IP. Try again later.',
+          type: 'rate_limit_error',
+        },
+      },
+      429,
+    );
+  }
+
+  const requestId = createRequestId();
+
+  const requestRecord = {
+    request_id: requestId,
+    created_at: new Date(now).toISOString(),
+    name: body.name,
+    email: body.email,
+    company: body.company ?? null,
+    use_case: body.use_case,
+    intended_use: body.intended_use,
+    expected_daily_requests: body.expected_daily_requests ?? null,
+  };
+
+  try {
+    await c.env.HEALTH_KV.put(`access-request:${requestId}`, JSON.stringify(requestRecord), {
+      expirationTtl: 60 * 60 * 24 * 45,
+    });
+  } catch (error) {
+    console.log(
+      JSON.stringify({
+        event: 'access_request_storage_error',
+        request_id: requestId,
+        message: getErrorMessage(error),
+      }),
+    );
+  }
+
+  const emailDomain = body.email.includes('@') ? body.email.split('@')[1] ?? 'unknown' : 'unknown';
+  console.log(
+    JSON.stringify({
+      event: 'access_request_received',
+      request_id: requestId,
+      email_domain: emailDomain,
+      company: body.company ?? null,
+      intended_use: body.intended_use,
+      expected_daily_requests: body.expected_daily_requests ?? null,
+      use_case_chars: body.use_case.length,
+    }),
+  );
+
+  return c.json(
+    {
+      ok: true as const,
+      request_id: requestId,
+      status: 'queued' as const,
+      message: 'Request received. Review this request_id in KV and issue a gateway key manually.',
+    },
+    202,
+  );
+});
+
 app.doc('/openapi.json', {
   openapi: '3.0.0',
   info: {
@@ -704,7 +830,7 @@ app.get('/', (c) =>
   c.json({
     service: 'free-ai-gateway',
     version: '1.0.0',
-    endpoints: ['/v1/chat/completions', '/v1/models', '/health', '/openapi.json', '/docs'],
+    endpoints: ['/v1/chat/completions', '/v1/models', '/health', '/openapi.json', '/docs', '/access/request-key'],
   }),
 );
 

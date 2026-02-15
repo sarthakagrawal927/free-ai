@@ -10,6 +10,7 @@ OpenAI-compatible API gateway for text inference across free-tier providers.
 - `GET /openapi.json`
 - `GET /docs`
 - `GET /playground` (hidden, only when `PLAYGROUND_ENABLED=true`)
+- `POST /access/request-key` (public request form backend, no API key required)
 
 ## Authentication
 
@@ -18,6 +19,8 @@ All `/v1/*`, `/openapi.json`, and `/docs` routes require:
 ```http
 Authorization: Bearer <GATEWAY_API_KEY>
 ```
+
+`/access/request-key` is intentionally public so users can request a gateway key.
 
 ## Request Extension
 
@@ -96,3 +99,22 @@ curl -X POST http://127.0.0.1:8787/v1/chat/completions \
     "stream": false
   }'
 ```
+
+## Key Request API (public)
+
+```bash
+curl -X POST http://127.0.0.1:8787/access/request-key \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Jane Doe",
+    "email": "jane@acme.dev",
+    "company": "Acme Labs",
+    "use_case": "Internal support copilot for our ops team",
+    "intended_use": "internal",
+    "expected_daily_requests": 1200
+  }'
+```
+
+When `PLAYGROUND_ENABLED=true`, `/playground` now includes:
+- Live sandbox runner (single + compare)
+- Key request form wired to `/access/request-key`
