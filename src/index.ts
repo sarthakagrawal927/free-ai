@@ -40,7 +40,7 @@ const chatRequestSchema = z
 
 const gatewayMetaSchema = z
   .object({
-    provider: z.enum(['workers_ai', 'groq', 'gemini', 'openrouter', 'cerebras']),
+    provider: z.enum(['workers_ai', 'groq', 'gemini', 'openrouter', 'cerebras', 'cli_bridge']),
     model: z.string(),
     attempts: z.number().int().min(1),
     reasoning_effort: z.enum(['auto', 'low', 'medium', 'high']),
@@ -156,7 +156,7 @@ function getForcedProvider(c: { req: { header: (key: string) => string | undefin
     return undefined;
   }
 
-  if (['workers_ai', 'groq', 'gemini', 'openrouter', 'cerebras'].includes(value)) {
+  if (['workers_ai', 'groq', 'gemini', 'openrouter', 'cerebras', 'cli_bridge'].includes(value)) {
     return value as Provider;
   }
 
@@ -380,35 +380,118 @@ app.openapi(chatRoute, async (c) => {
         });
 
         if (providerResult.stream && providerResult.streamSource) {
+          const chunkDecoder = new TextDecoder();
+          let workersSseBuffer = '';
+
+          const writeWorkersChunk = async (writer: WritableStreamDefaultWriter<Uint8Array>, token: string) => {
+            await writer.write(
+              toSseData({
+                id: `chatcmpl-${requestId}`,
+                object: 'chat.completion.chunk',
+                created: Math.floor(Date.now() / 1000),
+                model: candidate.model,
+                choices: [
+                  {
+                    index: 0,
+                    delta: { content: token },
+                    finish_reason: null,
+                  },
+                ],
+              }),
+            );
+          };
+
+          const processWorkersSseText = async (
+            writer: WritableStreamDefaultWriter<Uint8Array>,
+            text: string,
+          ) => {
+            workersSseBuffer += text;
+
+            while (true) {
+              const frameEnd = workersSseBuffer.indexOf('\n\n');
+              if (frameEnd === -1) {
+                break;
+              }
+
+              const frame = workersSseBuffer.slice(0, frameEnd).trim();
+              workersSseBuffer = workersSseBuffer.slice(frameEnd + 2);
+              if (!frame) {
+                continue;
+              }
+
+              const dataLine = frame
+                .split('\n')
+                .find((line) => line.trimStart().startsWith('data:'));
+
+              if (!dataLine) {
+                continue;
+              }
+
+              const payloadText = dataLine.replace(/^data:\s*/, '').trim();
+              if (!payloadText || payloadText === '[DONE]') {
+                continue;
+              }
+
+              try {
+                const payload = JSON.parse(payloadText) as {
+                  response?: unknown;
+                  delta?: { content?: unknown };
+                  text?: unknown;
+                };
+
+                const token =
+                  typeof payload.response === 'string'
+                    ? payload.response
+                    : typeof payload.delta?.content === 'string'
+                      ? payload.delta.content
+                      : typeof payload.text === 'string'
+                        ? payload.text
+                        : '';
+
+                if (token) {
+                  await writeWorkersChunk(writer, token);
+                }
+              } catch {
+                // Ignore non-JSON frames from upstream Workers AI stream.
+              }
+            }
+          };
+
           const stream = createSseStream(async (writer) => {
             for await (const chunk of providerResult.streamSource as AsyncIterable<unknown>) {
               if (candidate.provider === 'workers_ai') {
+                if (chunk instanceof Uint8Array) {
+                  const asText = chunkDecoder.decode(chunk, { stream: true });
+                  await processWorkersSseText(writer, asText);
+                  continue;
+                }
+
+                if (chunk instanceof ArrayBuffer) {
+                  const bytes = new Uint8Array(chunk);
+                  const asText = chunkDecoder.decode(bytes, { stream: true });
+                  await processWorkersSseText(writer, asText);
+                  continue;
+                }
+
                 const token =
                   typeof chunk === 'string'
                     ? chunk
                     : chunk && typeof chunk === 'object' && 'response' in chunk
                       ? String((chunk as { response?: unknown }).response ?? '')
+                      : chunk &&
+                          typeof chunk === 'object' &&
+                          'delta' in chunk &&
+                          (chunk as { delta?: { content?: unknown } }).delta?.content
+                        ? String((chunk as { delta?: { content?: unknown } }).delta?.content ?? '')
+                        : chunk && typeof chunk === 'object' && 'text' in chunk
+                          ? String((chunk as { text?: unknown }).text ?? '')
                       : '';
 
                 if (!token) {
                   continue;
                 }
 
-                await writer.write(
-                  toSseData({
-                    id: `chatcmpl-${requestId}`,
-                    object: 'chat.completion.chunk',
-                    created: Math.floor(Date.now() / 1000),
-                    model: candidate.model,
-                    choices: [
-                      {
-                        index: 0,
-                        delta: { content: token },
-                        finish_reason: null,
-                      },
-                    ],
-                  }),
-                );
+                await writeWorkersChunk(writer, token);
               } else {
                 await writer.write(toSseData(chunk));
               }

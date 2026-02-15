@@ -6,7 +6,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     provider: 'workers_ai',
     model: '@cf/meta/llama-3.1-8b-instruct',
     reasoning: 'medium',
-    supportsStreaming: false,
+    supportsStreaming: true,
     enabled: true,
     phase: 1,
     priority: 0.92,
@@ -16,7 +16,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     provider: 'workers_ai',
     model: '@cf/mistral/mistral-7b-instruct-v0.1',
     reasoning: 'low',
-    supportsStreaming: false,
+    supportsStreaming: true,
     enabled: true,
     phase: 1,
     priority: 0.88,
@@ -81,6 +81,16 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     phase: 2,
     priority: 0.74,
   },
+  {
+    id: 'cli-bridge-default',
+    provider: 'cli_bridge',
+    model: 'default',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    phase: 1,
+    priority: 0.65,
+  },
 ];
 
 const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = {
@@ -92,6 +102,7 @@ const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = {
   'gemini:gemini-2.0-flash': { requestsPerDay: 600 },
   'openrouter:openrouter/free': { requestsPerDay: 50 },
   'cerebras:qwen-3-32b': { requestsPerDay: 500 },
+  'cli_bridge:default': { requestsPerDay: 10000 },
 };
 
 export interface RateLimitConfig {
@@ -110,6 +121,7 @@ const PROVIDER_KEY_REQUIRED: Record<Provider, boolean> = {
   gemini: true,
   openrouter: true,
   cerebras: true,
+  cli_bridge: true,
 };
 
 function safeParse<T>(value: string | undefined): T | null {
@@ -136,6 +148,8 @@ function hasProviderKey(env: Env, provider: Provider): boolean {
       return Boolean(env.OPENROUTER_API_KEY);
     case 'cerebras':
       return Boolean(env.CEREBRAS_API_KEY);
+    case 'cli_bridge':
+      return Boolean(env.CLI_BRIDGE_URL);
     default:
       return false;
   }

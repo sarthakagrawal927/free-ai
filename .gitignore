@@ -4,6 +4,9 @@ dist/
 coverage/
 .env
 .env.*
+!.env.example
+.dev.vars
+.dev.vars.*
 .DS_Store
 playground/node_modules/
 playwright-report/

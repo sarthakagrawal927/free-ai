@@ -1,7 +1,7 @@
 import type { AttemptRecord, FailureClass, ModelStateSnapshot, ProviderLimitConfig } from '../types';
 
 interface HealthDoEnv {
-  HEALTH_KV: KVNamespace;
+  HEALTH_KV?: KVNamespace;
 }
 
 interface ModelState {
@@ -96,6 +96,10 @@ export class HealthStateDO {
   }
 
   private async persistSnapshot(state: StateMap): Promise<void> {
+    if (!this.env.HEALTH_KV || typeof this.env.HEALTH_KV.put !== 'function') {
+      return;
+    }
+
     const payload = Object.entries(state).map(([key, modelState]) => ({
       key,
       attempts: modelState.history.length,

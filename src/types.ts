@@ -1,4 +1,4 @@
-export type Provider = 'workers_ai' | 'groq' | 'gemini' | 'openrouter' | 'cerebras';
+export type Provider = 'workers_ai' | 'groq' | 'gemini' | 'openrouter' | 'cerebras' | 'cli_bridge';
 
 export type ReasoningEffort = 'auto' | 'low' | 'medium' | 'high';
 
@@ -78,7 +78,7 @@ export interface GatewayError {
 }
 
 export interface Env {
-  AI: {
+  AI?: {
     run: (model: string, input: Record<string, unknown>) => Promise<unknown>;
   };
   HEALTH_DO: DurableObjectNamespace;
@@ -87,6 +87,10 @@ export interface Env {
   GATEWAY_API_KEY: string;
   GROQ_API_KEY?: string;
   GEMINI_API_KEY?: string;
+  CLOUDFLARE_ACCOUNT_ID?: string;
+  CLOUDFLARE_WORKERS_AI_API_KEY?: string;
+  CLI_BRIDGE_URL?: string;
+  CLI_BRIDGE_PROVIDER?: string;
   OPENROUTER_API_KEY?: string;
   CEREBRAS_API_KEY?: string;
   MODEL_REGISTRY_JSON?: string;

@@ -40,7 +40,22 @@ Non-stream responses include:
 npm install
 ```
 
-2. Configure secrets:
+2. Create local env:
+
+```bash
+cp .env.example .env
+# Fill .env with your keys
+```
+
+3. Local dev:
+
+```bash
+npm run dev:local
+```
+
+`dev:local` reads `.env` and auto-generates `.dev.vars` for Wrangler.
+
+4. For remote/prod deployment, configure Worker secrets:
 
 ```bash
 npx wrangler secret put GATEWAY_API_KEY
@@ -49,12 +64,9 @@ npx wrangler secret put GEMINI_API_KEY
 # Optional phase-2
 npx wrangler secret put OPENROUTER_API_KEY
 npx wrangler secret put CEREBRAS_API_KEY
-```
-
-3. Update `wrangler.toml` KV IDs and run:
-
-```bash
-npm run dev
+# Optional Workers AI REST fallback
+npx wrangler secret put CLOUDFLARE_ACCOUNT_ID
+npx wrangler secret put CLOUDFLARE_WORKERS_AI_API_KEY
 ```
 
 ## Deploy

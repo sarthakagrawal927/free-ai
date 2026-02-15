@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "env:sync": "node scripts/sync-dev-vars.mjs",
     "dev": "wrangler dev --remote",
-    "dev:local": "wrangler dev",
+    "dev:local": "npm run env:sync && wrangler dev --local",
     "deploy": "wrangler deploy",
     "build:playground": "vite build --config playground/vite.config.ts",
     "typecheck": "tsc --noEmit",
@@ -15,6 +16,8 @@
     "check": "npm run typecheck && npm test",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
+    "test:e2e:live": "playwright test -c playwright.live.config.ts",
+    "test:e2e:live:update": "playwright test -c playwright.live.config.ts --update-snapshots",
     "test:all": "npm run check && npm run test:e2e"
   },
   "dependencies": {

@@ -1,4 +1,5 @@
 import { callCerebras } from './cerebras';
+import { callCliBridge } from './cli-bridge';
 import { callGemini } from './gemini';
 import { callGroq } from './groq';
 import { callOpenRouter } from './openrouter';
@@ -11,4 +12,5 @@ export const providerCallers: Record<string, ProviderCaller> = {
   gemini: callGemini,
   openrouter: callOpenRouter,
   cerebras: callCerebras,
+  cli_bridge: callCliBridge,
 };
