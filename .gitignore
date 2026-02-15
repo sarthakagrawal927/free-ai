@@ -12,3 +12,5 @@ playground/node_modules/
 playwright-report/
 test-results/
 artifacts/
+.wrangler.deploy.toml
+.deploy.secrets.json

@@ -189,6 +189,7 @@ curl -X POST "$GATEWAY_URL/access/request-key" \
 
 - `npm run dev` -> Wrangler remote dev
 - `npm run dev:local` -> local worker with `.env` sync
+- `npm run deploy:cloudflare` -> one-command Cloudflare deploy bootstrap + deploy
 - `npm run deploy` -> deploy worker
 - `npm run check` -> typecheck + unit tests
 - `npm run test:e2e` -> mocked FE tests
@@ -218,7 +219,30 @@ npm run test:e2e:live
 
 ## Deploy
 
-Set secrets before deploy:
+Recommended (one command):
+
+```bash
+npm run deploy:cloudflare
+```
+
+What this does:
+
+- verifies Cloudflare auth (`wrangler whoami`)
+- auto-resolves/creates `HEALTH_KV` + preview namespace
+- generates local `.wrangler.deploy.toml` with resolved KV IDs
+- uploads secrets from `.env` in bulk
+- deploys and prints the `workers.dev` URL
+
+Useful flags:
+
+```bash
+node scripts/deploy-cloudflare.mjs --prepare-only
+node scripts/deploy-cloudflare.mjs --skip-secrets
+```
+
+Manual path:
+
+1. Set secrets:
 
 ```bash
 npx wrangler secret put GATEWAY_API_KEY
@@ -231,7 +255,7 @@ npx wrangler secret put OPENROUTER_API_KEY
 npx wrangler secret put CEREBRAS_API_KEY
 ```
 
-Deploy:
+2. Deploy:
 
 ```bash
 npm run deploy

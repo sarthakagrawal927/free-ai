@@ -18,7 +18,7 @@ bindings = [
 
 [[migrations]]
 tag = "v1"
-new_classes = ["HealthStateDO", "IpRateLimitDO"]
+new_sqlite_classes = ["HealthStateDO", "IpRateLimitDO"]
 
 [vars]
 PLAYGROUND_ENABLED = "false"
