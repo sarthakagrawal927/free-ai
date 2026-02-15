@@ -12,7 +12,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "build": "npm run build:playground",
-    "check": "npm run typecheck && npm test"
+    "check": "npm run typecheck && npm test",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:all": "npm run check && npm run test:e2e"
   },
   "dependencies": {
     "@hono/swagger-ui": "^0.5.3",
@@ -32,6 +35,7 @@
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.6.0",
     "@cloudflare/workers-types": "^4.20260214.0",
+    "@playwright/test": "^1.58.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "typescript": "^5.9.3",

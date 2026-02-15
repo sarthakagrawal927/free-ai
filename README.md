@@ -68,6 +68,7 @@ npm run deploy
 ```bash
 npm run typecheck
 npm test
+npm run test:e2e
 ```
 
 ## Example request
