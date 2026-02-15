@@ -12,9 +12,19 @@ OpenAI-compatible API gateway for text inference with health-aware routing acros
 - Hidden internal platform UI (`/playground`) for sandbox testing
 - Public key-request intake endpoint (`POST /access/request-key`)
 
-## Screenshot
+## Screenshots
 
-![Platform UI](e2e-live/playground-live.spec.ts-snapshots/playground-live-grid-darwin.png)
+Landing page:
+
+![Platform Landing](docs/screenshots/platform-01-landing.png)
+
+Live sandbox result:
+
+![Platform Live Sandbox](docs/screenshots/platform-02-live-sandbox.png)
+
+Key request submission:
+
+![Platform Key Request](docs/screenshots/platform-03-key-request.png)
 
 ## API Surface
 
