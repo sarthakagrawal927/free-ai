@@ -1,0 +1,22 @@
+name = "free-ai-gateway"
+main = "src/index.ts"
+compatibility_date = "2026-02-14"
+workers_dev = true
+
+kv_namespaces = [
+  { binding = "HEALTH_KV", id = "replace-with-kv-id", preview_id = "replace-with-kv-preview-id" }
+]
+
+[durable_objects]
+bindings = [
+  { name = "HEALTH_DO", class_name = "HealthStateDO" },
+  { name = "RATE_LIMIT_DO", class_name = "IpRateLimitDO" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["HealthStateDO", "IpRateLimitDO"]
+
+[vars]
+PLAYGROUND_ENABLED = "false"
+ENABLE_PHASE2 = "false"
