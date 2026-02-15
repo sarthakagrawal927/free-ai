@@ -1,98 +1,119 @@
 # Free AI Gateway (Cloudflare Worker)
 
-OpenAI-compatible API gateway for text inference across free-tier providers.
+OpenAI-compatible API gateway for text inference with health-aware routing across free providers.
 
-## Endpoints
+## What You Get
 
-- `POST /v1/chat/completions`
-- `GET /v1/models`
-- `GET /health`
-- `GET /openapi.json`
-- `GET /docs`
-- `GET /playground` (hidden, only when `PLAYGROUND_ENABLED=true`)
-- `POST /access/request-key` (public request form backend, no API key required)
+- OpenAI-style `POST /v1/chat/completions`
+- Auto-routing by model health + `reasoning_effort`
+- Provider adapters: Workers AI, Groq, Gemini, optional OpenRouter/Cerebras, optional `cli_bridge`
+- Streaming and non-streaming responses
+- Auth-protected API surface for server-to-server usage
+- Hidden internal platform UI (`/playground`) for sandbox testing
+- Public key-request intake endpoint (`POST /access/request-key`)
 
-## Authentication
+## Screenshot
 
-All `/v1/*`, `/openapi.json`, and `/docs` routes require:
+![Platform UI](e2e-live/playground-live.spec.ts-snapshots/playground-live-grid-darwin.png)
+
+## API Surface
+
+- `POST /v1/chat/completions` (protected)
+- `GET /v1/models` (protected)
+- `GET /health` (public)
+- `GET /openapi.json` (protected)
+- `GET /docs` (protected)
+- `GET /playground` (public only when `PLAYGROUND_ENABLED=true`)
+- `POST /access/request-key` (public)
+
+## Auth
+
+Protected routes require:
 
 ```http
 Authorization: Bearer <GATEWAY_API_KEY>
 ```
 
-`/access/request-key` is intentionally public so users can request a gateway key.
-
-## Request Extension
+## Request/Response Extensions
 
 `POST /v1/chat/completions` supports:
 
 - `reasoning_effort`: `auto | low | medium | high`
-- `prompt`: optional alias (converted into one `user` message)
+- `prompt`: alias when `messages` is omitted
 
-## Response Extension
+Responses include:
 
-Non-stream responses include:
+- `x_gateway`: provider/model/attempt/request metadata
 
-- `x_gateway`: provider/model/attempt metadata
+## Quickstart
 
-## Local Dev
-
-1. Install dependencies:
+1. Install:
 
 ```bash
 npm install
 ```
 
-2. Create local env:
+2. Configure env:
 
 ```bash
 cp .env.example .env
-# Fill .env with your keys
+# fill values
 ```
 
-3. Local dev:
+3. Start local worker:
 
 ```bash
 npm run dev:local
 ```
 
-`dev:local` reads `.env` and auto-generates `.dev.vars` for Wrangler.
-
-4. For remote/prod deployment, configure Worker secrets:
+4. Optional platform UI:
 
 ```bash
-npx wrangler secret put GATEWAY_API_KEY
-npx wrangler secret put GROQ_API_KEY
-npx wrangler secret put GEMINI_API_KEY
-# Optional phase-2
-npx wrangler secret put OPENROUTER_API_KEY
-npx wrangler secret put CEREBRAS_API_KEY
-# Optional Workers AI REST fallback
-npx wrangler secret put CLOUDFLARE_ACCOUNT_ID
-npx wrangler secret put CLOUDFLARE_WORKERS_AI_API_KEY
+PLAYGROUND_ENABLED=true npm run dev:local
 ```
 
-## Deploy
+Open: `http://127.0.0.1:8787/playground`
+
+## Environment Variables
+
+Use `.env.example` as the template.
+
+Core:
+
+- `GATEWAY_API_KEY`
+- `PLAYGROUND_ENABLED`
+- `ENABLE_PHASE2`
+
+Phase 1 providers:
+
+- `GROQ_API_KEY`
+- `GEMINI_API_KEY`
+- `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_WORKERS_AI_API_KEY` (Workers AI REST fallback for local)
+- `CLI_BRIDGE_URL` and optional `CLI_BRIDGE_PROVIDER`
+
+Optional phase 2:
+
+- `OPENROUTER_API_KEY`
+- `CEREBRAS_API_KEY`
+
+`npm run env:sync` copies allowed keys from `.env` into `.dev.vars` for Wrangler.
+
+## cURL Examples
+
+Set once:
 
 ```bash
-npm run deploy
+export GATEWAY_URL="http://127.0.0.1:8787"
+export GATEWAY_API_KEY="<your_gateway_key>"
 ```
 
-## Test + Typecheck
+Non-stream chat (auto routing):
 
 ```bash
-npm run typecheck
-npm test
-npm run test:e2e
-```
-
-## Example request
-
-```bash
-curl -X POST http://127.0.0.1:8787/v1/chat/completions \
+curl -sS "$GATEWAY_URL/v1/chat/completions" \
   -H "Authorization: Bearer $GATEWAY_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{
+  --data '{
     "model": "auto",
     "prompt": "Explain edge runtimes in 3 bullets",
     "reasoning_effort": "medium",
@@ -100,12 +121,44 @@ curl -X POST http://127.0.0.1:8787/v1/chat/completions \
   }'
 ```
 
-## Key Request API (public)
+Force Groq for debugging:
 
 ```bash
-curl -X POST http://127.0.0.1:8787/access/request-key \
+curl -sS "$GATEWAY_URL/v1/chat/completions" \
+  -H "Authorization: Bearer $GATEWAY_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{
+  -H "x-gateway-force-provider: groq" \
+  --data '{"prompt":"what color is panda","reasoning_effort":"low","stream":false}'
+```
+
+Streaming:
+
+```bash
+curl -N "$GATEWAY_URL/v1/chat/completions" \
+  -H "Authorization: Bearer $GATEWAY_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"prompt":"Say hello in 5 languages","reasoning_effort":"low","stream":true}'
+```
+
+Models:
+
+```bash
+curl -sS "$GATEWAY_URL/v1/models" \
+  -H "Authorization: Bearer $GATEWAY_API_KEY"
+```
+
+Health:
+
+```bash
+curl -sS "$GATEWAY_URL/health"
+```
+
+Key request API:
+
+```bash
+curl -X POST "$GATEWAY_URL/access/request-key" \
+  -H "Content-Type: application/json" \
+  --data '{
     "name": "Jane Doe",
     "email": "jane@acme.dev",
     "company": "Acme Labs",
@@ -115,6 +168,67 @@ curl -X POST http://127.0.0.1:8787/access/request-key \
   }'
 ```
 
-When `PLAYGROUND_ENABLED=true`, `/playground` now includes:
-- Live sandbox runner (single + compare)
-- Key request form wired to `/access/request-key`
+## Key Issuance Workflow
+
+- User submits `/access/request-key` form or API call.
+- Gateway stores request metadata in KV (`access-request:<request_id>`).
+- Operator reviews request and manually issues a `GATEWAY_API_KEY`.
+- Client uses issued key in `Authorization: Bearer <key>`.
+
+## Scripts
+
+- `npm run dev` -> Wrangler remote dev
+- `npm run dev:local` -> local worker with `.env` sync
+- `npm run deploy` -> deploy worker
+- `npm run check` -> typecheck + unit tests
+- `npm run test:e2e` -> mocked FE tests
+- `npm run test:e2e:live:update` -> live snapshot baseline
+- `npm run test:e2e:live` -> live snapshot verify
+
+## Testing
+
+Unit + typecheck:
+
+```bash
+npm run check
+```
+
+Mocked FE tests:
+
+```bash
+npm run test:e2e
+```
+
+Live Playwright snapshot tests (real providers, requires keys):
+
+```bash
+npm run test:e2e:live:update
+npm run test:e2e:live
+```
+
+## Deploy
+
+Set secrets before deploy:
+
+```bash
+npx wrangler secret put GATEWAY_API_KEY
+npx wrangler secret put GROQ_API_KEY
+npx wrangler secret put GEMINI_API_KEY
+npx wrangler secret put CLOUDFLARE_ACCOUNT_ID
+npx wrangler secret put CLOUDFLARE_WORKERS_AI_API_KEY
+# optional
+npx wrangler secret put OPENROUTER_API_KEY
+npx wrangler secret put CEREBRAS_API_KEY
+```
+
+Deploy:
+
+```bash
+npm run deploy
+```
+
+## Notes
+
+- Keep `PLAYGROUND_ENABLED=false` in production unless explicitly needed.
+- Logs are metadata-oriented; raw prompt/completion storage is avoided by design.
+- If you pasted any real provider keys into chat, rotate them.
