@@ -110,13 +110,24 @@ function parseHealthKvIds(toml) {
     /binding\s*=\s*"HEALTH_KV"\s*,\s*id\s*=\s*"([^"]+)"\s*,\s*preview_id\s*=\s*"([^"]+)"/m,
   );
 
-  if (!inline) {
+  if (inline) {
+    return {
+      id: inline[1],
+      previewId: inline[2],
+    };
+  }
+
+  const table = toml.match(
+    /\[\[kv_namespaces\]\][\s\S]*?binding\s*=\s*"HEALTH_KV"[\s\S]*?id\s*=\s*"([^"]+)"[\s\S]*?preview_id\s*=\s*"([^"]+)"/m,
+  );
+
+  if (!table) {
     throw new Error('Could not find HEALTH_KV binding in wrangler.toml');
   }
 
   return {
-    id: inline[1],
-    previewId: inline[2],
+    id: table[1],
+    previewId: table[2],
   };
 }
 
@@ -133,10 +144,21 @@ function escapeTomlString(value) {
 }
 
 function withKvIds(toml, id, previewId) {
-  return toml.replace(
-    /(binding\s*=\s*"HEALTH_KV"\s*,\s*id\s*=\s*")([^"]+)("\s*,\s*preview_id\s*=\s*")([^"]+)(")/m,
-    `$1${id}$3${previewId}$5`,
-  );
+  if (/binding\s*=\s*"HEALTH_KV"\s*,\s*id\s*=\s*"[^"]+"\s*,\s*preview_id\s*=\s*"[^"]+"/m.test(toml)) {
+    return toml.replace(
+      /(binding\s*=\s*"HEALTH_KV"\s*,\s*id\s*=\s*")([^"]+)("\s*,\s*preview_id\s*=\s*")([^"]+)(")/m,
+      `$1${id}$3${previewId}$5`,
+    );
+  }
+
+  if (/\[\[kv_namespaces\]\][\s\S]*?binding\s*=\s*"HEALTH_KV"/m.test(toml)) {
+    return toml.replace(
+      /(\[\[kv_namespaces\]\][\s\S]*?binding\s*=\s*"HEALTH_KV"[\s\S]*?id\s*=\s*")([^"]+)("[\s\S]*?preview_id\s*=\s*")([^"]+)(")/m,
+      `$1${id}$3${previewId}$5`,
+    );
+  }
+
+  throw new Error('Could not replace HEALTH_KV ids in wrangler config');
 }
 
 function withVarsFromEnv(toml, env) {
@@ -153,6 +175,13 @@ function withVarsFromEnv(toml, env) {
     next = next.replace(
       /^ENABLE_PHASE2\s*=\s*"[^"]*"/m,
       `ENABLE_PHASE2 = "${escapeTomlString(env.ENABLE_PHASE2)}"`,
+    );
+  }
+
+  if (env.AUTO_ISSUE_KEYS !== undefined) {
+    next = next.replace(
+      /^AUTO_ISSUE_KEYS\s*=\s*"[^"]*"/m,
+      `AUTO_ISSUE_KEYS = "${escapeTomlString(env.AUTO_ISSUE_KEYS)}"`,
     );
   }
 

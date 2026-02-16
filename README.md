@@ -94,6 +94,7 @@ Core:
 - `GATEWAY_API_KEY`
 - `PLAYGROUND_ENABLED`
 - `ENABLE_PHASE2`
+- `AUTO_ISSUE_KEYS` (`true` returns an API key immediately from `/access/request-key`)
 
 Phase 1 providers:
 
@@ -181,9 +182,14 @@ curl -X POST "$GATEWAY_URL/access/request-key" \
 
 ## Key Issuance Workflow
 
+- Default (`AUTO_ISSUE_KEYS=false`):
 - User submits `/access/request-key` form or API call.
-- Gateway stores request metadata in KV (`access-request:<request_id>`).
-- Operator reviews request and manually issues a `GATEWAY_API_KEY`.
+- Gateway stores request metadata in KV (`access-request:<request_id>`) and returns `status: "queued"`.
+- Operator reviews request and manually issues a key.
+
+- Auto-issue mode (`AUTO_ISSUE_KEYS=true`):
+- `/access/request-key` returns `status: "approved"` with `api_key` immediately.
+- Gateway stores only hashed key material in KV (`api-key:<sha256>`).
 - Client uses issued key in `Authorization: Bearer <key>`.
 
 ## Scripts

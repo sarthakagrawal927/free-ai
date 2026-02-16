@@ -125,17 +125,49 @@ const keyRequestBodySchema = z
   })
   .openapi('KeyRequestBody');
 
-const keyRequestResponseSchema = z
+const keyRequestQueuedResponseSchema = z
   .object({
     ok: z.literal(true),
     request_id: z.string(),
     status: z.literal('queued'),
     message: z.string(),
   })
-  .openapi('KeyRequestResponse');
+  .openapi('KeyRequestQueuedResponse');
+
+const keyRequestApprovedResponseSchema = z
+  .object({
+    ok: z.literal(true),
+    request_id: z.string(),
+    status: z.literal('approved'),
+    api_key: z.string(),
+    message: z.string(),
+  })
+  .openapi('KeyRequestApprovedResponse');
+
+async function sha256Hex(input: string): Promise<string> {
+  const data = new TextEncoder().encode(input);
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(digest))
+    .map((value) => value.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+async function verifyGatewayToken(env: Env, token: string): Promise<boolean> {
+  if (token === env.GATEWAY_API_KEY) {
+    return true;
+  }
+
+  try {
+    const hash = await sha256Hex(token);
+    const record = await env.HEALTH_KV.get(`api-key:${hash}`);
+    return Boolean(record);
+  } catch {
+    return false;
+  }
+}
 
 const authMiddleware = bearerAuth({
-  verifyToken: async (token, c) => token === c.env.GATEWAY_API_KEY,
+  verifyToken: async (token, c) => verifyGatewayToken(c.env, token),
 });
 
 app.use('/v1/*', authMiddleware);
@@ -714,16 +746,30 @@ const keyRequestRoute = createRoute({
     },
   },
   responses: {
+    201: {
+      description: 'Key request accepted and auto-issued',
+      content: {
+        'application/json': {
+          schema: keyRequestApprovedResponseSchema,
+        },
+      },
+    },
     202: {
       description: 'Key request accepted',
       content: {
         'application/json': {
-          schema: keyRequestResponseSchema,
+          schema: keyRequestQueuedResponseSchema,
         },
       },
     },
     429: {
       description: 'Rate limited',
+      content: {
+        'application/json': { schema: errorSchema },
+      },
+    },
+    500: {
+      description: 'Failed to issue key',
       content: {
         'application/json': { schema: errorSchema },
       },
@@ -795,6 +841,62 @@ app.openapi(keyRequestRoute, async (c) => {
       use_case_chars: body.use_case.length,
     }),
   );
+
+  const autoIssueEnabled = c.env.AUTO_ISSUE_KEYS === 'true';
+  if (autoIssueEnabled) {
+    const issuedKey = `fagw_${crypto.randomUUID().replace(/-/g, '')}`;
+    const keyHash = await sha256Hex(issuedKey);
+    const keyRecord = {
+      request_id: requestId,
+      key_hash: keyHash,
+      created_at: new Date(now).toISOString(),
+      email: body.email,
+      intended_use: body.intended_use,
+      expected_daily_requests: body.expected_daily_requests ?? null,
+      status: 'active',
+    };
+
+    try {
+      await c.env.HEALTH_KV.put(`api-key:${keyHash}`, JSON.stringify(keyRecord));
+    } catch (error) {
+      console.log(
+        JSON.stringify({
+          event: 'access_key_issue_error',
+          request_id: requestId,
+          message: getErrorMessage(error),
+        }),
+      );
+
+      return c.json(
+        {
+          error: {
+            message: 'Request was received but key issuance failed. Try again shortly.',
+            type: 'storage_error',
+          },
+        },
+        500,
+      );
+    }
+
+    console.log(
+      JSON.stringify({
+        event: 'access_request_auto_approved',
+        request_id: requestId,
+        key_hash_prefix: keyHash.slice(0, 10),
+      }),
+    );
+
+    return c.json(
+      {
+        ok: true as const,
+        request_id: requestId,
+        status: 'approved' as const,
+        api_key: issuedKey,
+        message: 'API key issued. Store it securely; it is shown only once.',
+      },
+      201,
+    );
+  }
 
   return c.json(
     {

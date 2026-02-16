@@ -98,4 +98,5 @@ export interface Env {
   RATE_LIMIT_CONFIG_JSON?: string;
   PLAYGROUND_ENABLED?: string;
   ENABLE_PHASE2?: string;
+  AUTO_ISSUE_KEYS?: string;
 }

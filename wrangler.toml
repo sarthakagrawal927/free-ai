@@ -6,9 +6,10 @@ workers_dev = true
 [ai]
 binding = "AI"
 
-kv_namespaces = [
-  { binding = "HEALTH_KV", id = "replace-with-kv-id", preview_id = "replace-with-kv-preview-id" }
-]
+[[kv_namespaces]]
+binding = "HEALTH_KV"
+id = "replace-with-kv-id"
+preview_id = "replace-with-kv-preview-id"
 
 [durable_objects]
 bindings = [
@@ -23,3 +24,4 @@ new_sqlite_classes = ["HealthStateDO", "IpRateLimitDO"]
 [vars]
 PLAYGROUND_ENABLED = "false"
 ENABLE_PHASE2 = "false"
+AUTO_ISSUE_KEYS = "false"

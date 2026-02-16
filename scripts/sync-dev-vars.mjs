@@ -16,6 +16,7 @@ const ALLOWED_KEYS = [
   'CLOUDFLARE_WORKERS_AI_API_KEY',
   'PLAYGROUND_ENABLED',
   'ENABLE_PHASE2',
+  'AUTO_ISSUE_KEYS',
 ];
 
 function parseEnv(contents) {
