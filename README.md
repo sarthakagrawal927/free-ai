@@ -28,6 +28,7 @@ Key request submission:
 
 ## API Surface
 
+- `GET /` (landing page; send `Accept: application/json` for machine-readable metadata)
 - `POST /v1/chat/completions` (protected)
 - `GET /v1/models` (protected)
 - `GET /health` (public)

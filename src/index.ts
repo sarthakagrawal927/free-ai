@@ -8,6 +8,7 @@ import { getModelKey, getModelRegistry, getProviderLimits, getRateLimitConfig, i
 import { providerCallers } from './providers';
 import { classifyError, isRetriableFailure } from './router/classify-error';
 import { selectCandidates } from './router/select-model';
+import { renderLandingHtml } from './landing';
 import { renderPlaygroundHtml } from './playground';
 import { healthLookup, healthRecord, healthSnapshot, consumeIpRateLimit } from './state/client';
 import { HealthStateDO } from './state/health-do';
@@ -826,13 +827,24 @@ app.get('/playground', (c) => {
   return c.html(renderPlaygroundHtml());
 });
 
-app.get('/', (c) =>
-  c.json({
+app.get('/', (c) => {
+  const payload = {
     service: 'free-ai-gateway',
     version: '1.0.0',
     endpoints: ['/v1/chat/completions', '/v1/models', '/health', '/openapi.json', '/docs', '/access/request-key'],
-  }),
-);
+  };
+
+  const accept = c.req.header('accept')?.toLowerCase() ?? '';
+  if (accept.includes('application/json')) {
+    return c.json(payload);
+  }
+
+  return c.html(
+    renderLandingHtml({
+      playgroundEnabled: isPlaygroundEnabled(c.env),
+    }),
+  );
+});
 
 export default app;
 export { HealthStateDO, IpRateLimitDO };
