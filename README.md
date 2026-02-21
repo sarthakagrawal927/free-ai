@@ -259,6 +259,16 @@ npm run test:e2e:live:update
 npm run test:e2e:live
 ```
 
+Python OpenAI SDK smoke test (deployed URL):
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install openai
+python scripts/test_deployed_openai_sdk.py \
+  --gateway-base-url https://free-ai-gateway.sarthakagrawal927.workers.dev
+```
+
 ## Deploy
 
 Recommended (one command):
