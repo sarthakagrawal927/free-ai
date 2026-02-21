@@ -58,6 +58,7 @@ export interface GatewayMeta {
   attempts: number;
   reasoning_effort: ReasoningEffort;
   request_id: string;
+  project_id?: string;
 }
 
 export interface NormalizedChatRequest {

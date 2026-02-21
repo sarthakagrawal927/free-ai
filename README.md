@@ -55,10 +55,16 @@ Authorization: Bearer <GATEWAY_API_KEY>
 
 - `reasoning_effort`: `auto | low | medium | high`
 - `prompt`: alias when `messages` is omitted
+- `project_id`: optional project tag (`[a-zA-Z0-9._:-]`, max 64 chars)
 
 Responses include:
 
 - `x_gateway`: provider/model/attempt/request metadata
+- `x_gateway.project_id`: echoed when provided
+
+You can also send project metadata via header:
+
+- `x-gateway-project-id: <project-id>`
 
 ## Quickstart
 
@@ -171,6 +177,7 @@ curl -sS "$GATEWAY_URL/v1/chat/completions" \
   -H "Authorization: Bearer $GATEWAY_API_KEY" \
   -H "Content-Type: application/json" \
   -H "x-gateway-force-provider: groq" \
+  -H "x-gateway-project-id: project_analytics_api" \
   --data '{"prompt":"what color is panda","reasoning_effort":"low","stream":false}'
 ```
 

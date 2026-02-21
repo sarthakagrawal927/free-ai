@@ -27,6 +27,8 @@ const messageSchema = z
   })
   .openapi('ChatMessage');
 
+const projectIdSchema = z.string().min(1).max(64).regex(/^[a-zA-Z0-9._:-]+$/);
+
 const chatRequestSchema = z
   .object({
     model: z.string().default('auto'),
@@ -36,6 +38,7 @@ const chatRequestSchema = z
     temperature: z.number().min(0).max(2).optional(),
     max_tokens: z.number().int().min(1).max(8192).optional(),
     reasoning_effort: z.enum(['auto', 'low', 'medium', 'high']).default('auto'),
+    project_id: projectIdSchema.optional(),
   })
   .openapi('ChatCompletionRequest');
 
@@ -52,6 +55,7 @@ const responsesRequestSchema = z
         effort: z.enum(['low', 'medium', 'high']).optional(),
       })
       .optional(),
+    project_id: projectIdSchema.optional(),
   })
   .openapi('ResponsesRequest');
 
@@ -62,6 +66,7 @@ const gatewayMetaSchema = z
     attempts: z.number().int().min(1),
     reasoning_effort: z.enum(['auto', 'low', 'medium', 'high']),
     request_id: z.string(),
+    project_id: projectIdSchema.optional(),
   })
   .openapi('GatewayMeta');
 
@@ -294,6 +299,7 @@ function buildGatewayMeta(params: {
   attempts: number;
   reasoning: NormalizedChatRequest['reasoning_effort'];
   requestId: string;
+  projectId?: string;
 }): GatewayMeta {
   return {
     provider: params.provider,
@@ -301,7 +307,66 @@ function buildGatewayMeta(params: {
     attempts: params.attempts,
     reasoning_effort: params.reasoning,
     request_id: params.requestId,
+    project_id: params.projectId,
   };
+}
+
+function resolveProjectId(headerValue: string | undefined, bodyValue: string | undefined): string | undefined {
+  const candidate = (headerValue ?? bodyValue)?.trim();
+  if (!candidate) {
+    return undefined;
+  }
+
+  return projectIdSchema.safeParse(candidate).success ? candidate : undefined;
+}
+
+async function trackProjectUsage(
+  env: Env,
+  params: {
+    projectId: string;
+    requestId: string;
+    status: 'ok' | 'error';
+    provider?: Provider;
+    model?: string;
+  },
+): Promise<void> {
+  const day = new Date().toISOString().slice(0, 10);
+  const usageKey = `project-usage:${params.projectId}:${day}`;
+  const lastSeenKey = `project-last-seen:${params.projectId}`;
+
+  try {
+    const current = Number.parseInt((await env.HEALTH_KV.get(usageKey)) ?? '0', 10);
+    const nextCount = Number.isFinite(current) ? current + 1 : 1;
+
+    await env.HEALTH_KV.put(usageKey, String(nextCount), {
+      expirationTtl: 60 * 60 * 24 * 35,
+    });
+
+    await env.HEALTH_KV.put(
+      lastSeenKey,
+      JSON.stringify({
+        project_id: params.projectId,
+        last_seen_at: new Date().toISOString(),
+        request_id: params.requestId,
+        status: params.status,
+        provider: params.provider ?? null,
+        model: params.model ?? null,
+        daily_count: nextCount,
+      }),
+      {
+        expirationTtl: 60 * 60 * 24 * 35,
+      },
+    );
+  } catch (error) {
+    console.log(
+      JSON.stringify({
+        event: 'project_usage_track_error',
+        project_id: params.projectId,
+        request_id: params.requestId,
+        message: getErrorMessage(error),
+      }),
+    );
+  }
 }
 
 function gatherTextFragments(input: unknown): string[] {
@@ -434,6 +499,21 @@ const chatRoute = createRoute({
 app.openapi(chatRoute, async (c) => {
   const body = c.req.valid('json');
   const requestId = createRequestId();
+  const headerProjectId = c.req.header('x-gateway-project-id') ?? undefined;
+  const projectId = resolveProjectId(headerProjectId, body.project_id);
+  if (headerProjectId && !projectId) {
+    return c.json(
+      {
+        error: {
+          message: 'Invalid x-gateway-project-id. Use 1-64 chars [a-zA-Z0-9._:-]',
+          type: 'invalid_request_error',
+          code: 'invalid_project_id',
+        },
+      },
+      400,
+    );
+  }
+
   const normalizedMessages = normalizeMessages(body.messages, body.prompt);
 
   if (normalizedMessages.length === 0) {
@@ -558,6 +638,7 @@ app.openapi(chatRoute, async (c) => {
           attempts: attemptCounter,
           reasoning: normalized.reasoning_effort,
           requestId,
+          projectId,
         });
 
         if (providerResult.stream && providerResult.streamSource) {
@@ -742,12 +823,24 @@ app.openapi(chatRoute, async (c) => {
     console.log(
       JSON.stringify({
         request_id: requestId,
+        project_id: projectId ?? null,
         provider: chosenMeta?.provider,
         model: chosenMeta?.model,
         attempts: chosenMeta?.attempts,
         stream: true,
       }),
     );
+
+    if (projectId) {
+      await trackProjectUsage(c.env, {
+        projectId,
+        requestId,
+        status: 'ok',
+        provider: chosenMeta?.provider,
+        model: chosenMeta?.model,
+      });
+    }
+
     return streamResponse;
   }
 
@@ -755,6 +848,7 @@ app.openapi(chatRoute, async (c) => {
     console.log(
       JSON.stringify({
         request_id: requestId,
+        project_id: projectId ?? null,
         provider: chosenMeta.provider,
         model: chosenMeta.model,
         attempts: chosenMeta.attempts,
@@ -762,10 +856,30 @@ app.openapi(chatRoute, async (c) => {
       }),
     );
 
+    if (projectId) {
+      await trackProjectUsage(c.env, {
+        projectId,
+        requestId,
+        status: 'ok',
+        provider: chosenMeta.provider,
+        model: chosenMeta.model,
+      });
+    }
+
     return c.json(finalResponse as never, 200);
   }
 
   const status = lastErrorClass === 'input_nonretriable' ? 400 : lastErrorClass === 'usage_retriable' ? 429 : 502;
+
+  if (projectId) {
+    await trackProjectUsage(c.env, {
+      projectId,
+      requestId,
+      status: 'error',
+      provider: chosenMeta?.provider,
+      model: chosenMeta?.model,
+    });
+  }
 
   return c.json(
     {
@@ -828,6 +942,20 @@ const responsesRoute = createRoute({
 
 app.openapi(responsesRoute, async (c) => {
   const body = c.req.valid('json');
+  const headerProjectId = c.req.header('x-gateway-project-id') ?? undefined;
+  const projectId = resolveProjectId(headerProjectId, body.project_id);
+  if (headerProjectId && !projectId) {
+    return c.json(
+      {
+        error: {
+          message: 'Invalid x-gateway-project-id. Use 1-64 chars [a-zA-Z0-9._:-]',
+          type: 'invalid_request_error',
+          code: 'invalid_project_id',
+        },
+      },
+      400,
+    );
+  }
 
   if (body.stream) {
     return c.json(
@@ -876,6 +1004,10 @@ app.openapi(responsesRoute, async (c) => {
     headers.set('x-gateway-force-model', forceModel);
   }
 
+  if (projectId) {
+    headers.set('x-gateway-project-id', projectId);
+  }
+
   const proxiedRequest = new Request(new URL('/v1/chat/completions', c.req.url), {
     method: 'POST',
     headers,
@@ -886,6 +1018,7 @@ app.openapi(responsesRoute, async (c) => {
       temperature: body.temperature,
       max_tokens: body.max_output_tokens,
       reasoning_effort: reasoningEffort,
+      project_id: projectId,
     }),
   });
 
