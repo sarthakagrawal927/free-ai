@@ -12,8 +12,10 @@ interface ModelState {
 }
 
 type StateMap = Record<string, ModelState>;
+type RoundRobinMap = Record<string, number>;
 
 const STORAGE_KEY = 'state';
+const ROUND_ROBIN_STORAGE_KEY = 'round-robin';
 const HISTORY_LIMIT = 100;
 const SHORT_WINDOW = 10;
 const SHORT_FAILURE_THRESHOLD = 7;
@@ -85,6 +87,14 @@ export class HealthStateDO {
 
   private async saveState(state: StateMap): Promise<void> {
     await this.ctx.storage.put(STORAGE_KEY, state);
+  }
+
+  private async loadRoundRobinState(): Promise<RoundRobinMap> {
+    return (await this.ctx.storage.get<RoundRobinMap>(ROUND_ROBIN_STORAGE_KEY)) ?? {};
+  }
+
+  private async saveRoundRobinState(state: RoundRobinMap): Promise<void> {
+    await this.ctx.storage.put(ROUND_ROBIN_STORAGE_KEY, state);
   }
 
   private resetIfNeeded(modelState: ModelState, now: number): void {
@@ -195,6 +205,27 @@ export class HealthStateDO {
         toSnapshot(key, modelState, undefined, now),
       );
       return json({ snapshots });
+    }
+
+    if (path === '/round-robin-next') {
+      const body = (await request.json()) as {
+        key?: string;
+        size?: number;
+      };
+
+      const key = String(body.key ?? '').trim();
+      const size = Math.max(1, Math.floor(Number(body.size ?? 0)));
+      if (!key || size <= 1) {
+        return json({ offset: 0 });
+      }
+
+      const roundRobinState = await this.loadRoundRobinState();
+      const current = roundRobinState[key] ?? 0;
+      const offset = ((current % size) + size) % size;
+      roundRobinState[key] = (offset + 1) % size;
+      await this.saveRoundRobinState(roundRobinState);
+
+      return json({ offset });
     }
 
     return json({ error: 'Not found' }, 404);

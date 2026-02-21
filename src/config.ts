@@ -34,7 +34,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
   {
     id: 'groq-llama-70b',
     provider: 'groq',
-    model: 'llama3-70b-8192',
+    model: 'llama-3.3-70b-versatile',
     reasoning: 'high',
     supportsStreaming: true,
     enabled: true,
@@ -97,7 +97,7 @@ const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = {
   'workers_ai:@cf/meta/llama-3.1-8b-instruct': { requestsPerDay: 300 },
   'workers_ai:@cf/mistral/mistral-7b-instruct-v0.1': { requestsPerDay: 500 },
   'groq:llama-3.1-8b-instant': { requestsPerDay: 1500 },
-  'groq:llama3-70b-8192': { requestsPerDay: 300 },
+  'groq:llama-3.3-70b-versatile': { requestsPerDay: 300 },
   'gemini:gemini-2.0-flash-lite': { requestsPerDay: 1500 },
   'gemini:gemini-2.0-flash': { requestsPerDay: 600 },
   'openrouter:openrouter/free': { requestsPerDay: 50 },

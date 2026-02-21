@@ -10,12 +10,12 @@ import { classifyError, isRetriableFailure } from './router/classify-error';
 import { selectCandidates } from './router/select-model';
 import { renderLandingHtml } from './landing';
 import { renderPlaygroundHtml } from './playground';
-import { healthLookup, healthRecord, healthSnapshot, consumeIpRateLimit } from './state/client';
+import { consumeIpRateLimit, healthLookup, healthRecord, healthSnapshot, nextRoundRobinOffset } from './state/client';
 import { HealthStateDO } from './state/health-do';
 import { IpRateLimitDO } from './state/ip-rate-limit-do';
 import { createSseStream, toSseData } from './utils/sse';
 import { buildCompletionEnvelope, createRequestId, getErrorMessage, normalizeMessages } from './utils/request';
-import type { Env, GatewayMeta, NormalizedChatRequest, Provider, ProviderLimitConfig } from './types';
+import type { Env, GatewayMeta, ModelCandidate, NormalizedChatRequest, Provider, ProviderLimitConfig } from './types';
 
 const app = new OpenAPIHono<{ Bindings: Env }>();
 
@@ -580,6 +580,29 @@ function resolveEmbeddingCandidates(
 
     return b.priority - a.priority;
   });
+}
+
+function rotateByOffset<T>(items: T[], offset: number): T[] {
+  if (items.length <= 1) {
+    return items;
+  }
+
+  const safeOffset = ((Math.floor(offset) % items.length) + items.length) % items.length;
+  if (safeOffset === 0) {
+    return items;
+  }
+
+  return [...items.slice(safeOffset), ...items.slice(0, safeOffset)];
+}
+
+function buildChatRoundRobinKey(params: {
+  endpoint: 'chat.completions' | 'responses';
+  reasoningEffort: NormalizedChatRequest['reasoning_effort'];
+  stream: boolean;
+  candidates: ModelCandidate[];
+}): string {
+  const providerSet = params.candidates.map((candidate) => getModelKey(candidate.provider, candidate.model)).join(',');
+  return `chat:${params.endpoint}:${params.reasoningEffort}:${params.stream ? 'stream' : 'nonstream'}:${providerSet}`;
 }
 
 function isSafetyRefusal(completion: Record<string, unknown> | undefined): boolean {
@@ -1151,12 +1174,32 @@ app.openapi(chatRoute, async (c) => {
   }
 
   const stateMap = await healthLookup(c.env, modelKeys, lookupLimits, now);
-  const selected = selectCandidates(registry, stateMap, {
+  let selected = selectCandidates(registry, stateMap, {
     requestedReasoning: normalized.reasoning_effort,
     stream: normalized.stream,
     now,
     modelOverride: forcedModel,
   });
+
+  const requestedModel = normalized.model.trim().toLowerCase();
+  const shouldRoundRobin =
+    !forcedProvider && !forcedModel && selected.length > 1 && (requestedModel === '' || requestedModel === 'auto');
+
+  if (shouldRoundRobin) {
+    const roundRobinKey = buildChatRoundRobinKey({
+      endpoint,
+      reasoningEffort: normalized.reasoning_effort,
+      stream: normalized.stream,
+      candidates: selected,
+    });
+
+    const offset = await nextRoundRobinOffset(c.env, {
+      key: roundRobinKey,
+      size: selected.length,
+    }).catch(() => 0);
+
+    selected = rotateByOffset(selected, offset);
+  }
 
   if (selected.length === 0) {
     await recordGatewayRequest(c.env, {

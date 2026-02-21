@@ -57,6 +57,41 @@ export async function healthSnapshot(env: Env): Promise<ModelStateSnapshot[]> {
   return body.snapshots;
 }
 
+export async function nextRoundRobinOffset(
+  env: Env,
+  params: {
+    key: string;
+    size: number;
+  },
+): Promise<number> {
+  if (!params.key || params.size <= 1) {
+    return 0;
+  }
+
+  const id = env.HEALTH_DO.idFromName('global-health');
+  const stub = env.HEALTH_DO.get(id);
+  const response = await stub.fetch(`${DO_ORIGIN}/round-robin-next`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      key: params.key,
+      size: params.size,
+    }),
+  });
+
+  if (!response.ok) {
+    return 0;
+  }
+
+  const body = (await response.json()) as { offset?: unknown };
+  const offset = typeof body.offset === 'number' ? body.offset : 0;
+  if (!Number.isFinite(offset) || offset < 0) {
+    return 0;
+  }
+
+  return Math.floor(offset % params.size);
+}
+
 export async function consumeIpRateLimit(
   env: Env,
   params: {
