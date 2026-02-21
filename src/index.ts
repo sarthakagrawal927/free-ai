@@ -520,8 +520,6 @@ const authMiddleware = bearerAuth({
 });
 
 app.use('/v1/*', authMiddleware);
-app.use('/openapi.json', authMiddleware);
-app.use('/docs', authMiddleware);
 
 app.use('/v1/*', async (c, next) => {
   const config = getRateLimitConfig(c.env);
