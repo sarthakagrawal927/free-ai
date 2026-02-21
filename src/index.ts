@@ -5,7 +5,7 @@ import pLimit from 'p-limit';
 import pRetry from 'p-retry';
 import { AbortError } from 'p-retry';
 import { getModelKey, getModelRegistry, getProviderLimits, getRateLimitConfig, isPlaygroundEnabled } from './config';
-import { providerCallers } from './providers';
+import { providerCallers, providerEmbeddingCallers } from './providers';
 import { classifyError, isRetriableFailure } from './router/classify-error';
 import { selectCandidates } from './router/select-model';
 import { renderLandingHtml } from './landing';
@@ -58,6 +58,16 @@ const responsesRequestSchema = z
     project_id: projectIdSchema.optional(),
   })
   .openapi('ResponsesRequest');
+
+const embeddingsRequestSchema = z
+  .object({
+    model: z.string().default('auto'),
+    input: z.union([z.string(), z.array(z.string().min(1)).min(1)]),
+    encoding_format: z.enum(['float']).optional(),
+    dimensions: z.number().int().min(1).max(4096).optional(),
+    project_id: projectIdSchema.optional(),
+  })
+  .openapi('EmbeddingsRequest');
 
 const gatewayMetaSchema = z
   .object({
@@ -130,6 +140,27 @@ const responsesApiResponseSchema = z
     x_gateway: gatewayMetaSchema.optional(),
   })
   .openapi('ResponsesResponse');
+
+const embeddingsResponseSchema = z
+  .object({
+    object: z.literal('list'),
+    data: z.array(
+      z.object({
+        object: z.literal('embedding'),
+        index: z.number(),
+        embedding: z.array(z.number()),
+      }),
+    ),
+    model: z.string(),
+    usage: z
+      .object({
+        prompt_tokens: z.number().optional(),
+        total_tokens: z.number().optional(),
+      })
+      .optional(),
+    x_gateway: gatewayMetaSchema,
+  })
+  .openapi('EmbeddingsResponse');
 
 const errorSchema = z
   .object({
@@ -277,6 +308,31 @@ function isoNow(): string {
 }
 
 const MAX_ANALYTICS_DAYS = 90;
+
+interface EmbeddingCandidate {
+  provider: Provider;
+  model: string;
+  priority: number;
+}
+
+const EMBEDDING_CANDIDATES: EmbeddingCandidate[] = [
+  {
+    provider: 'gemini',
+    model: 'gemini-embedding-001',
+    priority: 0.95,
+  },
+  {
+    provider: 'workers_ai',
+    model: '@cf/baai/bge-base-en-v1.5',
+    priority: 0.9,
+  },
+];
+
+const EMBEDDING_MODEL_ALIASES: Record<string, string> = {
+  'text-embedding-3-small': 'gemini-embedding-001',
+  'text-embedding-3-large': 'gemini-embedding-001',
+  'text-embedding-004': 'gemini-embedding-001',
+};
 
 function toIsoDate(value: Date): string {
   return value.toISOString().slice(0, 10);
@@ -458,6 +514,74 @@ function getForcedProvider(c: { req: { header: (key: string) => string | undefin
   return undefined;
 }
 
+function workersAiEmbeddingAvailable(env: Env): boolean {
+  if (env.AI && typeof env.AI.run === 'function') {
+    return true;
+  }
+
+  return Boolean(env.CLOUDFLARE_ACCOUNT_ID && env.CLOUDFLARE_WORKERS_AI_API_KEY);
+}
+
+function normalizeEmbeddingInput(input: string | string[]): string[] {
+  if (typeof input === 'string') {
+    const trimmed = input.trim();
+    return trimmed ? [trimmed] : [];
+  }
+
+  if (!Array.isArray(input)) {
+    return [];
+  }
+
+  return input.map((value) => value.trim()).filter((value) => value.length > 0);
+}
+
+function resolveEmbeddingCandidates(
+  env: Env,
+  params: {
+    requestedModel: string;
+    forcedProvider?: Provider;
+    forcedModel?: string;
+  },
+): EmbeddingCandidate[] {
+  const requestedModel = params.requestedModel.trim();
+  const alias = EMBEDDING_MODEL_ALIASES[requestedModel];
+  const preferredModel = alias ?? requestedModel;
+
+  const filtered = EMBEDDING_CANDIDATES.filter((candidate) => {
+    if (params.forcedProvider && candidate.provider !== params.forcedProvider) {
+      return false;
+    }
+
+    if (params.forcedModel && candidate.model !== params.forcedModel) {
+      return false;
+    }
+
+    if (candidate.provider === 'gemini' && !env.GEMINI_API_KEY) {
+      return false;
+    }
+
+    if (candidate.provider === 'workers_ai' && !workersAiEmbeddingAvailable(env)) {
+      return false;
+    }
+
+    return true;
+  });
+
+  return filtered.sort((a, b) => {
+    const aPreferred = preferredModel !== 'auto' && a.model === preferredModel;
+    const bPreferred = preferredModel !== 'auto' && b.model === preferredModel;
+
+    if (aPreferred && !bPreferred) {
+      return -1;
+    }
+    if (!aPreferred && bPreferred) {
+      return 1;
+    }
+
+    return b.priority - a.priority;
+  });
+}
+
 function isSafetyRefusal(completion: Record<string, unknown> | undefined): boolean {
   const choice = Array.isArray(completion?.choices)
     ? (completion.choices[0] as { finish_reason?: string; message?: { content?: string | null } } | undefined)
@@ -510,7 +634,7 @@ function resolveProjectId(headerValue: string | undefined, bodyValue: string | u
 async function recordGatewayRequest(
   env: Env,
   params: {
-    endpoint: 'chat.completions' | 'responses';
+    endpoint: 'chat.completions' | 'responses' | 'embeddings';
     projectId?: string;
     requestId: string;
     reasoningEffort: NormalizedChatRequest['reasoning_effort'];
@@ -1559,6 +1683,270 @@ app.openapi(responsesRoute, async (c) => {
   return c.json(chatCompletionToResponsesObject(parsedCompletion) as never, 200);
 });
 
+const embeddingsRoute = createRoute({
+  method: 'post',
+  path: '/v1/embeddings',
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: embeddingsRequestSchema,
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Embeddings response',
+      content: {
+        'application/json': {
+          schema: embeddingsResponseSchema,
+        },
+      },
+    },
+    400: {
+      description: 'Invalid input',
+      content: {
+        'application/json': { schema: errorSchema },
+      },
+    },
+    401: {
+      description: 'Unauthorized',
+      content: {
+        'application/json': { schema: errorSchema },
+      },
+    },
+    429: {
+      description: 'Rate limited',
+      content: {
+        'application/json': { schema: errorSchema },
+      },
+    },
+    503: {
+      description: 'No embedding provider available',
+      content: {
+        'application/json': { schema: errorSchema },
+      },
+    },
+    502: {
+      description: 'Provider failure',
+      content: {
+        'application/json': { schema: errorSchema },
+      },
+    },
+  },
+});
+
+app.openapi(embeddingsRoute, async (c) => {
+  const requestStartedAt = Date.now();
+  const body = c.req.valid('json');
+  const requestId = createRequestId();
+  const normalizedInput = normalizeEmbeddingInput(body.input);
+  const inputChars = normalizedInput.reduce((sum, item) => sum + item.length, 0);
+  const forcedProvider = getForcedProvider(c);
+  const forcedModel = c.req.header('x-gateway-force-model') ?? undefined;
+  const headerProjectId = c.req.header('x-gateway-project-id') ?? undefined;
+  const projectId = resolveProjectId(headerProjectId, body.project_id);
+
+  if (headerProjectId && !projectId) {
+    await recordGatewayRequest(c.env, {
+      endpoint: 'embeddings',
+      projectId: undefined,
+      requestId,
+      reasoningEffort: 'auto',
+      stream: false,
+      promptChars: inputChars,
+      messageCount: normalizedInput.length,
+      statusCode: 400,
+      outcome: 'error',
+      attempts: 0,
+      errorType: 'invalid_project_id',
+      latencyMs: Date.now() - requestStartedAt,
+    });
+
+    return c.json(
+      {
+        error: {
+          message: 'Invalid x-gateway-project-id. Use 1-64 chars [a-zA-Z0-9._:-]',
+          type: 'invalid_request_error',
+          code: 'invalid_project_id',
+        },
+      },
+      400,
+    );
+  }
+
+  if (normalizedInput.length === 0) {
+    await recordGatewayRequest(c.env, {
+      endpoint: 'embeddings',
+      projectId,
+      requestId,
+      reasoningEffort: 'auto',
+      stream: false,
+      promptChars: 0,
+      messageCount: 0,
+      statusCode: 400,
+      outcome: 'error',
+      attempts: 0,
+      errorType: 'missing_input',
+      latencyMs: Date.now() - requestStartedAt,
+    });
+
+    return c.json(
+      {
+        error: {
+          message: '`input` is required',
+          type: 'invalid_request_error',
+          code: 'missing_input',
+        },
+      },
+      400,
+    );
+  }
+
+  const candidates = resolveEmbeddingCandidates(c.env, {
+    requestedModel: body.model,
+    forcedProvider,
+    forcedModel,
+  });
+
+  if (candidates.length === 0) {
+    await recordGatewayRequest(c.env, {
+      endpoint: 'embeddings',
+      projectId,
+      requestId,
+      reasoningEffort: 'auto',
+      stream: false,
+      promptChars: inputChars,
+      messageCount: normalizedInput.length,
+      statusCode: 503,
+      outcome: 'error',
+      attempts: 0,
+      errorType: 'no_embedding_provider',
+      latencyMs: Date.now() - requestStartedAt,
+    });
+
+    return c.json(
+      {
+        error: {
+          message: 'No embedding provider is configured',
+          type: 'configuration_error',
+          code: 'no_embedding_provider',
+        },
+      },
+      503,
+    );
+  }
+
+  let attemptCounter = 0;
+  let chosenMeta: GatewayMeta | undefined;
+  let finalResponse: Record<string, unknown> | null = null;
+  let lastErrorClass = 'provider_fatal';
+  let lastErrorMessage = 'Unknown error';
+
+  await pRetry(
+    async () => {
+      const candidate = candidates[attemptCounter];
+      if (!candidate || attemptCounter >= 2) {
+        throw new AbortError('No more embedding candidates');
+      }
+
+      attemptCounter += 1;
+
+      try {
+        const caller = providerEmbeddingCallers[candidate.provider];
+        if (!caller) {
+          throw new Error(`No embedding caller for provider ${candidate.provider}`);
+        }
+
+        const result = await caller({
+          env: c.env,
+          provider: candidate.provider,
+          model: candidate.model,
+          input: normalizedInput,
+          encoding_format: body.encoding_format,
+          dimensions: body.dimensions,
+        });
+
+        chosenMeta = buildGatewayMeta({
+          provider: candidate.provider,
+          model: candidate.model,
+          attempts: attemptCounter,
+          reasoning: 'auto',
+          requestId,
+          projectId,
+        });
+
+        finalResponse = {
+          ...result.response,
+          x_gateway: chosenMeta,
+        };
+      } catch (error) {
+        const failureClass = classifyError(error);
+        lastErrorClass = failureClass;
+        lastErrorMessage = getErrorMessage(error);
+
+        if (!isRetriableFailure(failureClass) || attemptCounter >= 2) {
+          throw new AbortError(lastErrorMessage);
+        }
+
+        throw error instanceof Error ? error : new Error(lastErrorMessage);
+      }
+    },
+    {
+      retries: 1,
+      minTimeout: 10,
+      factor: 1,
+    },
+  ).catch(() => undefined);
+
+  if (finalResponse && chosenMeta) {
+    await recordGatewayRequest(c.env, {
+      endpoint: 'embeddings',
+      projectId,
+      requestId,
+      reasoningEffort: 'auto',
+      stream: false,
+      promptChars: inputChars,
+      messageCount: normalizedInput.length,
+      statusCode: 200,
+      outcome: 'ok',
+      attempts: chosenMeta.attempts,
+      provider: chosenMeta.provider,
+      model: chosenMeta.model,
+      latencyMs: Date.now() - requestStartedAt,
+    });
+
+    return c.json(finalResponse as never, 200);
+  }
+
+  const status = lastErrorClass === 'input_nonretriable' ? 400 : lastErrorClass === 'usage_retriable' ? 429 : 502;
+  await recordGatewayRequest(c.env, {
+    endpoint: 'embeddings',
+    projectId,
+    requestId,
+    reasoningEffort: 'auto',
+    stream: false,
+    promptChars: inputChars,
+    messageCount: normalizedInput.length,
+    statusCode: status,
+    outcome: 'error',
+    attempts: attemptCounter,
+    errorType: lastErrorClass,
+    latencyMs: Date.now() - requestStartedAt,
+  });
+
+  return c.json(
+    {
+      error: {
+        message: lastErrorMessage,
+        type: lastErrorClass,
+      },
+    },
+    status,
+  );
+});
+
 const modelsRoute = createRoute({
   method: 'get',
   path: '/v1/models',
@@ -2107,6 +2495,7 @@ app.get('/', (c) => {
     endpoints: [
       '/v1/chat/completions',
       '/v1/responses',
+      '/v1/embeddings',
       '/v1/models',
       '/v1/analytics',
       '/health',

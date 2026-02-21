@@ -1,6 +1,11 @@
 import OpenAI from 'openai';
 import type { Provider } from '../types';
-import type { ProviderCallInput, ProviderCallResult } from './types';
+import type {
+  ProviderCallInput,
+  ProviderCallResult,
+  ProviderEmbeddingInput,
+  ProviderEmbeddingResult,
+} from './types';
 
 interface OpenAICompatibleConfig {
   provider: Provider;
@@ -58,5 +63,46 @@ export async function runOpenAICompatibleRequest(
     model: input.model,
     stream: false,
     completion,
+  };
+}
+
+export async function runOpenAICompatibleEmbeddingsRequest(
+  input: ProviderEmbeddingInput,
+  config: OpenAICompatibleConfig,
+): Promise<ProviderEmbeddingResult> {
+  const client = createClient(config);
+  const response = (await client.embeddings.create({
+    model: input.model,
+    input: input.input.length === 1 ? input.input[0] : input.input,
+  } as never)) as unknown as {
+    object?: string;
+    data?: Array<{ embedding?: number[]; index?: number }>;
+    model?: string;
+    usage?: { prompt_tokens?: number; total_tokens?: number };
+  };
+
+  const data = Array.isArray(response.data)
+    ? response.data
+        .map((item, index) => ({
+          object: 'embedding' as const,
+          index: typeof item.index === 'number' ? item.index : index,
+          embedding: Array.isArray(item.embedding) ? item.embedding : [],
+        }))
+        .filter((item) => item.embedding.length > 0)
+    : [];
+
+  if (data.length === 0) {
+    throw new Error('Provider returned no embeddings');
+  }
+
+  return {
+    provider: config.provider,
+    model: input.model,
+    response: {
+      object: 'list',
+      data,
+      model: typeof response.model === 'string' ? response.model : input.model,
+      usage: response.usage,
+    },
   };
 }

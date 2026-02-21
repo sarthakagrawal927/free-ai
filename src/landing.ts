@@ -211,6 +211,7 @@ export function renderLandingHtml(params: { playgroundEnabled: boolean }): strin
           <ul class="list">
             <li><span class="mono">POST /v1/chat/completions</span> (auth required)</li>
             <li><span class="mono">POST /v1/responses</span> (auth required)</li>
+            <li><span class="mono">POST /v1/embeddings</span> (auth required)</li>
             <li><span class="mono">GET /v1/models</span> (auth required)</li>
             <li><span class="mono">GET /v1/analytics</span> (auth required)</li>
             <li><span class="mono">GET /health</span></li>

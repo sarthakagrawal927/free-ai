@@ -40,3 +40,32 @@ export interface ProviderCallResult {
 }
 
 export type ProviderCaller = (input: ProviderCallInput) => Promise<ProviderCallResult>;
+
+export interface ProviderEmbeddingInput {
+  env: Env;
+  provider: Provider;
+  model: string;
+  input: string[];
+  encoding_format?: 'float';
+  dimensions?: number;
+}
+
+export interface ProviderEmbeddingResult {
+  provider: Provider;
+  model: string;
+  response: {
+    object: 'list';
+    data: Array<{
+      object: 'embedding';
+      index: number;
+      embedding: number[];
+    }>;
+    model: string;
+    usage?: {
+      prompt_tokens?: number;
+      total_tokens?: number;
+    };
+  };
+}
+
+export type ProviderEmbeddingCaller = (input: ProviderEmbeddingInput) => Promise<ProviderEmbeddingResult>;

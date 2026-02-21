@@ -6,6 +6,7 @@ OpenAI-compatible API gateway for text inference with health-aware routing acros
 
 - OpenAI-style `POST /v1/chat/completions`
 - OpenAI-style `POST /v1/responses` (non-stream)
+- OpenAI-style `POST /v1/embeddings`
 - Auto-routing by model health + `reasoning_effort`
 - Provider adapters: Workers AI, Groq, Gemini, optional OpenRouter/Cerebras, optional `cli_bridge`
 - Streaming and non-streaming responses
@@ -32,6 +33,7 @@ Key request submission:
 - `GET /` (landing page; send `Accept: application/json` for machine-readable metadata)
 - `POST /v1/chat/completions` (protected)
 - `POST /v1/responses` (protected, non-stream)
+- `POST /v1/embeddings` (protected)
 - `GET /v1/models` (protected)
 - `GET /v1/analytics` (protected)
 - `GET /health` (public)
@@ -195,6 +197,19 @@ curl -sS "$GATEWAY_URL/v1/responses" \
   }'
 ```
 
+Embeddings API (OpenAI-compatible):
+
+```bash
+curl -sS "$GATEWAY_URL/v1/embeddings" \
+  -H "Authorization: Bearer $GATEWAY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -H "x-gateway-project-id: project_analytics_api" \
+  --data '{
+    "model": "auto",
+    "input": ["what color is panda", "pandas are black and white"]
+  }'
+```
+
 Streaming:
 
 ```bash
@@ -353,4 +368,6 @@ npm run deploy
 
 - Keep `PLAYGROUND_ENABLED=false` in production unless explicitly needed.
 - Logs are metadata-oriented; raw prompt/completion storage is avoided by design.
+- Embeddings route currently uses Gemini (`gemini-embedding-001`) and Workers AI (`@cf/baai/bge-base-en-v1.5`).
+- Groq chat compatibility is enabled, but Groq embeddings are not wired because embeddings are not listed in the Groq API reference endpoints.
 - If you pasted any real provider keys into chat, rotate them.
