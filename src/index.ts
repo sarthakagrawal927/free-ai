@@ -39,6 +39,22 @@ const chatRequestSchema = z
   })
   .openapi('ChatCompletionRequest');
 
+const responsesRequestSchema = z
+  .object({
+    model: z.string().default('auto'),
+    input: z.union([z.string(), z.array(z.unknown()), z.record(z.string(), z.unknown())]),
+    stream: z.boolean().default(false),
+    temperature: z.number().min(0).max(2).optional(),
+    max_output_tokens: z.number().int().min(1).max(8192).optional(),
+    reasoning_effort: z.enum(['auto', 'low', 'medium', 'high']).optional(),
+    reasoning: z
+      .object({
+        effort: z.enum(['low', 'medium', 'high']).optional(),
+      })
+      .optional(),
+  })
+  .openapi('ResponsesRequest');
+
 const gatewayMetaSchema = z
   .object({
     provider: z.enum(['workers_ai', 'groq', 'gemini', 'openrouter', 'cerebras', 'cli_bridge']),
@@ -75,6 +91,40 @@ const nonStreamResponseSchema = z
     x_gateway: gatewayMetaSchema,
   })
   .openapi('ChatCompletionResponse');
+
+const responsesApiResponseSchema = z
+  .object({
+    id: z.string(),
+    object: z.literal('response'),
+    created_at: z.number(),
+    status: z.string(),
+    model: z.string(),
+    output: z.array(
+      z.object({
+        type: z.literal('message'),
+        id: z.string(),
+        status: z.string(),
+        role: z.literal('assistant'),
+        content: z.array(
+          z.object({
+            type: z.literal('output_text'),
+            text: z.string(),
+            annotations: z.array(z.unknown()),
+          }),
+        ),
+      }),
+    ),
+    output_text: z.string(),
+    usage: z
+      .object({
+        input_tokens: z.number().optional(),
+        output_tokens: z.number().optional(),
+        total_tokens: z.number().optional(),
+      })
+      .optional(),
+    x_gateway: gatewayMetaSchema.optional(),
+  })
+  .openapi('ResponsesResponse');
 
 const errorSchema = z
   .object({
@@ -251,6 +301,84 @@ function buildGatewayMeta(params: {
     attempts: params.attempts,
     reasoning_effort: params.reasoning,
     request_id: params.requestId,
+  };
+}
+
+function gatherTextFragments(input: unknown): string[] {
+  if (typeof input === 'string') {
+    const trimmed = input.trim();
+    return trimmed ? [trimmed] : [];
+  }
+
+  if (Array.isArray(input)) {
+    return input.flatMap((item) => gatherTextFragments(item));
+  }
+
+  if (!input || typeof input !== 'object') {
+    return [];
+  }
+
+  const record = input as Record<string, unknown>;
+  const values: unknown[] = [];
+
+  if (typeof record.text === 'string') values.push(record.text);
+  if (typeof record.input_text === 'string') values.push(record.input_text);
+  if (typeof record.content === 'string') values.push(record.content);
+  if (Array.isArray(record.content)) values.push(...record.content);
+  if (Array.isArray(record.input)) values.push(...record.input);
+
+  return values.flatMap((value) => gatherTextFragments(value));
+}
+
+function responsesInputToPrompt(input: unknown): string {
+  return gatherTextFragments(input).join('\n').trim();
+}
+
+function chatCompletionToResponsesObject(completion: Record<string, unknown>): Record<string, unknown> {
+  const chatId = typeof completion.id === 'string' ? completion.id : `chatcmpl-${createRequestId()}`;
+  const responseId = chatId.startsWith('resp_') ? chatId : `resp_${chatId.replace(/^chatcmpl-?/, '')}`;
+  const createdAt =
+    typeof completion.created === 'number' ? completion.created : Math.floor(Date.now() / 1000);
+  const model = typeof completion.model === 'string' ? completion.model : 'auto';
+
+  const content = String(
+    (completion.choices as Array<{ message?: { content?: unknown } }>)?.[0]?.message?.content ?? '',
+  );
+
+  const usage = completion.usage as
+    | { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number }
+    | undefined;
+
+  return {
+    id: responseId,
+    object: 'response',
+    created_at: createdAt,
+    status: 'completed',
+    model,
+    output: [
+      {
+        type: 'message',
+        id: `msg_${responseId}`,
+        status: 'completed',
+        role: 'assistant',
+        content: [
+          {
+            type: 'output_text',
+            text: content,
+            annotations: [],
+          },
+        ],
+      },
+    ],
+    output_text: content,
+    usage: usage
+      ? {
+          input_tokens: usage.prompt_tokens,
+          output_tokens: usage.completion_tokens,
+          total_tokens: usage.total_tokens,
+        }
+      : undefined,
+    x_gateway: completion.x_gateway,
   };
 }
 
@@ -650,6 +778,161 @@ app.openapi(chatRoute, async (c) => {
   );
 });
 
+const responsesRoute = createRoute({
+  method: 'post',
+  path: '/v1/responses',
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: responsesRequestSchema,
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Responses API compatible response',
+      content: {
+        'application/json': {
+          schema: responsesApiResponseSchema,
+        },
+      },
+    },
+    400: {
+      description: 'Invalid input',
+      content: {
+        'application/json': { schema: errorSchema },
+      },
+    },
+    401: {
+      description: 'Unauthorized',
+      content: {
+        'application/json': { schema: errorSchema },
+      },
+    },
+    429: {
+      description: 'Rate limited',
+      content: {
+        'application/json': { schema: errorSchema },
+      },
+    },
+    503: {
+      description: 'No healthy free-tier model available',
+      content: {
+        'application/json': { schema: errorSchema },
+      },
+    },
+  },
+});
+
+app.openapi(responsesRoute, async (c) => {
+  const body = c.req.valid('json');
+
+  if (body.stream) {
+    return c.json(
+      {
+        error: {
+          message: 'Streaming for /v1/responses is not implemented yet. Use /v1/chat/completions for streaming.',
+          type: 'invalid_request_error',
+          code: 'stream_not_supported',
+        },
+      },
+      400,
+    );
+  }
+
+  const prompt = responsesInputToPrompt(body.input);
+  if (!prompt) {
+    return c.json(
+      {
+        error: {
+          message: '`input` must include text content',
+          type: 'invalid_request_error',
+          code: 'missing_input',
+        },
+      },
+      400,
+    );
+  }
+
+  const reasoningEffort = body.reasoning_effort ?? body.reasoning?.effort ?? 'auto';
+
+  const headers = new Headers();
+  headers.set('content-type', 'application/json');
+
+  const authorization = c.req.header('authorization');
+  if (authorization) {
+    headers.set('authorization', authorization);
+  }
+
+  const forceProvider = c.req.header('x-gateway-force-provider');
+  if (forceProvider) {
+    headers.set('x-gateway-force-provider', forceProvider);
+  }
+
+  const forceModel = c.req.header('x-gateway-force-model');
+  if (forceModel) {
+    headers.set('x-gateway-force-model', forceModel);
+  }
+
+  const proxiedRequest = new Request(new URL('/v1/chat/completions', c.req.url), {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      model: body.model,
+      prompt,
+      stream: false,
+      temperature: body.temperature,
+      max_tokens: body.max_output_tokens,
+      reasoning_effort: reasoningEffort,
+    }),
+  });
+
+  const proxiedResponse = await app.fetch(proxiedRequest, c.env, c.executionCtx);
+  const proxiedText = await proxiedResponse.text();
+
+  if (!proxiedResponse.ok) {
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(proxiedText);
+    } catch {
+      parsed = undefined;
+    }
+
+    if (parsed && typeof parsed === 'object' && 'error' in (parsed as Record<string, unknown>)) {
+      return c.json(parsed as never, proxiedResponse.status as 400 | 401 | 429 | 503);
+    }
+
+    return c.json(
+      {
+        error: {
+          message: proxiedText || 'Upstream error',
+          type: 'provider_fatal',
+        },
+      },
+      proxiedResponse.status as 400 | 401 | 429 | 503,
+    );
+  }
+
+  let parsedCompletion: Record<string, unknown>;
+  try {
+    parsedCompletion = JSON.parse(proxiedText) as Record<string, unknown>;
+  } catch {
+    return c.json(
+      {
+        error: {
+          message: 'Invalid JSON returned by chat completion route',
+          type: 'provider_fatal',
+        },
+      },
+      503,
+    );
+  }
+
+  return c.json(chatCompletionToResponsesObject(parsedCompletion) as never, 200);
+});
+
 const modelsRoute = createRoute({
   method: 'get',
   path: '/v1/models',
@@ -933,7 +1216,15 @@ app.get('/', (c) => {
   const payload = {
     service: 'free-ai-gateway',
     version: '1.0.0',
-    endpoints: ['/v1/chat/completions', '/v1/models', '/health', '/openapi.json', '/docs', '/access/request-key'],
+    endpoints: [
+      '/v1/chat/completions',
+      '/v1/responses',
+      '/v1/models',
+      '/health',
+      '/openapi.json',
+      '/docs',
+      '/access/request-key',
+    ],
   };
 
   const accept = c.req.header('accept')?.toLowerCase() ?? '';

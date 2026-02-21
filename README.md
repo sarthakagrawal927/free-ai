@@ -5,6 +5,7 @@ OpenAI-compatible API gateway for text inference with health-aware routing acros
 ## What You Get
 
 - OpenAI-style `POST /v1/chat/completions`
+- OpenAI-style `POST /v1/responses` (non-stream)
 - Auto-routing by model health + `reasoning_effort`
 - Provider adapters: Workers AI, Groq, Gemini, optional OpenRouter/Cerebras, optional `cli_bridge`
 - Streaming and non-streaming responses
@@ -30,12 +31,15 @@ Key request submission:
 
 - `GET /` (landing page; send `Accept: application/json` for machine-readable metadata)
 - `POST /v1/chat/completions` (protected)
+- `POST /v1/responses` (protected, non-stream)
 - `GET /v1/models` (protected)
 - `GET /health` (public)
 - `GET /openapi.json` (protected)
 - `GET /docs` (protected)
 - `GET /playground` (public only when `PLAYGROUND_ENABLED=true`)
 - `POST /access/request-key` (public)
+
+Note: `/v1/responses` currently supports non-stream mode. Use `/v1/chat/completions` for streaming.
 
 ## Auth
 
@@ -119,6 +123,24 @@ export GATEWAY_URL="http://127.0.0.1:8787"
 export GATEWAY_API_KEY="<your_gateway_key>"
 ```
 
+OpenAI Node SDK:
+
+```ts
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  apiKey: process.env.GATEWAY_API_KEY,
+  baseURL: 'https://free-ai-gateway.sarthakagrawal927.workers.dev/v1',
+});
+
+const response = await client.responses.create({
+  model: 'auto',
+  input: 'Write one line about edge AI',
+});
+
+console.log(response.output_text);
+```
+
 Non-stream chat (auto routing):
 
 ```bash
@@ -141,6 +163,19 @@ curl -sS "$GATEWAY_URL/v1/chat/completions" \
   -H "Content-Type: application/json" \
   -H "x-gateway-force-provider: groq" \
   --data '{"prompt":"what color is panda","reasoning_effort":"low","stream":false}'
+```
+
+Responses API (OpenAI-compatible):
+
+```bash
+curl -sS "$GATEWAY_URL/v1/responses" \
+  -H "Authorization: Bearer $GATEWAY_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{
+    "model": "auto",
+    "input": "Write one sentence about routing",
+    "stream": false
+  }'
 ```
 
 Streaming:
