@@ -1,0 +1,13 @@
+{
+  "name": "gateway-openai-node-example",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Node.js OpenAI SDK sample for Free AI Gateway",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "dependencies": {
+    "openai": "^6.22.0"
+  }
+}

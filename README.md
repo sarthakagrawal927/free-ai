@@ -89,6 +89,15 @@ PLAYGROUND_ENABLED=true npm run dev:local
 
 Open: `http://127.0.0.1:8787/playground`
 
+## Examples
+
+Reusable SDK example projects live in `/examples`:
+
+- Node.js: `/examples/node-openai-sdk`
+- Python: `/examples/python-openai-sdk`
+
+See `/examples/README.md` for quick run commands.
+
 ## Environment Variables
 
 Use `.env.example` as the template.
