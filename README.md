@@ -11,6 +11,8 @@ OpenAI-compatible API gateway for text inference with health-aware routing acros
 - Provider adapters: Workers AI, Groq, Gemini, optional OpenRouter/Cerebras, optional `cli_bridge`
 - Streaming and non-streaming responses
 - Auth-protected API surface for server-to-server usage
+- Usage dashboard (`/dashboard`) for live request analytics
+- Raw request-log API (`GET /v1/requests`) for direct D1-backed inspection
 - Hidden internal platform UI (`/playground`) for sandbox testing
 - Public key-request intake endpoint (`POST /access/request-key`)
 
@@ -36,9 +38,11 @@ Key request submission:
 - `POST /v1/embeddings` (protected)
 - `GET /v1/models` (protected)
 - `GET /v1/analytics` (protected)
+- `GET /v1/requests` (protected)
 - `GET /health` (public)
 - `GET /openapi.json` (protected)
 - `GET /docs` (protected)
+- `GET /dashboard` (public UI, reads protected APIs with your key)
 - `GET /playground` (public only when `PLAYGROUND_ENABLED=true`)
 - `POST /access/request-key` (public)
 
@@ -97,6 +101,8 @@ PLAYGROUND_ENABLED=true npm run dev:local
 ```
 
 Open: `http://127.0.0.1:8787/playground`
+
+Usage dashboard: `http://127.0.0.1:8787/dashboard`
 
 ## Examples
 
@@ -240,6 +246,13 @@ curl -sS "$GATEWAY_URL/v1/analytics?project_id=simple_proj&date_from=2026-02-15&
   -H "Authorization: Bearer $GATEWAY_API_KEY"
 ```
 
+Raw request logs (directly from `gateway_requests`):
+
+```bash
+curl -sS "$GATEWAY_URL/v1/requests?date_from=2026-02-15&date_to=2026-02-21&limit=100&endpoint=chat.completions" \
+  -H "Authorization: Bearer $GATEWAY_API_KEY"
+```
+
 Health:
 
 ```bash
@@ -371,3 +384,36 @@ npm run deploy
 - Embeddings route currently uses Gemini (`gemini-embedding-001`) and Workers AI (`@cf/baai/bge-base-en-v1.5`).
 - Groq chat compatibility is enabled, but Groq embeddings are not wired because embeddings are not listed in the Groq API reference endpoints.
 - If you pasted any real provider keys into chat, rotate them.
+
+## Ranked Roadmap (Next)
+
+1. Multimodal chat support in `/v1/chat/completions` (image/audio content arrays, OpenAI-compatible).
+2. OpenAI model alias mapping (`gpt-*` names -> provider models) with explicit compatibility table.
+3. Per-key and per-project quotas/rate limits (RPM/RPD/token budgets).
+4. Key lifecycle APIs (create, rotate, revoke, expiry, scopes).
+5. Provider circuit-breakers and automatic temporary model quarantine.
+6. Contract tests against OpenAI SDKs (Node/Python/Go) for compatibility lock.
+7. Prompt/response cache layer (hash-based, TTL, metadata-only logs).
+8. Provider-normalized token usage accounting and cost tracking.
+9. Alerting + observability (structured logs, error-rate alerts, latency SLOs).
+10. Staging/prod deployment split with canary rollout and rollback.
+
+## Free Multimodal Options (As Of 2026-02-21)
+
+1. Gemini Developer API
+- OpenAI-compatible multimodal chat examples show text + `image_url` inputs.
+- Free tier exists; pricing tables mark some multimodal models (for example Gemini 3 Flash Preview) as free of charge on the free tier.
+- Gemini 2.5 Flash free-tier rate limits are documented at `10 RPM`, `250,000 TPM`, `250 RPD` (check your project tier in AI Studio).
+- Docs: [OpenAI compatibility](https://ai.google.dev/gemini-api/docs/openai), [Pricing](https://ai.google.dev/gemini-api/docs/pricing), [Rate limits](https://ai.google.dev/gemini-api/docs/rate-limits)
+
+2. Groq
+- Vision is supported via OpenAI-style `chat.completions` with multimodal content (`type: image_url`) on Llama 4 Scout/Maverick models.
+- Groq publishes Free Plan limits and includes Llama 4 vision models in those tables.
+- Example published free-plan limits: `llama-4-scout-17b-16e-instruct` (`30 RPM`, `6,000 RPD`) and `llama-4-maverick-17b-128e-instruct` (`30 RPM`, `1,000 RPD`).
+- Docs: [Images and Vision](https://console.groq.com/docs/vision), [Rate limits](https://console.groq.com/docs/rate-limits)
+
+3. Cloudflare Workers AI
+- Free allowance is 10,000 neurons/day, then paid usage above that threshold.
+- Includes multimodal-capable models such as `@cf/meta/llama-3.2-11b-vision-instruct` (image reasoning/captioning/visual QA).
+- Example cost on that model is documented as `$0.038 / 1,000 input tokens` and `$0.125 / 1,000 output tokens` once you exceed the daily free allowance.
+- Docs: [Workers AI pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/), [Model catalog](https://developers.cloudflare.com/workers-ai/models/), [Llama 3.2 11B Vision](https://developers.cloudflare.com/workers-ai/models/llama-3.2-11b-vision-instruct/)

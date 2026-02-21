@@ -1,11 +1,11 @@
 export function renderLandingHtml(params: { playgroundEnabled: boolean }): string {
   const playgroundCta = params.playgroundEnabled
-    ? '<a class="btn primary" href="/playground">Open Dashboard</a>'
-    : '<span class="btn disabled" title="PLAYGROUND_ENABLED is false in deployed vars">Dashboard Disabled</span>';
+    ? '<a class="btn primary" href="/playground">Open Sandbox</a>'
+    : '<span class="btn disabled" title="PLAYGROUND_ENABLED is false in deployed vars">Sandbox Disabled</span>';
 
   const playgroundHint = params.playgroundEnabled
-    ? 'Dashboard is live for interactive sandbox testing.'
-    : 'Dashboard is currently disabled. Set PLAYGROUND_ENABLED=true to expose /playground.';
+    ? 'Sandbox is live for interactive provider testing.'
+    : 'Sandbox is currently disabled. Set PLAYGROUND_ENABLED=true to expose /playground.';
 
   return `<!doctype html>
 <html lang="en">
@@ -198,11 +198,12 @@ export function renderLandingHtml(params: { playgroundEnabled: boolean }): strin
           and optional internal dashboard for live sandbox testing.
         </p>
         <div class="hero-actions">
+          <a class="btn primary" href="/dashboard">Usage Dashboard</a>
           ${playgroundCta}
           <a class="btn secondary" href="/docs">API Docs</a>
           <a class="btn secondary" href="/health">Health</a>
         </div>
-        <p class="hint">${playgroundHint}</p>
+        <p class="hint">/dashboard is always available. ${playgroundHint}</p>
       </section>
 
       <section class="grid">
@@ -214,12 +215,15 @@ export function renderLandingHtml(params: { playgroundEnabled: boolean }): strin
             <li><span class="mono">POST /v1/embeddings</span> (auth required)</li>
             <li><span class="mono">GET /v1/models</span> (auth required)</li>
             <li><span class="mono">GET /v1/analytics</span> (auth required)</li>
+            <li><span class="mono">GET /v1/requests</span> (auth required)</li>
             <li><span class="mono">GET /health</span></li>
             <li><span class="mono">POST /access/request-key</span></li>
           </ul>
           <div class="links">
             <a href="/v1/models">/v1/models</a>
             <a href="/v1/analytics">/v1/analytics</a>
+            <a href="/v1/requests">/v1/requests</a>
+            <a href="/dashboard">/dashboard</a>
             <a href="/openapi.json">/openapi.json</a>
             <a href="/docs">/docs</a>
           </div>
@@ -236,7 +240,8 @@ export function renderLandingHtml(params: { playgroundEnabled: boolean }): strin
             Use the key as <span class="mono">Authorization: Bearer &lt;GATEWAY_API_KEY&gt;</span>.
           </p>
           <div class="links">
-            <a href="/playground">Open dashboard</a>
+            <a href="/dashboard">Open usage dashboard</a>
+            <a href="/playground">Open sandbox</a>
             <a href="/docs">Open API docs</a>
           </div>
         </article>

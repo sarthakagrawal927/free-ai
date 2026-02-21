@@ -8,6 +8,7 @@ import { getModelKey, getModelRegistry, getProviderLimits, getRateLimitConfig, i
 import { providerCallers, providerEmbeddingCallers } from './providers';
 import { classifyError, isRetriableFailure } from './router/classify-error';
 import { selectCandidates } from './router/select-model';
+import { renderDashboardHtml } from './dashboard';
 import { renderLandingHtml } from './landing';
 import { renderPlaygroundHtml } from './playground';
 import { consumeIpRateLimit, healthLookup, healthRecord, healthSnapshot, nextRoundRobinOffset } from './state/client';
@@ -263,6 +264,56 @@ const analyticsResponseSchema = z.object({
   by_reasoning_effort: z.array(analyticsReasoningSchema),
   by_endpoint: z.array(analyticsEndpointSchema),
   by_project: z.array(analyticsProjectSchema),
+});
+
+const requestLogQuerySchema = z.object({
+  project_id: projectIdSchema.optional(),
+  date_from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  date_to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  endpoint: z.enum(['chat.completions', 'responses', 'embeddings']).optional(),
+  outcome: z.enum(['ok', 'error']).optional(),
+  provider: z.string().min(1).max(64).optional(),
+  limit: z.coerce.number().int().min(1).max(500).default(100),
+  offset: z.coerce.number().int().min(0).max(5000).default(0),
+});
+
+const requestLogItemSchema = z.object({
+  request_id: z.string(),
+  received_at: z.string(),
+  endpoint: z.string(),
+  project_id: z.string().nullable(),
+  reasoning_effort: z.string(),
+  stream: z.boolean(),
+  prompt_chars: z.number(),
+  message_count: z.number(),
+  status_code: z.number(),
+  outcome: z.string(),
+  chosen_provider: z.string().nullable(),
+  chosen_model: z.string().nullable(),
+  attempts: z.number(),
+  error_type: z.string().nullable(),
+  latency_ms: z.number().nullable(),
+});
+
+const requestLogResponseSchema = z.object({
+  ok: z.literal(true),
+  range: z.object({
+    date_from: z.string(),
+    date_to: z.string(),
+    days: z.number(),
+    project_id: z.string().nullable(),
+  }),
+  pagination: z.object({
+    limit: z.number(),
+    offset: z.number(),
+    returned: z.number(),
+  }),
+  filters: z.object({
+    endpoint: z.string().nullable(),
+    outcome: z.string().nullable(),
+    provider: z.string().nullable(),
+  }),
+  data: z.array(requestLogItemSchema),
 });
 
 const keyRequestBodySchema = z
@@ -2319,6 +2370,205 @@ app.openapi(analyticsRoute, async (c) => {
   );
 });
 
+const requestLogsRoute = createRoute({
+  method: 'get',
+  path: '/v1/requests',
+  request: {
+    query: requestLogQuerySchema,
+  },
+  responses: {
+    200: {
+      description: 'Raw gateway request rows',
+      content: {
+        'application/json': {
+          schema: requestLogResponseSchema,
+        },
+      },
+    },
+    400: {
+      description: 'Invalid query parameters',
+      content: {
+        'application/json': { schema: errorSchema },
+      },
+    },
+    503: {
+      description: 'Request-log storage unavailable',
+      content: {
+        'application/json': { schema: errorSchema },
+      },
+    },
+  },
+});
+
+app.openapi(requestLogsRoute, async (c) => {
+  if (!c.env.GATEWAY_DB) {
+    return c.json(
+      {
+        error: {
+          message: 'D1 request-log storage is not configured',
+          type: 'configuration_error',
+        },
+      },
+      503,
+    );
+  }
+
+  const query = c.req.valid('query');
+  const defaults = defaultAnalyticsRange();
+  const dateFrom = query.date_from ?? defaults.dateFrom;
+  const dateTo = query.date_to ?? defaults.dateTo;
+
+  if (!isValidIsoDate(dateFrom) || !isValidIsoDate(dateTo)) {
+    return c.json(
+      {
+        error: {
+          message: 'date_from/date_to must be valid YYYY-MM-DD values',
+          type: 'invalid_request_error',
+          code: 'invalid_date',
+        },
+      },
+      400,
+    );
+  }
+
+  if (dateFrom > dateTo) {
+    return c.json(
+      {
+        error: {
+          message: 'date_from must be less than or equal to date_to',
+          type: 'invalid_request_error',
+          code: 'invalid_date_range',
+        },
+      },
+      400,
+    );
+  }
+
+  const days = countDaysInclusive(dateFrom, dateTo);
+  if (days > MAX_ANALYTICS_DAYS) {
+    return c.json(
+      {
+        error: {
+          message: `date range too wide. Maximum is ${MAX_ANALYTICS_DAYS} days`,
+          type: 'invalid_request_error',
+          code: 'date_range_too_large',
+        },
+      },
+      400,
+    );
+  }
+
+  const bindings: Array<string | number> = [dateFrom, dateTo];
+  const filters = ['substr(received_at, 1, 10) >= ?1', 'substr(received_at, 1, 10) <= ?2'];
+
+  if (query.project_id) {
+    filters.push(`project_id = ?${bindings.length + 1}`);
+    bindings.push(query.project_id);
+  }
+
+  if (query.endpoint) {
+    filters.push(`endpoint = ?${bindings.length + 1}`);
+    bindings.push(query.endpoint);
+  }
+
+  if (query.outcome) {
+    filters.push(`outcome = ?${bindings.length + 1}`);
+    bindings.push(query.outcome);
+  }
+
+  if (query.provider) {
+    filters.push(`chosen_provider = ?${bindings.length + 1}`);
+    bindings.push(query.provider);
+  }
+
+  const whereClause = filters.join(' AND ');
+  const rowsResult = await c.env.GATEWAY_DB.prepare(
+    `
+    SELECT
+      request_id,
+      received_at,
+      endpoint,
+      project_id,
+      reasoning_effort,
+      stream,
+      prompt_chars,
+      message_count,
+      status_code,
+      outcome,
+      chosen_provider,
+      chosen_model,
+      attempts,
+      error_type,
+      latency_ms
+    FROM gateway_requests
+    WHERE ${whereClause}
+    ORDER BY received_at DESC
+    LIMIT ?${bindings.length + 1}
+    OFFSET ?${bindings.length + 2}
+    `,
+  )
+    .bind(...bindings, query.limit, query.offset)
+    .all<{
+      request_id: string;
+      received_at: string;
+      endpoint: string;
+      project_id: string | null;
+      reasoning_effort: string;
+      stream: number | null;
+      prompt_chars: number | null;
+      message_count: number | null;
+      status_code: number | null;
+      outcome: string;
+      chosen_provider: string | null;
+      chosen_model: string | null;
+      attempts: number | null;
+      error_type: string | null;
+      latency_ms: number | null;
+    }>();
+
+  const data = (rowsResult.results ?? []).map((row) => ({
+    request_id: row.request_id,
+    received_at: row.received_at,
+    endpoint: row.endpoint,
+    project_id: row.project_id,
+    reasoning_effort: row.reasoning_effort,
+    stream: toNumber(row.stream) === 1,
+    prompt_chars: toNumber(row.prompt_chars),
+    message_count: toNumber(row.message_count),
+    status_code: toNumber(row.status_code),
+    outcome: row.outcome,
+    chosen_provider: row.chosen_provider,
+    chosen_model: row.chosen_model,
+    attempts: toNumber(row.attempts),
+    error_type: row.error_type,
+    latency_ms: row.latency_ms == null ? null : toNumber(row.latency_ms),
+  }));
+
+  return c.json(
+    {
+      ok: true as const,
+      range: {
+        date_from: dateFrom,
+        date_to: dateTo,
+        days,
+        project_id: query.project_id ?? null,
+      },
+      pagination: {
+        limit: query.limit,
+        offset: query.offset,
+        returned: data.length,
+      },
+      filters: {
+        endpoint: query.endpoint ?? null,
+        outcome: query.outcome ?? null,
+        provider: query.provider ?? null,
+      },
+      data,
+    },
+    200,
+  );
+});
+
 const healthRoute = createRoute({
   method: 'get',
   path: '/health',
@@ -2523,6 +2773,8 @@ app.doc('/openapi.json', {
 
 app.get('/docs', swaggerUI({ url: '/openapi.json' }));
 
+app.get('/dashboard', (c) => c.html(renderDashboardHtml()));
+
 app.get('/playground', (c) => {
   if (!isPlaygroundEnabled(c.env)) {
     return c.text('Not Found', 404);
@@ -2541,9 +2793,11 @@ app.get('/', (c) => {
       '/v1/embeddings',
       '/v1/models',
       '/v1/analytics',
+      '/v1/requests',
       '/health',
       '/openapi.json',
       '/docs',
+      '/dashboard',
       '/access/request-key',
     ],
   };
