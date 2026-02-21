@@ -11,6 +11,11 @@ binding = "HEALTH_KV"
 id = "replace-with-kv-id"
 preview_id = "replace-with-kv-preview-id"
 
+[[d1_databases]]
+binding = "GATEWAY_DB"
+database_name = "replace-with-d1-name"
+database_id = "replace-with-d1-id"
+
 [durable_objects]
 bindings = [
   { name = "HEALTH_DO", class_name = "HealthStateDO" },

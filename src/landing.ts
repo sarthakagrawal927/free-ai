@@ -212,11 +212,13 @@ export function renderLandingHtml(params: { playgroundEnabled: boolean }): strin
             <li><span class="mono">POST /v1/chat/completions</span> (auth required)</li>
             <li><span class="mono">POST /v1/responses</span> (auth required)</li>
             <li><span class="mono">GET /v1/models</span> (auth required)</li>
+            <li><span class="mono">GET /v1/analytics</span> (auth required)</li>
             <li><span class="mono">GET /health</span></li>
             <li><span class="mono">POST /access/request-key</span></li>
           </ul>
           <div class="links">
             <a href="/v1/models">/v1/models</a>
+            <a href="/v1/analytics">/v1/analytics</a>
             <a href="/openapi.json">/openapi.json</a>
             <a href="/docs">/docs</a>
           </div>
@@ -227,7 +229,7 @@ export function renderLandingHtml(params: { playgroundEnabled: boolean }): strin
           <p>
             Submit a request through <span class="mono">/playground</span> or call
             <span class="mono">POST /access/request-key</span> from your backend.
-            You will receive a request ID, then an operator issues your gateway key.
+            Auto issue is currently disabled. You will receive a request ID, then an operator issues your gateway key.
           </p>
           <p>
             Use the key as <span class="mono">Authorization: Bearer &lt;GATEWAY_API_KEY&gt;</span>.

@@ -33,6 +33,7 @@ Key request submission:
 - `POST /v1/chat/completions` (protected)
 - `POST /v1/responses` (protected, non-stream)
 - `GET /v1/models` (protected)
+- `GET /v1/analytics` (protected)
 - `GET /health` (public)
 - `GET /openapi.json` (protected)
 - `GET /docs` (protected)
@@ -210,6 +211,20 @@ curl -sS "$GATEWAY_URL/v1/models" \
   -H "Authorization: Bearer $GATEWAY_API_KEY"
 ```
 
+Analytics (last 7 days):
+
+```bash
+curl -sS "$GATEWAY_URL/v1/analytics" \
+  -H "Authorization: Bearer $GATEWAY_API_KEY"
+```
+
+Analytics (single project + range):
+
+```bash
+curl -sS "$GATEWAY_URL/v1/analytics?project_id=simple_proj&date_from=2026-02-15&date_to=2026-02-21&limit=10" \
+  -H "Authorization: Bearer $GATEWAY_API_KEY"
+```
+
 Health:
 
 ```bash
@@ -235,12 +250,14 @@ curl -X POST "$GATEWAY_URL/access/request-key" \
 
 - Default (`AUTO_ISSUE_KEYS=false`):
 - User submits `/access/request-key` form or API call.
-- Gateway stores request metadata in KV (`access-request:<request_id>`) and returns `status: "queued"`.
+- Gateway stores request metadata in D1 (`key_requests`) and returns `status: "queued"`.
+- KV fallback is used only if D1 is unavailable.
 - Operator reviews request and manually issues a key.
 
 - Auto-issue mode (`AUTO_ISSUE_KEYS=true`):
 - `/access/request-key` returns `status: "approved"` with `api_key` immediately.
-- Gateway stores only hashed key material in KV (`api-key:<sha256>`).
+- Gateway stores hashed key material in D1 (`api_keys.key_hash`).
+- KV fallback is used only if D1 is unavailable.
 - Client uses issued key in `Authorization: Bearer <key>`.
 
 ## Scripts
@@ -297,8 +314,10 @@ What this does:
 
 - verifies Cloudflare auth (`wrangler whoami`)
 - auto-resolves/creates `HEALTH_KV` + preview namespace
-- generates local `.wrangler.deploy.toml` with resolved KV IDs
+- auto-resolves/creates D1 database bound to `GATEWAY_DB`
+- generates local `.wrangler.deploy.toml` with resolved KV/D1 IDs
 - uploads secrets from `.env` in bulk
+- applies D1 migrations from `/migrations`
 - deploys and prints the `workers.dev` URL
 
 Useful flags:
@@ -326,6 +345,7 @@ npx wrangler secret put CEREBRAS_API_KEY
 2. Deploy:
 
 ```bash
+npx wrangler d1 migrations apply GATEWAY_DB --remote
 npm run deploy
 ```
 

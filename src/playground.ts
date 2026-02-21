@@ -474,7 +474,7 @@ export function renderPlaygroundHtml(): string {
             </div>
             <p class="muted">
               Submit this form to request a gateway key. The endpoint stores the request with a generated request ID
-              so you can review and approve externally.
+              so you can review and approve externally. Auto issue is disabled on this deployment.
             </p>
 
             <form id="keyRequestForm" class="request-form">
