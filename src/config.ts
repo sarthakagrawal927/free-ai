@@ -1,4 +1,4 @@
-import type { Env, ModelCandidate, Provider, ProviderLimitConfig, ReasoningEffort, ReasoningTier } from './types';
+import type { Env, ModelCandidate, Provider, ProviderLimitConfig, ReasoningEffort, ReasoningTier, TextProvider } from './types';
 
 const DEFAULT_MODELS: ModelCandidate[] = [
   {
@@ -115,7 +115,7 @@ const DEFAULT_RATE_LIMIT: RateLimitConfig = {
   refillPerSecond: 20 / 60,
 };
 
-const PROVIDER_KEY_REQUIRED: Record<Provider, boolean> = {
+const PROVIDER_KEY_REQUIRED: Record<TextProvider, boolean> = {
   workers_ai: false,
   groq: true,
   gemini: true,
@@ -136,7 +136,7 @@ function safeParse<T>(value: string | undefined): T | null {
   }
 }
 
-function hasProviderKey(env: Env, provider: Provider): boolean {
+function hasProviderKey(env: Env, provider: TextProvider): boolean {
   switch (provider) {
     case 'workers_ai':
       return true;

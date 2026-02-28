@@ -16,7 +16,16 @@ import { HealthStateDO } from './state/health-do';
 import { IpRateLimitDO } from './state/ip-rate-limit-do';
 import { createSseStream, toSseData } from './utils/sse';
 import { buildCompletionEnvelope, createRequestId, getErrorMessage, normalizeMessages } from './utils/request';
-import type { Env, GatewayMeta, ModelCandidate, NormalizedChatRequest, Provider, ProviderLimitConfig } from './types';
+import type {
+  EmbeddingProvider,
+  Env,
+  GatewayMeta,
+  ModelCandidate,
+  NormalizedChatRequest,
+  Provider,
+  ProviderLimitConfig,
+  TextProvider,
+} from './types';
 
 const app = new OpenAPIHono<{ Bindings: Env }>();
 
@@ -62,7 +71,7 @@ const responsesRequestSchema = z
 
 const embeddingsRequestSchema = z
   .object({
-    model: z.string().default('auto'),
+    model: z.string().min(1),
     input: z.union([z.string(), z.array(z.string().min(1)).min(1)]),
     encoding_format: z.enum(['float']).optional(),
     dimensions: z.number().int().min(1).max(4096).optional(),
@@ -72,7 +81,7 @@ const embeddingsRequestSchema = z
 
 const gatewayMetaSchema = z
   .object({
-    provider: z.enum(['workers_ai', 'groq', 'gemini', 'openrouter', 'cerebras', 'cli_bridge']),
+    provider: z.enum(['workers_ai', 'groq', 'gemini', 'voyage_ai', 'openrouter', 'cerebras', 'cli_bridge']),
     model: z.string(),
     attempts: z.number().int().min(1),
     reasoning_effort: z.enum(['auto', 'low', 'medium', 'high']),
@@ -361,7 +370,7 @@ function isoNow(): string {
 const MAX_ANALYTICS_DAYS = 90;
 
 interface EmbeddingCandidate {
-  provider: Provider;
+  provider: EmbeddingProvider;
   model: string;
   priority: number;
 }
@@ -371,6 +380,11 @@ const EMBEDDING_CANDIDATES: EmbeddingCandidate[] = [
     provider: 'gemini',
     model: 'gemini-embedding-001',
     priority: 0.95,
+  },
+  {
+    provider: 'voyage_ai',
+    model: 'voyage-3.5-lite',
+    priority: 0.91,
   },
   {
     provider: 'workers_ai',
@@ -550,14 +564,29 @@ app.use('/v1/*', async (c, next) => {
   await next();
 });
 
-function getForcedProvider(c: { req: { header: (key: string) => string | undefined } }): Provider | undefined {
+function getForcedTextProvider(c: { req: { header: (key: string) => string | undefined } }): TextProvider | undefined {
   const value = c.req.header('x-gateway-force-provider');
   if (!value) {
     return undefined;
   }
 
   if (['workers_ai', 'groq', 'gemini', 'openrouter', 'cerebras', 'cli_bridge'].includes(value)) {
-    return value as Provider;
+    return value as TextProvider;
+  }
+
+  return undefined;
+}
+
+function getForcedEmbeddingProvider(
+  c: { req: { header: (key: string) => string | undefined } },
+): EmbeddingProvider | undefined {
+  const value = c.req.header('x-gateway-force-provider');
+  if (!value) {
+    return undefined;
+  }
+
+  if (['workers_ai', 'gemini', 'voyage_ai'].includes(value)) {
+    return value as EmbeddingProvider;
   }
 
   return undefined;
@@ -588,7 +617,7 @@ function resolveEmbeddingCandidates(
   env: Env,
   params: {
     requestedModel: string;
-    forcedProvider?: Provider;
+    forcedProvider?: EmbeddingProvider;
     forcedModel?: string;
   },
 ): EmbeddingCandidate[] {
@@ -610,6 +639,10 @@ function resolveEmbeddingCandidates(
     }
 
     if (candidate.provider === 'workers_ai' && !workersAiEmbeddingAvailable(env)) {
+      return false;
+    }
+
+    if (candidate.provider === 'voyage_ai' && !env.VOYAGE_API_KEY) {
       return false;
     }
 
@@ -1177,7 +1210,7 @@ app.openapi(chatRoute, async (c) => {
     reasoning_effort: body.reasoning_effort,
   };
 
-  const forcedProvider = getForcedProvider(c);
+  const forcedProvider = getForcedTextProvider(c);
   const forcedModel = c.req.header('x-gateway-force-model') ?? undefined;
 
   let registry = getModelRegistry(c.env);
@@ -1835,7 +1868,8 @@ app.openapi(embeddingsRoute, async (c) => {
   const requestId = createRequestId();
   const normalizedInput = normalizeEmbeddingInput(body.input);
   const inputChars = normalizedInput.reduce((sum, item) => sum + item.length, 0);
-  const forcedProvider = getForcedProvider(c);
+  const requestedEmbeddingModel = body.model.trim();
+  const forcedProvider = getForcedEmbeddingProvider(c);
   const forcedModel = c.req.header('x-gateway-force-model') ?? undefined;
   const headerProjectId = c.req.header('x-gateway-project-id') ?? undefined;
   const projectId = resolveProjectId(headerProjectId, body.project_id);
@@ -1862,6 +1896,34 @@ app.openapi(embeddingsRoute, async (c) => {
           message: 'Invalid x-gateway-project-id. Use 1-64 chars [a-zA-Z0-9._:-]',
           type: 'invalid_request_error',
           code: 'invalid_project_id',
+        },
+      },
+      400,
+    );
+  }
+
+  if (!requestedEmbeddingModel || requestedEmbeddingModel.toLowerCase() === 'auto') {
+    await recordGatewayRequest(c.env, {
+      endpoint: 'embeddings',
+      projectId,
+      requestId,
+      reasoningEffort: 'auto',
+      stream: false,
+      promptChars: inputChars,
+      messageCount: normalizedInput.length,
+      statusCode: 400,
+      outcome: 'error',
+      attempts: 0,
+      errorType: 'invalid_embedding_model',
+      latencyMs: Date.now() - requestStartedAt,
+    });
+
+    return c.json(
+      {
+        error: {
+          message: '`model` is required for embeddings and cannot be "auto"',
+          type: 'invalid_request_error',
+          code: 'invalid_embedding_model',
         },
       },
       400,
@@ -1897,7 +1959,7 @@ app.openapi(embeddingsRoute, async (c) => {
   }
 
   const candidates = resolveEmbeddingCandidates(c.env, {
-    requestedModel: body.model,
+    requestedModel: requestedEmbeddingModel,
     forcedProvider,
     forcedModel,
   });
@@ -1935,11 +1997,12 @@ app.openapi(embeddingsRoute, async (c) => {
   let finalResponse: Record<string, unknown> | null = null;
   let lastErrorClass = 'provider_fatal';
   let lastErrorMessage = 'Unknown error';
+  const maxEmbeddingAttempts = Math.max(1, candidates.length);
 
   await pRetry(
     async () => {
       const candidate = candidates[attemptCounter];
-      if (!candidate || attemptCounter >= 2) {
+      if (!candidate || attemptCounter >= maxEmbeddingAttempts) {
         throw new AbortError('No more embedding candidates');
       }
 
@@ -1978,7 +2041,7 @@ app.openapi(embeddingsRoute, async (c) => {
         lastErrorClass = failureClass;
         lastErrorMessage = getErrorMessage(error);
 
-        if (!isRetriableFailure(failureClass) || attemptCounter >= 2) {
+        if (!isRetriableFailure(failureClass) || attemptCounter >= maxEmbeddingAttempts) {
           throw new AbortError(lastErrorMessage);
         }
 
@@ -1986,7 +2049,7 @@ app.openapi(embeddingsRoute, async (c) => {
       }
     },
     {
-      retries: 1,
+      retries: maxEmbeddingAttempts - 1,
       minTimeout: 10,
       factor: 1,
     },
@@ -2765,7 +2828,7 @@ app.doc('/openapi.json', {
     title: 'Free AI Gateway API',
     version: '1.0.0',
     description:
-      'OpenAI-compatible text gateway with health-aware free-tier routing across Workers AI, Groq, Gemini and optional OpenRouter/Cerebras.',
+      'OpenAI-compatible text gateway with health-aware free-tier routing across Workers AI, Groq, Gemini, Voyage AI embeddings, and optional OpenRouter/Cerebras.',
   },
 });
 

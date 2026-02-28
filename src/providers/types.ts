@@ -1,8 +1,8 @@
-import type { ChatMessage, Env, Provider } from '../types';
+import type { ChatMessage, EmbeddingProvider, Env, TextProvider } from '../types';
 
 export interface ProviderCallInput {
   env: Env;
-  provider: Provider;
+  provider: TextProvider;
   model: string;
   messages: ChatMessage[];
   temperature?: number;
@@ -11,7 +11,7 @@ export interface ProviderCallInput {
 }
 
 export interface ProviderCallResult {
-  provider: Provider;
+  provider: TextProvider;
   model: string;
   stream: boolean;
   completion?: {
@@ -43,7 +43,7 @@ export type ProviderCaller = (input: ProviderCallInput) => Promise<ProviderCallR
 
 export interface ProviderEmbeddingInput {
   env: Env;
-  provider: Provider;
+  provider: EmbeddingProvider;
   model: string;
   input: string[];
   encoding_format?: 'float';
@@ -51,7 +51,7 @@ export interface ProviderEmbeddingInput {
 }
 
 export interface ProviderEmbeddingResult {
-  provider: Provider;
+  provider: EmbeddingProvider;
   model: string;
   response: {
     object: 'list';

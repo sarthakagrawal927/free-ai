@@ -4,9 +4,11 @@ import { callGemini, callGeminiEmbeddings } from './gemini';
 import { callGroq } from './groq';
 import { callOpenRouter } from './openrouter';
 import type { ProviderCaller, ProviderEmbeddingCaller } from './types';
+import { callVoyageEmbeddings } from './voyage';
 import { callWorkersAi, callWorkersAiEmbeddings } from './workers-ai';
+import type { EmbeddingProvider, TextProvider } from '../types';
 
-export const providerCallers: Record<string, ProviderCaller> = {
+export const providerCallers: Record<TextProvider, ProviderCaller> = {
   workers_ai: callWorkersAi,
   groq: callGroq,
   gemini: callGemini,
@@ -15,7 +17,8 @@ export const providerCallers: Record<string, ProviderCaller> = {
   cli_bridge: callCliBridge,
 };
 
-export const providerEmbeddingCallers: Partial<Record<string, ProviderEmbeddingCaller>> = {
+export const providerEmbeddingCallers: Record<EmbeddingProvider, ProviderEmbeddingCaller> = {
   workers_ai: callWorkersAiEmbeddings,
   gemini: callGeminiEmbeddings,
+  voyage_ai: callVoyageEmbeddings,
 };

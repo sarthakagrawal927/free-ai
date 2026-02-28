@@ -8,7 +8,7 @@ OpenAI-compatible API gateway for text inference with health-aware routing acros
 - OpenAI-style `POST /v1/responses` (non-stream)
 - OpenAI-style `POST /v1/embeddings`
 - Auto-routing by model health + `reasoning_effort`
-- Provider adapters: Workers AI, Groq, Gemini, optional OpenRouter/Cerebras, optional `cli_bridge`
+- Provider adapters: Workers AI, Groq, Gemini, Voyage AI (embeddings), optional OpenRouter/Cerebras, optional `cli_bridge`
 - Streaming and non-streaming responses
 - Auth-protected API surface for server-to-server usage
 - Usage dashboard (`/dashboard`) for live request analytics
@@ -128,6 +128,7 @@ Phase 1 providers:
 
 - `GROQ_API_KEY`
 - `GEMINI_API_KEY`
+- `VOYAGE_API_KEY` (embeddings)
 - `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_WORKERS_AI_API_KEY` (Workers AI REST fallback for local)
 - `CLI_BRIDGE_URL` and optional `CLI_BRIDGE_PROVIDER`
 
@@ -211,10 +212,12 @@ curl -sS "$GATEWAY_URL/v1/embeddings" \
   -H "Content-Type: application/json" \
   -H "x-gateway-project-id: project_analytics_api" \
   --data '{
-    "model": "auto",
+    "model": "voyage-3.5-lite",
     "input": ["what color is panda", "pandas are black and white"]
   }'
 ```
+
+Note: `/v1/embeddings` requires an explicit `model`; `auto` is rejected.
 
 Streaming:
 
@@ -363,6 +366,7 @@ Manual path:
 npx wrangler secret put GATEWAY_API_KEY
 npx wrangler secret put GROQ_API_KEY
 npx wrangler secret put GEMINI_API_KEY
+npx wrangler secret put VOYAGE_API_KEY
 npx wrangler secret put CLOUDFLARE_ACCOUNT_ID
 npx wrangler secret put CLOUDFLARE_WORKERS_AI_API_KEY
 # optional
@@ -381,7 +385,7 @@ npm run deploy
 
 - Keep `PLAYGROUND_ENABLED=false` in production unless explicitly needed.
 - Logs are metadata-oriented; raw prompt/completion storage is avoided by design.
-- Embeddings route currently uses Gemini (`gemini-embedding-001`) and Workers AI (`@cf/baai/bge-base-en-v1.5`).
+- Embeddings route currently uses Gemini (`gemini-embedding-001`), Voyage AI (`voyage-3.5-lite`), and Workers AI (`@cf/baai/bge-base-en-v1.5`).
 - Groq chat compatibility is enabled, but Groq embeddings are not wired because embeddings are not listed in the Groq API reference endpoints.
 - If you pasted any real provider keys into chat, rotate them.
 

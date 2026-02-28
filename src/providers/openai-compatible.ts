@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import type { Provider } from '../types';
+import type { EmbeddingProvider, TextProvider } from '../types';
 import type {
   ProviderCallInput,
   ProviderCallResult,
@@ -7,14 +7,16 @@ import type {
   ProviderEmbeddingResult,
 } from './types';
 
-interface OpenAICompatibleConfig {
-  provider: Provider;
+interface OpenAICompatibleConfig<TProvider extends TextProvider | EmbeddingProvider> {
+  provider: TProvider;
   baseURL: string;
   apiKey: string;
   defaultHeaders?: Record<string, string>;
 }
 
-function createClient(config: OpenAICompatibleConfig): OpenAI {
+function createClient<TProvider extends TextProvider | EmbeddingProvider>(
+  config: OpenAICompatibleConfig<TProvider>,
+): OpenAI {
   return new OpenAI({
     apiKey: config.apiKey,
     baseURL: config.baseURL,
@@ -25,7 +27,7 @@ function createClient(config: OpenAICompatibleConfig): OpenAI {
 
 export async function runOpenAICompatibleRequest(
   input: ProviderCallInput,
-  config: OpenAICompatibleConfig,
+  config: OpenAICompatibleConfig<TextProvider>,
 ): Promise<ProviderCallResult> {
   const client = createClient(config);
 
@@ -68,7 +70,7 @@ export async function runOpenAICompatibleRequest(
 
 export async function runOpenAICompatibleEmbeddingsRequest(
   input: ProviderEmbeddingInput,
-  config: OpenAICompatibleConfig,
+  config: OpenAICompatibleConfig<EmbeddingProvider>,
 ): Promise<ProviderEmbeddingResult> {
   const client = createClient(config);
   const response = (await client.embeddings.create({

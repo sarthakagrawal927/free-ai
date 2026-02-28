@@ -1,4 +1,8 @@
-export type Provider = 'workers_ai' | 'groq' | 'gemini' | 'openrouter' | 'cerebras' | 'cli_bridge';
+export type TextProvider = 'workers_ai' | 'groq' | 'gemini' | 'openrouter' | 'cerebras' | 'cli_bridge';
+
+export type EmbeddingProvider = 'workers_ai' | 'gemini' | 'voyage_ai';
+
+export type Provider = TextProvider | EmbeddingProvider;
 
 export type ReasoningEffort = 'auto' | 'low' | 'medium' | 'high';
 
@@ -20,7 +24,7 @@ export interface ChatMessage {
 
 export interface ModelCandidate {
   id: string;
-  provider: Provider;
+  provider: TextProvider;
   model: string;
   reasoning: ReasoningTier;
   supportsStreaming: boolean;
@@ -89,6 +93,7 @@ export interface Env {
   GATEWAY_API_KEY: string;
   GROQ_API_KEY?: string;
   GEMINI_API_KEY?: string;
+  VOYAGE_API_KEY?: string;
   CLOUDFLARE_ACCOUNT_ID?: string;
   CLOUDFLARE_WORKERS_AI_API_KEY?: string;
   CLI_BRIDGE_URL?: string;
