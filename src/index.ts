@@ -1490,56 +1490,52 @@ app.get('/', (c) => {
   <span class="badge badge-internal">Internal Use Only</span>
 
   <div class="card">
-    <h2><span>&#x1f4ac;</span> Chat Models &mdash; 22 models across 5 providers</h2>
-    <p class="section-desc">Health-aware routing picks the best available model per reasoning tier. Phase 2 providers activate when API keys are added.</p>
+    <h2><span>&#x1f4ac;</span> Chat Models &mdash; 31 models across 5 providers</h2>
+    <p class="section-desc">Health-aware routing picks the best available model per reasoning tier. Providers auto-activate when their API key is present.</p>
     <table>
       <thead><tr><th>Model ID</th><th>Provider</th><th>Actual Model</th><th>Tier</th></tr></thead>
       <tbody>
         <tr><td colspan="4" style="color:#34d399;font-weight:600;font-size:0.78rem;padding:12px 12px 4px;border:none;text-transform:uppercase;letter-spacing:0.05em">High Reasoning</td></tr>
         <tr><td class="mono">workers-ai-llama-3.3-70b</td><td class="provider">Workers AI</td><td class="mono">@cf/meta/llama-3.3-70b-instruct-fp8-fast</td><td><span class="tier tier-high">high</span></td></tr>
         <tr><td class="mono">workers-ai-deepseek-r1-32b</td><td class="provider">Workers AI</td><td class="mono">@cf/deepseek-ai/deepseek-r1-distill-qwen-32b</td><td><span class="tier tier-high">high</span></td></tr>
-        <tr><td class="mono">groq-deepseek-r1-70b</td><td class="provider">Groq</td><td class="mono">deepseek-r1-distill-llama-70b</td><td><span class="tier tier-high">high</span></td></tr>
         <tr><td class="mono">groq-llama-70b</td><td class="provider">Groq</td><td class="mono">llama-3.3-70b-versatile</td><td><span class="tier tier-high">high</span></td></tr>
-        <tr><td class="mono">groq-qwen-qwq-32b</td><td class="provider">Groq</td><td class="mono">qwen-qwq-32b</td><td><span class="tier tier-high">high</span></td></tr>
-        <tr><td class="mono">groq-llama3-70b</td><td class="provider">Groq</td><td class="mono">llama3-70b-8192</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">groq-gpt-oss-120b</td><td class="provider">Groq</td><td class="mono">openai/gpt-oss-120b</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">groq-kimi-k2</td><td class="provider">Groq</td><td class="mono">moonshotai/kimi-k2-instruct</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">groq-qwen3-32b</td><td class="provider">Groq</td><td class="mono">qwen/qwen3-32b</td><td><span class="tier tier-high">high</span></td></tr>
         <tr><td class="mono">gemini-1.5-pro</td><td class="provider">Gemini</td><td class="mono">gemini-1.5-pro</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">openrouter-hermes-405b-free</td><td class="provider">OpenRouter</td><td class="mono">nousresearch/hermes-3-llama-3.1-405b:free</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">openrouter-llama-70b-free</td><td class="provider">OpenRouter</td><td class="mono">meta-llama/llama-3.3-70b-instruct:free</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">openrouter-gpt-oss-120b-free</td><td class="provider">OpenRouter</td><td class="mono">openai/gpt-oss-120b:free</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">openrouter-qwen3-next-80b-free</td><td class="provider">OpenRouter</td><td class="mono">qwen/qwen3-next-80b-a3b-instruct:free</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">openrouter-qwen3-coder-free</td><td class="provider">OpenRouter</td><td class="mono">qwen/qwen3-coder:free</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">cerebras-gpt-oss-120b</td><td class="provider">Cerebras</td><td class="mono">gpt-oss-120b</td><td><span class="tier tier-high">high</span></td></tr>
         <tr><td colspan="4" style="color:#60a5fa;font-weight:600;font-size:0.78rem;padding:12px 12px 4px;border:none;text-transform:uppercase;letter-spacing:0.05em">Medium Reasoning</td></tr>
         <tr><td class="mono">gemini-2.0-flash</td><td class="provider">Gemini</td><td class="mono">gemini-2.0-flash</td><td><span class="tier tier-medium">medium</span></td></tr>
         <tr><td class="mono">workers-ai-llama-8b</td><td class="provider">Workers AI</td><td class="mono">@cf/meta/llama-3.1-8b-instruct</td><td><span class="tier tier-medium">medium</span></td></tr>
         <tr><td class="mono">workers-ai-qwen-14b</td><td class="provider">Workers AI</td><td class="mono">@cf/qwen/qwen1.5-14b-chat-awq</td><td><span class="tier tier-medium">medium</span></td></tr>
         <tr><td class="mono">workers-ai-gemma-7b</td><td class="provider">Workers AI</td><td class="mono">@cf/google/gemma-7b-it-lora</td><td><span class="tier tier-medium">medium</span></td></tr>
-        <tr><td class="mono">groq-gemma2-9b</td><td class="provider">Groq</td><td class="mono">gemma2-9b-it</td><td><span class="tier tier-medium">medium</span></td></tr>
-        <tr><td class="mono">groq-mixtral-8x7b</td><td class="provider">Groq</td><td class="mono">mixtral-8x7b-32768</td><td><span class="tier tier-medium">medium</span></td></tr>
+        <tr><td class="mono">groq-gpt-oss-20b</td><td class="provider">Groq</td><td class="mono">openai/gpt-oss-20b</td><td><span class="tier tier-medium">medium</span></td></tr>
+        <tr><td class="mono">groq-llama4-maverick</td><td class="provider">Groq</td><td class="mono">meta-llama/llama-4-maverick-17b-128e-instruct</td><td><span class="tier tier-medium">medium</span></td></tr>
+        <tr><td class="mono">groq-llama4-scout</td><td class="provider">Groq</td><td class="mono">meta-llama/llama-4-scout-17b-16e-instruct</td><td><span class="tier tier-medium">medium</span></td></tr>
         <tr><td class="mono">gemini-1.5-flash</td><td class="provider">Gemini</td><td class="mono">gemini-1.5-flash</td><td><span class="tier tier-medium">medium</span></td></tr>
+        <tr><td class="mono">openrouter-gemma3-27b-free</td><td class="provider">OpenRouter</td><td class="mono">google/gemma-3-27b-it:free</td><td><span class="tier tier-medium">medium</span></td></tr>
+        <tr><td class="mono">openrouter-mistral-small-24b-free</td><td class="provider">OpenRouter</td><td class="mono">mistralai/mistral-small-3.1-24b-instruct:free</td><td><span class="tier tier-medium">medium</span></td></tr>
+        <tr><td class="mono">openrouter-stepfun-flash-free</td><td class="provider">OpenRouter</td><td class="mono">stepfun/step-3.5-flash:free</td><td><span class="tier tier-medium">medium</span></td></tr>
+        <tr><td class="mono">openrouter-gemma3-12b-free</td><td class="provider">OpenRouter</td><td class="mono">google/gemma-3-12b-it:free</td><td><span class="tier tier-medium">medium</span></td></tr>
+        <tr><td class="mono">openrouter-nvidia-nemotron-12b-free</td><td class="provider">OpenRouter</td><td class="mono">nvidia/nemotron-nano-12b-v2-vl:free</td><td><span class="tier tier-medium">medium</span></td></tr>
         <tr><td colspan="4" style="color:#9ca3af;font-weight:600;font-size:0.78rem;padding:12px 12px 4px;border:none;text-transform:uppercase;letter-spacing:0.05em">Low Reasoning (fastest)</td></tr>
         <tr><td class="mono">groq-llama-8b</td><td class="provider">Groq</td><td class="mono">llama-3.1-8b-instant</td><td><span class="tier tier-low">low</span></td></tr>
-        <tr><td class="mono">groq-llama3-8b</td><td class="provider">Groq</td><td class="mono">llama3-8b-8192</td><td><span class="tier tier-low">low</span></td></tr>
         <tr><td class="mono">gemini-2.0-flash-lite</td><td class="provider">Gemini</td><td class="mono">gemini-2.0-flash-lite</td><td><span class="tier tier-low">low</span></td></tr>
         <tr><td class="mono">gemini-1.5-flash-8b</td><td class="provider">Gemini</td><td class="mono">gemini-1.5-flash-8b</td><td><span class="tier tier-low">low</span></td></tr>
         <tr><td class="mono">workers-ai-mistral-7b</td><td class="provider">Workers AI</td><td class="mono">@cf/mistral/mistral-7b-instruct-v0.1</td><td><span class="tier tier-low">low</span></td></tr>
         <tr><td class="mono">workers-ai-llama-3b</td><td class="provider">Workers AI</td><td class="mono">@cf/meta/llama-3.2-3b-instruct</td><td><span class="tier tier-low">low</span></td></tr>
         <tr><td class="mono">workers-ai-llama-1b</td><td class="provider">Workers AI</td><td class="mono">@cf/meta/llama-3.2-1b-instruct</td><td><span class="tier tier-low">low</span></td></tr>
         <tr><td class="mono">workers-ai-phi-2</td><td class="provider">Workers AI</td><td class="mono">@cf/microsoft/phi-2</td><td><span class="tier tier-low">low</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="card" style="margin-top:4px;border-top:1px dashed #2e2e3e">
-    <h2><span>&#x1f504;</span> Phase 2 Models (activate with API keys)</h2>
-    <p class="section-desc">These models are configured but require OPENROUTER_API_KEY or CEREBRAS_API_KEY secrets + ENABLE_PHASE2=true.</p>
-    <table>
-      <thead><tr><th>Model ID</th><th>Provider</th><th>Actual Model</th><th>Tier</th></tr></thead>
-      <tbody>
-        <tr><td class="mono">openrouter-llama-70b-free</td><td class="provider">OpenRouter</td><td class="mono">meta-llama/llama-3.3-70b-instruct:free</td><td><span class="tier tier-high">high</span></td></tr>
-        <tr><td class="mono">openrouter-qwen-72b-free</td><td class="provider">OpenRouter</td><td class="mono">qwen/qwen-2.5-72b-instruct:free</td><td><span class="tier tier-high">high</span></td></tr>
-        <tr><td class="mono">openrouter-deepseek-r1-free</td><td class="provider">OpenRouter</td><td class="mono">deepseek/deepseek-r1:free</td><td><span class="tier tier-high">high</span></td></tr>
-        <tr><td class="mono">openrouter-mistral-7b-free</td><td class="provider">OpenRouter</td><td class="mono">mistralai/mistral-7b-instruct:free</td><td><span class="tier tier-low">low</span></td></tr>
-        <tr><td class="mono">cerebras-llama-70b</td><td class="provider">Cerebras</td><td class="mono">llama-3.3-70b</td><td><span class="tier tier-high">high</span></td></tr>
-        <tr><td class="mono">cerebras-qwen-32b</td><td class="provider">Cerebras</td><td class="mono">qwen-3-32b</td><td><span class="tier tier-high">high</span></td></tr>
         <tr><td class="mono">cerebras-llama-8b</td><td class="provider">Cerebras</td><td class="mono">llama3.1-8b</td><td><span class="tier tier-low">low</span></td></tr>
       </tbody>
     </table>
   </div>
+
 
   <div class="card">
     <h2><span>&#x1f9e9;</span> Embedding Models &mdash; 6 models across 3 providers</h2>

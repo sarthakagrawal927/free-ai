@@ -22,4 +22,3 @@ tag = "v1"
 new_sqlite_classes = ["HealthStateDO", "IpRateLimitDO"]
 
 [vars]
-ENABLE_PHASE2 = "false"

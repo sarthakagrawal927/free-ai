@@ -29,7 +29,6 @@ export interface ModelCandidate {
   reasoning: ReasoningTier;
   supportsStreaming: boolean;
   enabled: boolean;
-  phase: 1 | 2;
   priority: number;
 }
 
@@ -102,5 +101,4 @@ export interface Env {
   PROVIDER_LIMITS_JSON?: string;
   RATE_LIMIT_CONFIG_JSON?: string;
   DOCS_SITE_URL?: string;
-  ENABLE_PHASE2?: string;
 }

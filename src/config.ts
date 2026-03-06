@@ -9,7 +9,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'high',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
+
     priority: 0.93,
   },
   {
@@ -19,7 +19,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'high',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
+
     priority: 0.90,
   },
   {
@@ -29,7 +29,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'medium',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
+
     priority: 0.85,
   },
   {
@@ -39,7 +39,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'medium',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
+
     priority: 0.92,
   },
   {
@@ -49,7 +49,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'medium',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
+
     priority: 0.82,
   },
   {
@@ -59,7 +59,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'low',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
+
     priority: 0.88,
   },
   {
@@ -69,7 +69,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'low',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
+
     priority: 0.83,
   },
   {
@@ -79,7 +79,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'low',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
+
     priority: 0.78,
   },
   {
@@ -89,21 +89,11 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'low',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
+
     priority: 0.75,
   },
 
   // ── Groq (free tier, rate-limited) ──────────────────────────────────
-  {
-    id: 'groq-deepseek-r1-70b',
-    provider: 'groq',
-    model: 'deepseek-r1-distill-llama-70b',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    phase: 1,
-    priority: 0.91,
-  },
   {
     id: 'groq-llama-70b',
     provider: 'groq',
@@ -111,28 +101,68 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'high',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
-    priority: 0.89,
+
+    priority: 0.91,
   },
   {
-    id: 'groq-qwen-qwq-32b',
+    id: 'groq-gpt-oss-120b',
     provider: 'groq',
-    model: 'qwen-qwq-32b',
+    model: 'openai/gpt-oss-120b',
     reasoning: 'high',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
-    priority: 0.87,
+
+    priority: 0.89,
   },
   {
-    id: 'groq-gemma2-9b',
+    id: 'groq-gpt-oss-20b',
     provider: 'groq',
-    model: 'gemma2-9b-it',
+    model: 'openai/gpt-oss-20b',
     reasoning: 'medium',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
+
+    priority: 0.87,
+  },
+  {
+    id: 'groq-kimi-k2',
+    provider: 'groq',
+    model: 'moonshotai/kimi-k2-instruct',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+
+    priority: 0.88,
+  },
+  {
+    id: 'groq-qwen3-32b',
+    provider: 'groq',
+    model: 'qwen/qwen3-32b',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+
     priority: 0.86,
+  },
+  {
+    id: 'groq-llama4-maverick',
+    provider: 'groq',
+    model: 'meta-llama/llama-4-maverick-17b-128e-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+
+    priority: 0.85,
+  },
+  {
+    id: 'groq-llama4-scout',
+    provider: 'groq',
+    model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+
+    priority: 0.84,
   },
   {
     id: 'groq-llama-8b',
@@ -141,38 +171,8 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'low',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
+
     priority: 0.91,
-  },
-  {
-    id: 'groq-mixtral-8x7b',
-    provider: 'groq',
-    model: 'mixtral-8x7b-32768',
-    reasoning: 'medium',
-    supportsStreaming: true,
-    enabled: true,
-    phase: 1,
-    priority: 0.84,
-  },
-  {
-    id: 'groq-llama3-8b',
-    provider: 'groq',
-    model: 'llama3-8b-8192',
-    reasoning: 'low',
-    supportsStreaming: true,
-    enabled: true,
-    phase: 1,
-    priority: 0.80,
-  },
-  {
-    id: 'groq-llama3-70b',
-    provider: 'groq',
-    model: 'llama3-70b-8192',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    phase: 1,
-    priority: 0.82,
   },
 
   // ── Gemini (free tier, generous limits) ─────────────────────────────
@@ -183,7 +183,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'high',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
+
     priority: 0.88,
   },
   {
@@ -193,7 +193,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'medium',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
+
     priority: 0.92,
   },
   {
@@ -203,7 +203,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'medium',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
+
     priority: 0.86,
   },
   {
@@ -213,7 +213,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'low',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
+
     priority: 0.89,
   },
   {
@@ -223,11 +223,21 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'low',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
+
     priority: 0.84,
   },
 
-  // ── OpenRouter (phase 2, needs OPENROUTER_API_KEY) ──────────────────
+  // ── OpenRouter (needs OPENROUTER_API_KEY) ────────────────────────────
+  {
+    id: 'openrouter-hermes-405b-free',
+    provider: 'openrouter',
+    model: 'nousresearch/hermes-3-llama-3.1-405b:free',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+
+    priority: 0.79,
+  },
   {
     id: 'openrouter-llama-70b-free',
     provider: 'openrouter',
@@ -235,60 +245,100 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'high',
     supportsStreaming: true,
     enabled: true,
-    phase: 2,
+
     priority: 0.78,
   },
   {
-    id: 'openrouter-qwen-72b-free',
+    id: 'openrouter-gpt-oss-120b-free',
     provider: 'openrouter',
-    model: 'qwen/qwen-2.5-72b-instruct:free',
+    model: 'openai/gpt-oss-120b:free',
     reasoning: 'high',
     supportsStreaming: true,
     enabled: true,
-    phase: 2,
-    priority: 0.76,
-  },
-  {
-    id: 'openrouter-deepseek-r1-free',
-    provider: 'openrouter',
-    model: 'deepseek/deepseek-r1:free',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    phase: 2,
-    priority: 0.74,
-  },
-  {
-    id: 'openrouter-mistral-7b-free',
-    provider: 'openrouter',
-    model: 'mistralai/mistral-7b-instruct:free',
-    reasoning: 'low',
-    supportsStreaming: true,
-    enabled: true,
-    phase: 2,
-    priority: 0.70,
-  },
 
-  // ── Cerebras (phase 2, needs CEREBRAS_API_KEY) ──────────────────────
-  {
-    id: 'cerebras-llama-70b',
-    provider: 'cerebras',
-    model: 'llama-3.3-70b',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    phase: 2,
     priority: 0.77,
   },
   {
-    id: 'cerebras-qwen-32b',
-    provider: 'cerebras',
-    model: 'qwen-3-32b',
+    id: 'openrouter-qwen3-next-80b-free',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-next-80b-a3b-instruct:free',
     reasoning: 'high',
     supportsStreaming: true,
     enabled: true,
-    phase: 2,
+
+    priority: 0.76,
+  },
+  {
+    id: 'openrouter-gemma3-27b-free',
+    provider: 'openrouter',
+    model: 'google/gemma-3-27b-it:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+
+    priority: 0.75,
+  },
+  {
+    id: 'openrouter-mistral-small-24b-free',
+    provider: 'openrouter',
+    model: 'mistralai/mistral-small-3.1-24b-instruct:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+
     priority: 0.74,
+  },
+  {
+    id: 'openrouter-qwen3-coder-free',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-coder:free',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+
+    priority: 0.73,
+  },
+  {
+    id: 'openrouter-stepfun-flash-free',
+    provider: 'openrouter',
+    model: 'stepfun/step-3.5-flash:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+
+    priority: 0.72,
+  },
+  {
+    id: 'openrouter-gemma3-12b-free',
+    provider: 'openrouter',
+    model: 'google/gemma-3-12b-it:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+
+    priority: 0.71,
+  },
+  {
+    id: 'openrouter-nvidia-nemotron-12b-free',
+    provider: 'openrouter',
+    model: 'nvidia/nemotron-nano-12b-v2-vl:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+
+    priority: 0.70,
+  },
+
+  // ── Cerebras (needs CEREBRAS_API_KEY) ───────────────────────────────
+  {
+    id: 'cerebras-gpt-oss-120b',
+    provider: 'cerebras',
+    model: 'gpt-oss-120b',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+
+    priority: 0.77,
   },
   {
     id: 'cerebras-llama-8b',
@@ -297,7 +347,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'low',
     supportsStreaming: true,
     enabled: true,
-    phase: 2,
+
     priority: 0.72,
   },
 
@@ -309,7 +359,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     reasoning: 'medium',
     supportsStreaming: true,
     enabled: true,
-    phase: 1,
+
     priority: 0.65,
   },
 ];
@@ -326,28 +376,33 @@ const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = {
   'workers_ai:@cf/meta/llama-3.2-1b-instruct': { requestsPerDay: 1000 },
   'workers_ai:@cf/microsoft/phi-2': { requestsPerDay: 800 },
   // Groq
-  'groq:deepseek-r1-distill-llama-70b': { requestsPerDay: 200 },
   'groq:llama-3.3-70b-versatile': { requestsPerDay: 300 },
-  'groq:qwen-qwq-32b': { requestsPerDay: 300 },
-  'groq:gemma2-9b-it': { requestsPerDay: 1000 },
+  'groq:openai/gpt-oss-120b': { requestsPerDay: 200 },
+  'groq:openai/gpt-oss-20b': { requestsPerDay: 500 },
+  'groq:moonshotai/kimi-k2-instruct': { requestsPerDay: 300 },
+  'groq:qwen/qwen3-32b': { requestsPerDay: 500 },
+  'groq:meta-llama/llama-4-maverick-17b-128e-instruct': { requestsPerDay: 500 },
+  'groq:meta-llama/llama-4-scout-17b-16e-instruct': { requestsPerDay: 500 },
   'groq:llama-3.1-8b-instant': { requestsPerDay: 1500 },
-  'groq:mixtral-8x7b-32768': { requestsPerDay: 500 },
-  'groq:llama3-8b-8192': { requestsPerDay: 1500 },
-  'groq:llama3-70b-8192': { requestsPerDay: 300 },
   // Gemini
   'gemini:gemini-1.5-pro': { requestsPerDay: 50 },
   'gemini:gemini-2.0-flash': { requestsPerDay: 1000 },
   'gemini:gemini-1.5-flash': { requestsPerDay: 1500 },
   'gemini:gemini-2.0-flash-lite': { requestsPerDay: 1500 },
   'gemini:gemini-1.5-flash-8b': { requestsPerDay: 1500 },
-  // OpenRouter
+  // OpenRouter (free models, rate-limited upstream)
+  'openrouter:nousresearch/hermes-3-llama-3.1-405b:free': { requestsPerDay: 50 },
   'openrouter:meta-llama/llama-3.3-70b-instruct:free': { requestsPerDay: 50 },
-  'openrouter:qwen/qwen-2.5-72b-instruct:free': { requestsPerDay: 50 },
-  'openrouter:deepseek/deepseek-r1:free': { requestsPerDay: 50 },
-  'openrouter:mistralai/mistral-7b-instruct:free': { requestsPerDay: 100 },
+  'openrouter:openai/gpt-oss-120b:free': { requestsPerDay: 50 },
+  'openrouter:qwen/qwen3-next-80b-a3b-instruct:free': { requestsPerDay: 50 },
+  'openrouter:google/gemma-3-27b-it:free': { requestsPerDay: 100 },
+  'openrouter:mistralai/mistral-small-3.1-24b-instruct:free': { requestsPerDay: 100 },
+  'openrouter:qwen/qwen3-coder:free': { requestsPerDay: 50 },
+  'openrouter:stepfun/step-3.5-flash:free': { requestsPerDay: 100 },
+  'openrouter:google/gemma-3-12b-it:free': { requestsPerDay: 100 },
+  'openrouter:nvidia/nemotron-nano-12b-v2-vl:free': { requestsPerDay: 100 },
   // Cerebras
-  'cerebras:llama-3.3-70b': { requestsPerDay: 300 },
-  'cerebras:qwen-3-32b': { requestsPerDay: 500 },
+  'cerebras:gpt-oss-120b': { requestsPerDay: 300 },
   'cerebras:llama3.1-8b': { requestsPerDay: 1000 },
   // CLI Bridge
   'cli_bridge:default': { requestsPerDay: 10000 },
@@ -406,14 +461,9 @@ function hasProviderKey(env: Env, provider: TextProvider): boolean {
 export function getModelRegistry(env: Env): ModelCandidate[] {
   const configured = safeParse<ModelCandidate[]>(env.MODEL_REGISTRY_JSON);
   const base = configured && configured.length > 0 ? configured : DEFAULT_MODELS;
-  const phase2Enabled = env.ENABLE_PHASE2 === 'true';
 
   return base.filter((candidate) => {
     if (!candidate.enabled) {
-      return false;
-    }
-
-    if (candidate.phase === 2 && !phase2Enabled) {
       return false;
     }
 
