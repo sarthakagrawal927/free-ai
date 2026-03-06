@@ -2,24 +2,44 @@
 
 OpenAI-compatible API gateway that routes requests across free LLM providers with health-aware model selection.
 
-## Getting a Key
+## Authentication
 
-API keys are issued through [SaaS Maker](https://app.sassmaker.com). Sign up, create a project, and configure the AI Gateway to get your key.
+No API key required. The gateway is open — pass any value (or nothing) as the Bearer token.
 
-## Available Models
+## Chat Models
 
-The gateway auto-routes across these free providers:
+Use `model: "auto"` to let the gateway pick the best available model, or specify an exact model ID.
 
-| Provider | Models | Notes |
-|----------|--------|-------|
-| **Groq** | Llama 4 Scout, Llama 4 Maverick, Gemma 2 | Fast inference |
-| **Gemini** | Gemini 2.5 Flash, Gemini 3 Flash Preview | Multimodal, multilingual |
-| **Workers AI** | Llama 3.x, Qwen, Mistral, BGE embeddings | Cloudflare edge |
-| **Voyage AI** | voyage-3.5-lite | Embeddings |
-| **OpenRouter** | Various (when configured) | Fallback |
-| **Cerebras** | Various (when configured) | Fast inference |
+| Model ID | Provider | Reasoning Tier | Streaming |
+|----------|----------|---------------|-----------|
+| `@cf/meta/llama-3.1-8b-instruct` | Workers AI | medium | yes |
+| `@cf/mistral/mistral-7b-instruct-v0.1` | Workers AI | low | yes |
+| `llama-3.1-8b-instant` | Groq | low | yes |
+| `llama-3.3-70b-versatile` | Groq | high | yes |
+| `gemini-2.0-flash-lite` | Gemini | low | yes |
+| `gemini-2.0-flash` | Gemini | medium | yes |
 
-Use `model: "auto"` to let the gateway pick the best available model, or specify a model name directly.
+### Phase 2 (disabled by default)
+
+| Model ID | Provider | Reasoning Tier | Streaming |
+|----------|----------|---------------|-----------|
+| `openrouter/free` | OpenRouter | low | yes |
+| `qwen-3-32b` | Cerebras | high | yes |
+
+## Embedding Models
+
+Embeddings require an explicit model — `auto` is not supported.
+
+| Model ID | Provider |
+|----------|----------|
+| `gemini-embedding-001` | Gemini |
+| `voyage-3.5-lite` | Voyage AI |
+| `@cf/baai/bge-base-en-v1.5` | Workers AI |
+
+**Aliases** — these map to `gemini-embedding-001`:
+- `text-embedding-3-small`
+- `text-embedding-3-large`
+- `text-embedding-004`
 
 ## API Endpoints
 
@@ -32,7 +52,7 @@ POST /v1/chat/completions
 ```
 
 ```bash
-curl -X POST $GATEWAY_URL/v1/chat/completions \
+curl $GATEWAY_URL/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto",
@@ -43,12 +63,12 @@ curl -X POST $GATEWAY_URL/v1/chat/completions \
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `model` | string | No | Model name or `auto` (default) |
+| `model` | string | No | Model ID or `auto` (default) |
 | `messages` | array | Yes* | OpenAI-format messages |
 | `prompt` | string | Yes* | Shorthand when `messages` is omitted |
 | `stream` | boolean | No | Enable SSE streaming (default false) |
-| `temperature` | number | No | 0-2 |
-| `max_tokens` | number | No | 1-8192 |
+| `temperature` | number | No | 0–2 |
+| `max_tokens` | number | No | 1–8192 |
 | `reasoning_effort` | string | No | `auto`, `low`, `medium`, `high` |
 
 *Either `messages` or `prompt` is required.
@@ -68,15 +88,13 @@ POST /v1/embeddings
 ```
 
 ```bash
-curl -X POST $GATEWAY_URL/v1/embeddings \
+curl $GATEWAY_URL/v1/embeddings \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "voyage-3.5-lite",
+    "model": "gemini-embedding-001",
     "input": ["text to embed"]
   }'
 ```
-
-Requires an explicit `model` — `auto` is not supported for embeddings.
 
 ### Models
 
@@ -84,7 +102,7 @@ Requires an explicit `model` — `auto` is not supported for embeddings.
 GET /v1/models
 ```
 
-Lists all available models with health status.
+Lists all available models with health status and routing metadata.
 
 ### Health
 
@@ -92,7 +110,7 @@ Lists all available models with health status.
 GET /health
 ```
 
-Public endpoint. Returns model health snapshots.
+Returns model health snapshots.
 
 ## Response Extensions
 
@@ -102,7 +120,7 @@ All responses include an `x_gateway` field:
 {
   "x_gateway": {
     "provider": "groq",
-    "model": "llama-4-scout-17b-16e-instruct",
+    "model": "llama-3.3-70b-versatile",
     "attempts": 1,
     "reasoning_effort": "auto",
     "request_id": "abc123"
@@ -118,7 +136,7 @@ Works with the standard OpenAI SDK:
 import OpenAI from 'openai';
 
 const client = new OpenAI({
-  apiKey: 'pk_your_saasmaker_key',
+  apiKey: 'anything',
   baseURL: 'https://free-ai-gateway.sarthakagrawal927.workers.dev/v1',
 });
 
@@ -127,6 +145,19 @@ const response = await client.chat.completions.create({
   messages: [{ role: 'user', content: 'Hello' }],
 });
 ```
+
+## Provider Routing
+
+The gateway uses health-aware routing:
+- Tracks success rate, latency, and daily usage per model
+- Respects `reasoning_effort` to prefer models matching the requested tier
+- Automatically retries on failure with next-best model
+- Force a specific provider with `X-Gateway-Force-Provider: groq` header
+- Force a specific model with `X-Gateway-Force-Model: llama-3.3-70b-versatile` header
+
+## Rate Limits
+
+IP-based rate limiting: 10 requests burst, ~20 requests/minute sustained.
 
 ## Development
 
