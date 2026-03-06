@@ -8,8 +8,8 @@ binding = "AI"
 
 [[kv_namespaces]]
 binding = "HEALTH_KV"
-id = "replace-with-kv-id"
-preview_id = "replace-with-kv-preview-id"
+id = "1fd98758ee084a38a1299cfe84fd1ce9"
+preview_id = "63c44d03ec1b45098072b9f911f8bc68"
 
 [durable_objects]
 bindings = [

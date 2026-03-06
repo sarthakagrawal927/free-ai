@@ -1420,22 +1420,142 @@ app.doc('/openapi.json', {
 app.get('/docs', swaggerUI({ url: '/openapi.json' }));
 
 app.get('/', (c) => {
-  return c.json({
-    module: '@sass-maker/ai-gateway',
-    version: '1.0.0',
-    sass_maker: { type: 'api-gateway', category: 'ai' },
-    endpoints: [
-      '/v1/chat/completions',
-      '/v1/responses',
-      '/v1/embeddings',
-      '/v1/models',
-      '/health',
-      '/openapi.json',
-      '/docs',
-    ],
-    docs_url: c.env.DOCS_SITE_URL ?? null,
-    openapi_url: '/openapi.json',
-  });
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free AI Gateway - SaaS Maker</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0f;color:#e0e0e8;line-height:1.6;min-height:100vh}
+  .container{max-width:860px;margin:0 auto;padding:48px 24px}
+  h1{font-size:2.4rem;font-weight:700;background:linear-gradient(135deg,#6366f1,#a78bfa,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+  .subtitle{color:#9ca3af;font-size:1.1rem;margin-bottom:12px}
+  .badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:32px}
+  .badge-internal{background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.3)}
+  .card{background:#12121a;border:1px solid #1e1e2e;border-radius:12px;padding:24px;margin-bottom:20px}
+  .card h2{font-size:1.1rem;font-weight:600;color:#c4b5fd;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+  .card h2 span{font-size:1.2rem}
+  table{width:100%;border-collapse:collapse;font-size:0.88rem}
+  th{text-align:left;padding:8px 12px;color:#9ca3af;font-weight:500;border-bottom:1px solid #1e1e2e;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.04em}
+  td{padding:8px 12px;border-bottom:1px solid #16161f}
+  .mono{font-family:'SF Mono',SFMono-Regular,Consolas,monospace;font-size:0.82rem;color:#a5b4fc}
+  .provider{color:#9ca3af;font-size:0.8rem}
+  .tier{padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:500}
+  .tier-high{background:rgba(52,211,153,0.15);color:#34d399}
+  .tier-medium{background:rgba(96,165,250,0.15);color:#60a5fa}
+  .tier-low{background:rgba(156,163,175,0.15);color:#9ca3af}
+  .links{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .links a{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:8px;text-decoration:none;font-size:0.88rem;font-weight:500;transition:all 0.15s ease}
+  .link-primary{background:#6366f1;color:#fff}
+  .link-primary:hover{background:#818cf8}
+  .link-secondary{background:#1e1e2e;color:#c4b5fd;border:1px solid #2e2e3e}
+  .link-secondary:hover{background:#252535}
+  .section-desc{color:#9ca3af;font-size:0.88rem;margin-bottom:16px}
+  .does{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px}
+  @media(max-width:600px){.does{grid-template-columns:1fr}}
+  .does-col h3{font-size:0.85rem;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em}
+  .does-col.yes h3{color:#34d399}
+  .does-col.no h3{color:#f87171}
+  .does-col ul{list-style:none;font-size:0.85rem;color:#d1d5db}
+  .does-col ul li{padding:3px 0}
+  .does-col ul li::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:8px;position:relative;top:-1px}
+  .does-col.yes ul li::before{background:#34d399}
+  .does-col.no ul li::before{background:#f87171}
+  .code-block{background:#0d0d14;border:1px solid #1e1e2e;border-radius:8px;padding:16px;font-family:'SF Mono',SFMono-Regular,Consolas,monospace;font-size:0.82rem;color:#c4b5fd;overflow-x:auto;margin-top:16px;white-space:pre;line-height:1.5}
+  .footer{margin-top:40px;padding-top:20px;border-top:1px solid #1e1e2e;color:#6b7280;font-size:0.8rem;text-align:center}
+  .footer a{color:#818cf8;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Free AI Gateway</h1>
+  <p class="subtitle">OpenAI-compatible proxy with health-aware routing across free-tier providers</p>
+  <span class="badge badge-internal">Internal Use Only</span>
+
+  <div class="card">
+    <h2><span>&#x1f4ac;</span> Chat Models</h2>
+    <p class="section-desc">6 active models routed by reasoning tier and provider health.</p>
+    <table>
+      <thead><tr><th>Model ID</th><th>Provider</th><th>Actual Model</th><th>Tier</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">groq-llama-70b</td><td class="provider">Groq</td><td class="mono">llama-3.3-70b-versatile</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">workers-ai-llama-8b</td><td class="provider">Workers AI</td><td class="mono">@cf/meta/llama-3.1-8b-instruct</td><td><span class="tier tier-medium">medium</span></td></tr>
+        <tr><td class="mono">gemini-2.0-flash</td><td class="provider">Gemini</td><td class="mono">gemini-2.0-flash</td><td><span class="tier tier-medium">medium</span></td></tr>
+        <tr><td class="mono">groq-llama-8b</td><td class="provider">Groq</td><td class="mono">llama-3.1-8b-instant</td><td><span class="tier tier-low">low</span></td></tr>
+        <tr><td class="mono">gemini-2.0-flash-lite</td><td class="provider">Gemini</td><td class="mono">gemini-2.0-flash-lite</td><td><span class="tier tier-low">low</span></td></tr>
+        <tr><td class="mono">workers-ai-mistral-7b</td><td class="provider">Workers AI</td><td class="mono">@cf/mistral/mistral-7b-instruct-v0.1</td><td><span class="tier tier-low">low</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2><span>&#x1f9e9;</span> Embedding Models</h2>
+    <p class="section-desc">3 providers with OpenAI-compatible aliases.</p>
+    <table>
+      <thead><tr><th>Model ID</th><th>Provider</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">gemini-embedding-001</td><td class="provider">Gemini</td><td style="font-size:0.82rem;color:#9ca3af">Default. Aliases: text-embedding-3-small, text-embedding-3-large, text-embedding-004</td></tr>
+        <tr><td class="mono">voyage-3.5-lite</td><td class="provider">Voyage AI</td><td style="font-size:0.82rem;color:#9ca3af">Fallback</td></tr>
+        <tr><td class="mono">@cf/baai/bge-base-en-v1.5</td><td class="provider">Workers AI</td><td style="font-size:0.82rem;color:#9ca3af">Fallback</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2><span>&#x26a1;</span> What This Does &amp; Doesn't Do</h2>
+    <div class="does">
+      <div class="does-col yes">
+        <h3>Does</h3>
+        <ul>
+          <li>OpenAI-compatible /v1/chat/completions</li>
+          <li>OpenAI-compatible /v1/embeddings</li>
+          <li>Streaming (SSE) support</li>
+          <li>Health-aware provider failover</li>
+          <li>IP-based rate limiting (10 burst, ~20/min)</li>
+          <li>Reasoning tier routing (low/medium/high)</li>
+        </ul>
+      </div>
+      <div class="does-col no">
+        <h3>Doesn't Do</h3>
+        <ul>
+          <li>No authentication required</li>
+          <li>No request logging or storage</li>
+          <li>No API key management</li>
+          <li>No usage billing or quotas</li>
+          <li>No SLA or uptime guarantee</li>
+          <li>No image or audio models</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span>&#x1f680;</span> Quick Start</h2>
+    <div class="code-block">curl https://free-ai-gateway.sarthakagrawal927.workers.dev/v1/chat/completions \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer anything" \\
+  -d '{
+    "model": "groq-llama-70b",
+    "messages": [{"role": "user", "content": "Hello!"}]
+  }'</div>
+  </div>
+
+  <div class="links">
+    <a href="/docs" class="link-primary">API Docs (Swagger)</a>
+    <a href="/v1/models" class="link-secondary">Live Models</a>
+    <a href="/health" class="link-secondary">Health Status</a>
+    <a href="/openapi.json" class="link-secondary">OpenAPI Spec</a>
+  </div>
+
+  <div class="footer">
+    Powered by <a href="https://sassmaker.com">SaaS Maker</a> &middot; Free-tier AI gateway for internal tools and prototyping
+  </div>
+</div>
+</body>
+</html>`;
+  return c.html(html);
 });
 
 export default app;
