@@ -1,40 +1,76 @@
 # Free AI Gateway
 
-OpenAI-compatible API gateway that routes requests across free LLM providers with health-aware model selection.
+OpenAI-compatible API gateway that routes requests across free LLM providers with health-aware model selection. Powered by [SaaS Maker](https://sassmaker.com).
 
 ## Authentication
 
 No API key required. The gateway is open — pass any value (or nothing) as the Bearer token.
 
-## Chat Models
+## Chat Models (22 models, 5 providers)
 
 Use `model: "auto"` to let the gateway pick the best available model, or specify an exact model ID.
 
-| Model ID | Provider | Reasoning Tier | Streaming |
-|----------|----------|---------------|-----------|
-| `@cf/meta/llama-3.1-8b-instruct` | Workers AI | medium | yes |
-| `@cf/mistral/mistral-7b-instruct-v0.1` | Workers AI | low | yes |
-| `llama-3.1-8b-instant` | Groq | low | yes |
-| `llama-3.3-70b-versatile` | Groq | high | yes |
-| `gemini-2.0-flash-lite` | Gemini | low | yes |
-| `gemini-2.0-flash` | Gemini | medium | yes |
+### High Reasoning
 
-### Phase 2 (disabled by default)
+| Model ID | Provider | Actual Model | Daily Limit |
+|----------|----------|-------------|-------------|
+| `workers-ai-llama-3.3-70b` | Workers AI | `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | 200 |
+| `workers-ai-deepseek-r1-32b` | Workers AI | `@cf/deepseek-ai/deepseek-r1-distill-qwen-32b` | 200 |
+| `groq-deepseek-r1-70b` | Groq | `deepseek-r1-distill-llama-70b` | 200 |
+| `groq-llama-70b` | Groq | `llama-3.3-70b-versatile` | 300 |
+| `groq-qwen-qwq-32b` | Groq | `qwen-qwq-32b` | 300 |
+| `groq-llama3-70b` | Groq | `llama3-70b-8192` | 300 |
+| `gemini-1.5-pro` | Gemini | `gemini-1.5-pro` | 50 |
 
-| Model ID | Provider | Reasoning Tier | Streaming |
-|----------|----------|---------------|-----------|
-| `openrouter/free` | OpenRouter | low | yes |
-| `qwen-3-32b` | Cerebras | high | yes |
+### Medium Reasoning
 
-## Embedding Models
+| Model ID | Provider | Actual Model | Daily Limit |
+|----------|----------|-------------|-------------|
+| `gemini-2.0-flash` | Gemini | `gemini-2.0-flash` | 1000 |
+| `workers-ai-llama-8b` | Workers AI | `@cf/meta/llama-3.1-8b-instruct` | 500 |
+| `workers-ai-qwen-14b` | Workers AI | `@cf/qwen/qwen1.5-14b-chat-awq` | 300 |
+| `workers-ai-gemma-7b` | Workers AI | `@cf/google/gemma-7b-it-lora` | 500 |
+| `groq-gemma2-9b` | Groq | `gemma2-9b-it` | 1000 |
+| `groq-mixtral-8x7b` | Groq | `mixtral-8x7b-32768` | 500 |
+| `gemini-1.5-flash` | Gemini | `gemini-1.5-flash` | 1500 |
+
+### Low Reasoning (fastest)
+
+| Model ID | Provider | Actual Model | Daily Limit |
+|----------|----------|-------------|-------------|
+| `groq-llama-8b` | Groq | `llama-3.1-8b-instant` | 1500 |
+| `groq-llama3-8b` | Groq | `llama3-8b-8192` | 1500 |
+| `gemini-2.0-flash-lite` | Gemini | `gemini-2.0-flash-lite` | 1500 |
+| `gemini-1.5-flash-8b` | Gemini | `gemini-1.5-flash-8b` | 1500 |
+| `workers-ai-mistral-7b` | Workers AI | `@cf/mistral/mistral-7b-instruct-v0.1` | 500 |
+| `workers-ai-llama-3b` | Workers AI | `@cf/meta/llama-3.2-3b-instruct` | 800 |
+| `workers-ai-llama-1b` | Workers AI | `@cf/meta/llama-3.2-1b-instruct` | 1000 |
+| `workers-ai-phi-2` | Workers AI | `@cf/microsoft/phi-2` | 800 |
+
+### Phase 2 (needs API keys + ENABLE_PHASE2=true)
+
+| Model ID | Provider | Actual Model | Tier |
+|----------|----------|-------------|------|
+| `openrouter-llama-70b-free` | OpenRouter | `meta-llama/llama-3.3-70b-instruct:free` | high |
+| `openrouter-qwen-72b-free` | OpenRouter | `qwen/qwen-2.5-72b-instruct:free` | high |
+| `openrouter-deepseek-r1-free` | OpenRouter | `deepseek/deepseek-r1:free` | high |
+| `openrouter-mistral-7b-free` | OpenRouter | `mistralai/mistral-7b-instruct:free` | low |
+| `cerebras-llama-70b` | Cerebras | `llama-3.3-70b` | high |
+| `cerebras-qwen-32b` | Cerebras | `qwen-3-32b` | high |
+| `cerebras-llama-8b` | Cerebras | `llama3.1-8b` | low |
+
+## Embedding Models (6 models, 3 providers)
 
 Embeddings require an explicit model — `auto` is not supported.
 
-| Model ID | Provider |
-|----------|----------|
-| `gemini-embedding-001` | Gemini |
-| `voyage-3.5-lite` | Voyage AI |
-| `@cf/baai/bge-base-en-v1.5` | Workers AI |
+| Model ID | Provider | Notes |
+|----------|----------|-------|
+| `gemini-embedding-001` | Gemini | Default, highest priority |
+| `voyage-3.5-lite` | Voyage AI | Fallback #1 |
+| `voyage-3-lite` | Voyage AI | Fallback #2 |
+| `@cf/baai/bge-large-en-v1.5` | Workers AI | 768-dim, largest |
+| `@cf/baai/bge-base-en-v1.5` | Workers AI | 768-dim, balanced |
+| `@cf/baai/bge-small-en-v1.5` | Workers AI | 384-dim, fastest |
 
 **Aliases** — these map to `gemini-embedding-001`:
 - `text-embedding-3-small`
@@ -162,13 +198,13 @@ IP-based rate limiting: 10 requests burst, ~20 requests/minute sustained.
 ## Development
 
 ```bash
-npm install
+pnpm install
 cp .env.example .env  # fill provider keys
-npm run dev:local
+pnpm dev:local
 ```
 
 ## Deploy
 
 ```bash
-npm run deploy:cloudflare
+pnpm wrangler deploy
 ```

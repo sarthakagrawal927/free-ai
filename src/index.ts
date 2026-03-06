@@ -224,9 +224,24 @@ const EMBEDDING_CANDIDATES: EmbeddingCandidate[] = [
     priority: 0.91,
   },
   {
+    provider: 'voyage_ai',
+    model: 'voyage-3-lite',
+    priority: 0.88,
+  },
+  {
+    provider: 'workers_ai',
+    model: '@cf/baai/bge-large-en-v1.5',
+    priority: 0.87,
+  },
+  {
     provider: 'workers_ai',
     model: '@cf/baai/bge-base-en-v1.5',
-    priority: 0.9,
+    priority: 0.85,
+  },
+  {
+    provider: 'workers_ai',
+    model: '@cf/baai/bge-small-en-v1.5',
+    priority: 0.80,
   },
 ];
 
@@ -1475,30 +1490,69 @@ app.get('/', (c) => {
   <span class="badge badge-internal">Internal Use Only</span>
 
   <div class="card">
-    <h2><span>&#x1f4ac;</span> Chat Models</h2>
-    <p class="section-desc">6 active models routed by reasoning tier and provider health.</p>
+    <h2><span>&#x1f4ac;</span> Chat Models &mdash; 22 models across 5 providers</h2>
+    <p class="section-desc">Health-aware routing picks the best available model per reasoning tier. Phase 2 providers activate when API keys are added.</p>
     <table>
       <thead><tr><th>Model ID</th><th>Provider</th><th>Actual Model</th><th>Tier</th></tr></thead>
       <tbody>
+        <tr><td colspan="4" style="color:#34d399;font-weight:600;font-size:0.78rem;padding:12px 12px 4px;border:none;text-transform:uppercase;letter-spacing:0.05em">High Reasoning</td></tr>
+        <tr><td class="mono">workers-ai-llama-3.3-70b</td><td class="provider">Workers AI</td><td class="mono">@cf/meta/llama-3.3-70b-instruct-fp8-fast</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">workers-ai-deepseek-r1-32b</td><td class="provider">Workers AI</td><td class="mono">@cf/deepseek-ai/deepseek-r1-distill-qwen-32b</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">groq-deepseek-r1-70b</td><td class="provider">Groq</td><td class="mono">deepseek-r1-distill-llama-70b</td><td><span class="tier tier-high">high</span></td></tr>
         <tr><td class="mono">groq-llama-70b</td><td class="provider">Groq</td><td class="mono">llama-3.3-70b-versatile</td><td><span class="tier tier-high">high</span></td></tr>
-        <tr><td class="mono">workers-ai-llama-8b</td><td class="provider">Workers AI</td><td class="mono">@cf/meta/llama-3.1-8b-instruct</td><td><span class="tier tier-medium">medium</span></td></tr>
+        <tr><td class="mono">groq-qwen-qwq-32b</td><td class="provider">Groq</td><td class="mono">qwen-qwq-32b</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">groq-llama3-70b</td><td class="provider">Groq</td><td class="mono">llama3-70b-8192</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">gemini-1.5-pro</td><td class="provider">Gemini</td><td class="mono">gemini-1.5-pro</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td colspan="4" style="color:#60a5fa;font-weight:600;font-size:0.78rem;padding:12px 12px 4px;border:none;text-transform:uppercase;letter-spacing:0.05em">Medium Reasoning</td></tr>
         <tr><td class="mono">gemini-2.0-flash</td><td class="provider">Gemini</td><td class="mono">gemini-2.0-flash</td><td><span class="tier tier-medium">medium</span></td></tr>
+        <tr><td class="mono">workers-ai-llama-8b</td><td class="provider">Workers AI</td><td class="mono">@cf/meta/llama-3.1-8b-instruct</td><td><span class="tier tier-medium">medium</span></td></tr>
+        <tr><td class="mono">workers-ai-qwen-14b</td><td class="provider">Workers AI</td><td class="mono">@cf/qwen/qwen1.5-14b-chat-awq</td><td><span class="tier tier-medium">medium</span></td></tr>
+        <tr><td class="mono">workers-ai-gemma-7b</td><td class="provider">Workers AI</td><td class="mono">@cf/google/gemma-7b-it-lora</td><td><span class="tier tier-medium">medium</span></td></tr>
+        <tr><td class="mono">groq-gemma2-9b</td><td class="provider">Groq</td><td class="mono">gemma2-9b-it</td><td><span class="tier tier-medium">medium</span></td></tr>
+        <tr><td class="mono">groq-mixtral-8x7b</td><td class="provider">Groq</td><td class="mono">mixtral-8x7b-32768</td><td><span class="tier tier-medium">medium</span></td></tr>
+        <tr><td class="mono">gemini-1.5-flash</td><td class="provider">Gemini</td><td class="mono">gemini-1.5-flash</td><td><span class="tier tier-medium">medium</span></td></tr>
+        <tr><td colspan="4" style="color:#9ca3af;font-weight:600;font-size:0.78rem;padding:12px 12px 4px;border:none;text-transform:uppercase;letter-spacing:0.05em">Low Reasoning (fastest)</td></tr>
         <tr><td class="mono">groq-llama-8b</td><td class="provider">Groq</td><td class="mono">llama-3.1-8b-instant</td><td><span class="tier tier-low">low</span></td></tr>
+        <tr><td class="mono">groq-llama3-8b</td><td class="provider">Groq</td><td class="mono">llama3-8b-8192</td><td><span class="tier tier-low">low</span></td></tr>
         <tr><td class="mono">gemini-2.0-flash-lite</td><td class="provider">Gemini</td><td class="mono">gemini-2.0-flash-lite</td><td><span class="tier tier-low">low</span></td></tr>
+        <tr><td class="mono">gemini-1.5-flash-8b</td><td class="provider">Gemini</td><td class="mono">gemini-1.5-flash-8b</td><td><span class="tier tier-low">low</span></td></tr>
         <tr><td class="mono">workers-ai-mistral-7b</td><td class="provider">Workers AI</td><td class="mono">@cf/mistral/mistral-7b-instruct-v0.1</td><td><span class="tier tier-low">low</span></td></tr>
+        <tr><td class="mono">workers-ai-llama-3b</td><td class="provider">Workers AI</td><td class="mono">@cf/meta/llama-3.2-3b-instruct</td><td><span class="tier tier-low">low</span></td></tr>
+        <tr><td class="mono">workers-ai-llama-1b</td><td class="provider">Workers AI</td><td class="mono">@cf/meta/llama-3.2-1b-instruct</td><td><span class="tier tier-low">low</span></td></tr>
+        <tr><td class="mono">workers-ai-phi-2</td><td class="provider">Workers AI</td><td class="mono">@cf/microsoft/phi-2</td><td><span class="tier tier-low">low</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:4px;border-top:1px dashed #2e2e3e">
+    <h2><span>&#x1f504;</span> Phase 2 Models (activate with API keys)</h2>
+    <p class="section-desc">These models are configured but require OPENROUTER_API_KEY or CEREBRAS_API_KEY secrets + ENABLE_PHASE2=true.</p>
+    <table>
+      <thead><tr><th>Model ID</th><th>Provider</th><th>Actual Model</th><th>Tier</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">openrouter-llama-70b-free</td><td class="provider">OpenRouter</td><td class="mono">meta-llama/llama-3.3-70b-instruct:free</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">openrouter-qwen-72b-free</td><td class="provider">OpenRouter</td><td class="mono">qwen/qwen-2.5-72b-instruct:free</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">openrouter-deepseek-r1-free</td><td class="provider">OpenRouter</td><td class="mono">deepseek/deepseek-r1:free</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">openrouter-mistral-7b-free</td><td class="provider">OpenRouter</td><td class="mono">mistralai/mistral-7b-instruct:free</td><td><span class="tier tier-low">low</span></td></tr>
+        <tr><td class="mono">cerebras-llama-70b</td><td class="provider">Cerebras</td><td class="mono">llama-3.3-70b</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">cerebras-qwen-32b</td><td class="provider">Cerebras</td><td class="mono">qwen-3-32b</td><td><span class="tier tier-high">high</span></td></tr>
+        <tr><td class="mono">cerebras-llama-8b</td><td class="provider">Cerebras</td><td class="mono">llama3.1-8b</td><td><span class="tier tier-low">low</span></td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="card">
-    <h2><span>&#x1f9e9;</span> Embedding Models</h2>
-    <p class="section-desc">3 providers with OpenAI-compatible aliases.</p>
+    <h2><span>&#x1f9e9;</span> Embedding Models &mdash; 6 models across 3 providers</h2>
+    <p class="section-desc">Automatic failover with OpenAI-compatible aliases.</p>
     <table>
       <thead><tr><th>Model ID</th><th>Provider</th><th>Notes</th></tr></thead>
       <tbody>
         <tr><td class="mono">gemini-embedding-001</td><td class="provider">Gemini</td><td style="font-size:0.82rem;color:#9ca3af">Default. Aliases: text-embedding-3-small, text-embedding-3-large, text-embedding-004</td></tr>
-        <tr><td class="mono">voyage-3.5-lite</td><td class="provider">Voyage AI</td><td style="font-size:0.82rem;color:#9ca3af">Fallback</td></tr>
-        <tr><td class="mono">@cf/baai/bge-base-en-v1.5</td><td class="provider">Workers AI</td><td style="font-size:0.82rem;color:#9ca3af">Fallback</td></tr>
+        <tr><td class="mono">voyage-3.5-lite</td><td class="provider">Voyage AI</td><td style="font-size:0.82rem;color:#9ca3af">Fallback #1</td></tr>
+        <tr><td class="mono">voyage-3-lite</td><td class="provider">Voyage AI</td><td style="font-size:0.82rem;color:#9ca3af">Fallback #2</td></tr>
+        <tr><td class="mono">@cf/baai/bge-large-en-v1.5</td><td class="provider">Workers AI</td><td style="font-size:0.82rem;color:#9ca3af">768-dim, largest</td></tr>
+        <tr><td class="mono">@cf/baai/bge-base-en-v1.5</td><td class="provider">Workers AI</td><td style="font-size:0.82rem;color:#9ca3af">768-dim, balanced</td></tr>
+        <tr><td class="mono">@cf/baai/bge-small-en-v1.5</td><td class="provider">Workers AI</td><td style="font-size:0.82rem;color:#9ca3af">384-dim, fastest</td></tr>
       </tbody>
     </table>
   </div>
