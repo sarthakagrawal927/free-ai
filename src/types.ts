@@ -89,8 +89,6 @@ export interface Env {
   HEALTH_DO: DurableObjectNamespace;
   RATE_LIMIT_DO: DurableObjectNamespace;
   HEALTH_KV: KVNamespace;
-  GATEWAY_DB?: D1Database;
-  GATEWAY_API_KEY: string;
   GROQ_API_KEY?: string;
   GEMINI_API_KEY?: string;
   VOYAGE_API_KEY?: string;
@@ -103,7 +101,6 @@ export interface Env {
   MODEL_REGISTRY_JSON?: string;
   PROVIDER_LIMITS_JSON?: string;
   RATE_LIMIT_CONFIG_JSON?: string;
-  PLAYGROUND_ENABLED?: string;
+  DOCS_SITE_URL?: string;
   ENABLE_PHASE2?: string;
-  AUTO_ISSUE_KEYS?: string;
 }

@@ -1,423 +1,143 @@
-# Free AI Gateway (Cloudflare Worker)
+# Free AI Gateway
 
-OpenAI-compatible API gateway for text inference with health-aware routing across free providers.
+OpenAI-compatible API gateway that routes requests across free LLM providers with health-aware model selection.
 
-## What You Get
+## Getting a Key
 
-- OpenAI-style `POST /v1/chat/completions`
-- OpenAI-style `POST /v1/responses` (non-stream)
-- OpenAI-style `POST /v1/embeddings`
-- Auto-routing by model health + `reasoning_effort`
-- Provider adapters: Workers AI, Groq, Gemini, Voyage AI (embeddings), optional OpenRouter/Cerebras, optional `cli_bridge`
-- Streaming and non-streaming responses
-- Auth-protected API surface for server-to-server usage
-- Usage dashboard (`/dashboard`) for live request analytics
-- Raw request-log API (`GET /v1/requests`) for direct D1-backed inspection
-- Hidden internal platform UI (`/playground`) for sandbox testing
-- Public key-request intake endpoint (`POST /access/request-key`)
+API keys are issued through [SaaS Maker](https://app.sassmaker.com). Sign up, create a project, and configure the AI Gateway to get your key.
 
-## Screenshots
+## Available Models
 
-Landing page:
+The gateway auto-routes across these free providers:
 
-![Platform Landing](docs/screenshots/platform-01-landing.png)
+| Provider | Models | Notes |
+|----------|--------|-------|
+| **Groq** | Llama 4 Scout, Llama 4 Maverick, Gemma 2 | Fast inference |
+| **Gemini** | Gemini 2.5 Flash, Gemini 3 Flash Preview | Multimodal, multilingual |
+| **Workers AI** | Llama 3.x, Qwen, Mistral, BGE embeddings | Cloudflare edge |
+| **Voyage AI** | voyage-3.5-lite | Embeddings |
+| **OpenRouter** | Various (when configured) | Fallback |
+| **Cerebras** | Various (when configured) | Fast inference |
 
-Live sandbox result:
+Use `model: "auto"` to let the gateway pick the best available model, or specify a model name directly.
 
-![Platform Live Sandbox](docs/screenshots/platform-02-live-sandbox.png)
+## API Endpoints
 
-Key request submission:
+Base URL: `https://free-ai-gateway.sarthakagrawal927.workers.dev`
 
-![Platform Key Request](docs/screenshots/platform-03-key-request.png)
+### Chat Completions
 
-## API Surface
-
-- `GET /` (landing page; send `Accept: application/json` for machine-readable metadata)
-- `POST /v1/chat/completions` (protected)
-- `POST /v1/responses` (protected, non-stream)
-- `POST /v1/embeddings` (protected)
-- `GET /v1/models` (protected)
-- `GET /v1/analytics` (protected)
-- `GET /v1/requests` (protected)
-- `GET /health` (public)
-- `GET /openapi.json` (public)
-- `GET /docs` (public)
-- `GET /dashboard` (public UI, reads protected APIs with your key)
-- `GET /playground` (public only when `PLAYGROUND_ENABLED=true`)
-- `POST /access/request-key` (public)
-
-Note: `/v1/responses` currently supports non-stream mode. Use `/v1/chat/completions` for streaming.
-
-## Auth
-
-Protected routes require:
-
-```http
-Authorization: Bearer <GATEWAY_API_KEY>
 ```
-
-## Request/Response Extensions
-
-`POST /v1/chat/completions` supports:
-
-- `reasoning_effort`: `auto | low | medium | high`
-- `prompt`: alias when `messages` is omitted
-- `project_id`: optional project tag (`[a-zA-Z0-9._:-]`, max 64 chars)
-
-Responses include:
-
-- `x_gateway`: provider/model/attempt/request metadata
-- `x_gateway.project_id`: echoed when provided
-
-You can also send project metadata via header:
-
-- `x-gateway-project-id: <project-id>`
-
-## Quickstart
-
-1. Install:
+POST /v1/chat/completions
+```
 
 ```bash
-npm install
+curl -X POST $GATEWAY_URL/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "auto",
+    "messages": [{"role": "user", "content": "Hello"}],
+    "stream": false
+  }'
 ```
 
-2. Configure env:
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `model` | string | No | Model name or `auto` (default) |
+| `messages` | array | Yes* | OpenAI-format messages |
+| `prompt` | string | Yes* | Shorthand when `messages` is omitted |
+| `stream` | boolean | No | Enable SSE streaming (default false) |
+| `temperature` | number | No | 0-2 |
+| `max_tokens` | number | No | 1-8192 |
+| `reasoning_effort` | string | No | `auto`, `low`, `medium`, `high` |
+
+*Either `messages` or `prompt` is required.
+
+### Responses API
+
+```
+POST /v1/responses
+```
+
+OpenAI Responses API compatible. Non-streaming only. Internally proxies to `/v1/chat/completions`.
+
+### Embeddings
+
+```
+POST /v1/embeddings
+```
 
 ```bash
-cp .env.example .env
-# fill values
+curl -X POST $GATEWAY_URL/v1/embeddings \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "voyage-3.5-lite",
+    "input": ["text to embed"]
+  }'
 ```
 
-3. Start local worker:
+Requires an explicit `model` — `auto` is not supported for embeddings.
 
-```bash
-npm run dev:local
+### Models
+
+```
+GET /v1/models
 ```
 
-4. Optional platform UI:
+Lists all available models with health status.
 
-```bash
-PLAYGROUND_ENABLED=true npm run dev:local
+### Health
+
+```
+GET /health
 ```
 
-Open: `http://127.0.0.1:8787/playground`
+Public endpoint. Returns model health snapshots.
 
-Usage dashboard: `http://127.0.0.1:8787/dashboard`
+## Response Extensions
 
-## Examples
+All responses include an `x_gateway` field:
 
-Reusable SDK example projects live in `/examples`:
-
-- Node.js: `/examples/node-openai-sdk`
-- Python: `/examples/python-openai-sdk`
-
-See `/examples/README.md` for quick run commands.
-
-## Environment Variables
-
-Use `.env.example` as the template.
-
-Core:
-
-- `GATEWAY_API_KEY`
-- `PLAYGROUND_ENABLED`
-- `ENABLE_PHASE2`
-- `AUTO_ISSUE_KEYS` (`true` returns an API key immediately from `/access/request-key`)
-
-Phase 1 providers:
-
-- `GROQ_API_KEY`
-- `GEMINI_API_KEY`
-- `VOYAGE_API_KEY` (embeddings)
-- `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_WORKERS_AI_API_KEY` (Workers AI REST fallback for local)
-- `CLI_BRIDGE_URL` and optional `CLI_BRIDGE_PROVIDER`
-
-Optional phase 2:
-
-- `OPENROUTER_API_KEY`
-- `CEREBRAS_API_KEY`
-
-`npm run env:sync` copies allowed keys from `.env` into `.dev.vars` for Wrangler.
-
-## cURL Examples
-
-Set once:
-
-```bash
-export GATEWAY_URL="http://127.0.0.1:8787"
-export GATEWAY_API_KEY="<your_gateway_key>"
+```json
+{
+  "x_gateway": {
+    "provider": "groq",
+    "model": "llama-4-scout-17b-16e-instruct",
+    "attempts": 1,
+    "reasoning_effort": "auto",
+    "request_id": "abc123"
+  }
+}
 ```
 
-OpenAI Node SDK:
+## SDK Usage
 
-```ts
+Works with the standard OpenAI SDK:
+
+```typescript
 import OpenAI from 'openai';
 
 const client = new OpenAI({
-  apiKey: process.env.GATEWAY_API_KEY,
+  apiKey: 'pk_your_saasmaker_key',
   baseURL: 'https://free-ai-gateway.sarthakagrawal927.workers.dev/v1',
 });
 
-const response = await client.responses.create({
+const response = await client.chat.completions.create({
   model: 'auto',
-  input: 'Write one line about edge AI',
+  messages: [{ role: 'user', content: 'Hello' }],
 });
-
-console.log(response.output_text);
 ```
 
-Non-stream chat (auto routing):
+## Development
 
 ```bash
-curl -sS "$GATEWAY_URL/v1/chat/completions" \
-  -H "Authorization: Bearer $GATEWAY_API_KEY" \
-  -H "Content-Type: application/json" \
-  --data '{
-    "model": "auto",
-    "prompt": "Explain edge runtimes in 3 bullets",
-    "reasoning_effort": "medium",
-    "stream": false
-  }'
-```
-
-Force Groq for debugging:
-
-```bash
-curl -sS "$GATEWAY_URL/v1/chat/completions" \
-  -H "Authorization: Bearer $GATEWAY_API_KEY" \
-  -H "Content-Type: application/json" \
-  -H "x-gateway-force-provider: groq" \
-  -H "x-gateway-project-id: project_analytics_api" \
-  --data '{"prompt":"what color is panda","reasoning_effort":"low","stream":false}'
-```
-
-Responses API (OpenAI-compatible):
-
-```bash
-curl -sS "$GATEWAY_URL/v1/responses" \
-  -H "Authorization: Bearer $GATEWAY_API_KEY" \
-  -H "Content-Type: application/json" \
-  --data '{
-    "model": "auto",
-    "input": "Write one sentence about routing",
-    "stream": false
-  }'
-```
-
-Embeddings API (OpenAI-compatible):
-
-```bash
-curl -sS "$GATEWAY_URL/v1/embeddings" \
-  -H "Authorization: Bearer $GATEWAY_API_KEY" \
-  -H "Content-Type: application/json" \
-  -H "x-gateway-project-id: project_analytics_api" \
-  --data '{
-    "model": "voyage-3.5-lite",
-    "input": ["what color is panda", "pandas are black and white"]
-  }'
-```
-
-Note: `/v1/embeddings` requires an explicit `model`; `auto` is rejected.
-
-Streaming:
-
-```bash
-curl -N "$GATEWAY_URL/v1/chat/completions" \
-  -H "Authorization: Bearer $GATEWAY_API_KEY" \
-  -H "Content-Type: application/json" \
-  --data '{"prompt":"Say hello in 5 languages","reasoning_effort":"low","stream":true}'
-```
-
-Models:
-
-```bash
-curl -sS "$GATEWAY_URL/v1/models" \
-  -H "Authorization: Bearer $GATEWAY_API_KEY"
-```
-
-Analytics (last 7 days):
-
-```bash
-curl -sS "$GATEWAY_URL/v1/analytics" \
-  -H "Authorization: Bearer $GATEWAY_API_KEY"
-```
-
-Analytics (single project + range):
-
-```bash
-curl -sS "$GATEWAY_URL/v1/analytics?project_id=simple_proj&date_from=2026-02-15&date_to=2026-02-21&limit=10" \
-  -H "Authorization: Bearer $GATEWAY_API_KEY"
-```
-
-Raw request logs (directly from `gateway_requests`):
-
-```bash
-curl -sS "$GATEWAY_URL/v1/requests?date_from=2026-02-15&date_to=2026-02-21&limit=100&endpoint=chat.completions" \
-  -H "Authorization: Bearer $GATEWAY_API_KEY"
-```
-
-Health:
-
-```bash
-curl -sS "$GATEWAY_URL/health"
-```
-
-Key request API:
-
-```bash
-curl -X POST "$GATEWAY_URL/access/request-key" \
-  -H "Content-Type: application/json" \
-  --data '{
-    "name": "Jane Doe",
-    "email": "jane@acme.dev",
-    "company": "Acme Labs",
-    "use_case": "Internal support copilot for our ops team",
-    "intended_use": "internal",
-    "expected_daily_requests": 1200
-  }'
-```
-
-## Key Issuance Workflow
-
-- Default (`AUTO_ISSUE_KEYS=false`):
-- User submits `/access/request-key` form or API call.
-- Gateway stores request metadata in D1 (`key_requests`) and returns `status: "queued"`.
-- KV fallback is used only if D1 is unavailable.
-- Operator reviews request and manually issues a key.
-
-- Auto-issue mode (`AUTO_ISSUE_KEYS=true`):
-- `/access/request-key` returns `status: "approved"` with `api_key` immediately.
-- Gateway stores hashed key material in D1 (`api_keys.key_hash`).
-- KV fallback is used only if D1 is unavailable.
-- Client uses issued key in `Authorization: Bearer <key>`.
-
-## Scripts
-
-- `npm run dev` -> Wrangler remote dev
-- `npm run dev:local` -> local worker with `.env` sync
-- `npm run deploy:cloudflare` -> one-command Cloudflare deploy bootstrap + deploy
-- `npm run deploy` -> deploy worker
-- `npm run check` -> typecheck + unit tests
-- `npm run test:e2e` -> mocked FE tests
-- `npm run test:e2e:live:update` -> live snapshot baseline
-- `npm run test:e2e:live` -> live snapshot verify
-
-## Testing
-
-Unit + typecheck:
-
-```bash
-npm run check
-```
-
-Mocked FE tests:
-
-```bash
-npm run test:e2e
-```
-
-Live Playwright snapshot tests (real providers, requires keys):
-
-```bash
-npm run test:e2e:live:update
-npm run test:e2e:live
-```
-
-Python OpenAI SDK smoke test (deployed URL):
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install openai
-python scripts/test_deployed_openai_sdk.py \
-  --gateway-base-url https://free-ai-gateway.sarthakagrawal927.workers.dev
+npm install
+cp .env.example .env  # fill provider keys
+npm run dev:local
 ```
 
 ## Deploy
 
-Recommended (one command):
-
 ```bash
 npm run deploy:cloudflare
 ```
-
-What this does:
-
-- verifies Cloudflare auth (`wrangler whoami`)
-- auto-resolves/creates `HEALTH_KV` + preview namespace
-- auto-resolves/creates D1 database bound to `GATEWAY_DB`
-- generates local `.wrangler.deploy.toml` with resolved KV/D1 IDs
-- uploads secrets from `.env` in bulk
-- applies D1 migrations from `/migrations`
-- deploys and prints the `workers.dev` URL
-
-Useful flags:
-
-```bash
-node scripts/deploy-cloudflare.mjs --prepare-only
-node scripts/deploy-cloudflare.mjs --skip-secrets
-```
-
-Manual path:
-
-1. Set secrets:
-
-```bash
-npx wrangler secret put GATEWAY_API_KEY
-npx wrangler secret put GROQ_API_KEY
-npx wrangler secret put GEMINI_API_KEY
-npx wrangler secret put VOYAGE_API_KEY
-npx wrangler secret put CLOUDFLARE_ACCOUNT_ID
-npx wrangler secret put CLOUDFLARE_WORKERS_AI_API_KEY
-# optional
-npx wrangler secret put OPENROUTER_API_KEY
-npx wrangler secret put CEREBRAS_API_KEY
-```
-
-2. Deploy:
-
-```bash
-npx wrangler d1 migrations apply GATEWAY_DB --remote
-npm run deploy
-```
-
-## Notes
-
-- Keep `PLAYGROUND_ENABLED=false` in production unless explicitly needed.
-- Logs are metadata-oriented; raw prompt/completion storage is avoided by design.
-- Embeddings route currently uses Gemini (`gemini-embedding-001`), Voyage AI (`voyage-3.5-lite`), and Workers AI (`@cf/baai/bge-base-en-v1.5`).
-- Groq chat compatibility is enabled, but Groq embeddings are not wired because embeddings are not listed in the Groq API reference endpoints.
-- If you pasted any real provider keys into chat, rotate them.
-
-## Ranked Roadmap (Next)
-
-1. Multimodal chat support in `/v1/chat/completions` (image/audio content arrays, OpenAI-compatible).
-2. OpenAI model alias mapping (`gpt-*` names -> provider models) with explicit compatibility table.
-3. Per-key and per-project quotas/rate limits (RPM/RPD/token budgets).
-4. Key lifecycle APIs (create, rotate, revoke, expiry, scopes).
-5. Provider circuit-breakers and automatic temporary model quarantine.
-6. Contract tests against OpenAI SDKs (Node/Python/Go) for compatibility lock.
-7. Prompt/response cache layer (hash-based, TTL, metadata-only logs).
-8. Provider-normalized token usage accounting and cost tracking.
-9. Alerting + observability (structured logs, error-rate alerts, latency SLOs).
-10. Staging/prod deployment split with canary rollout and rollback.
-
-## Free Multimodal Options (As Of 2026-02-21)
-
-1. Gemini Developer API
-- OpenAI-compatible multimodal chat examples show text + `image_url` inputs.
-- Free tier exists; pricing tables mark some multimodal models (for example Gemini 3 Flash Preview) as free of charge on the free tier.
-- Gemini 2.5 Flash free-tier rate limits are documented at `10 RPM`, `250,000 TPM`, `250 RPD` (check your project tier in AI Studio).
-- Docs: [OpenAI compatibility](https://ai.google.dev/gemini-api/docs/openai), [Pricing](https://ai.google.dev/gemini-api/docs/pricing), [Rate limits](https://ai.google.dev/gemini-api/docs/rate-limits)
-
-2. Groq
-- Vision is supported via OpenAI-style `chat.completions` with multimodal content (`type: image_url`) on Llama 4 Scout/Maverick models.
-- Groq publishes Free Plan limits and includes Llama 4 vision models in those tables.
-- Example published free-plan limits: `llama-4-scout-17b-16e-instruct` (`30 RPM`, `6,000 RPD`) and `llama-4-maverick-17b-128e-instruct` (`30 RPM`, `1,000 RPD`).
-- Docs: [Images and Vision](https://console.groq.com/docs/vision), [Rate limits](https://console.groq.com/docs/rate-limits)
-
-3. Cloudflare Workers AI
-- Free allowance is 10,000 neurons/day, then paid usage above that threshold.
-- Includes multimodal-capable models such as `@cf/meta/llama-3.2-11b-vision-instruct` (image reasoning/captioning/visual QA).
-- Example cost on that model is documented as `$0.038 / 1,000 input tokens` and `$0.125 / 1,000 output tokens` once you exceed the daily free allowance.
-- Docs: [Workers AI pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/), [Model catalog](https://developers.cloudflare.com/workers-ai/models/), [Llama 3.2 11B Vision](https://developers.cloudflare.com/workers-ai/models/llama-3.2-11b-vision-instruct/)

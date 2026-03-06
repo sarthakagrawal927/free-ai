@@ -202,7 +202,3 @@ export function getTierOrder(reasoning: ReasoningEffort): ReasoningTier[] {
 export function getModelKey(provider: Provider, model: string): string {
   return `${provider}:${model}`;
 }
-
-export function isPlaygroundEnabled(env: Env): boolean {
-  return env.PLAYGROUND_ENABLED === 'true';
-}
