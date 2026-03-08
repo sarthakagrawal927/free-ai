@@ -177,14 +177,24 @@ const DEFAULT_MODELS: ModelCandidate[] = [
 
   // ── Gemini (free tier, generous limits) ─────────────────────────────
   {
-    id: 'gemini-1.5-pro',
+    id: 'gemini-2.5-pro',
     provider: 'gemini',
-    model: 'gemini-1.5-pro',
+    model: 'gemini-2.5-pro',
     reasoning: 'high',
     supportsStreaming: true,
     enabled: true,
 
-    priority: 0.88,
+    priority: 0.94,
+  },
+  {
+    id: 'gemini-2.5-flash',
+    provider: 'gemini',
+    model: 'gemini-2.5-flash',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+
+    priority: 0.92,
   },
   {
     id: 'gemini-2.0-flash',
@@ -194,17 +204,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     supportsStreaming: true,
     enabled: true,
 
-    priority: 0.92,
-  },
-  {
-    id: 'gemini-1.5-flash',
-    provider: 'gemini',
-    model: 'gemini-1.5-flash',
-    reasoning: 'medium',
-    supportsStreaming: true,
-    enabled: true,
-
-    priority: 0.86,
+    priority: 0.90,
   },
   {
     id: 'gemini-2.0-flash-lite',
@@ -217,14 +217,14 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.89,
   },
   {
-    id: 'gemini-1.5-flash-8b',
+    id: 'gemini-2.5-flash-lite',
     provider: 'gemini',
-    model: 'gemini-1.5-flash-8b',
+    model: 'gemini-2.5-flash-lite',
     reasoning: 'low',
     supportsStreaming: true,
     enabled: true,
 
-    priority: 0.84,
+    priority: 0.87,
   },
 
   // ── OpenRouter (needs OPENROUTER_API_KEY) ────────────────────────────
@@ -385,11 +385,11 @@ const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = {
   'groq:meta-llama/llama-4-scout-17b-16e-instruct': { requestsPerDay: 500 },
   'groq:llama-3.1-8b-instant': { requestsPerDay: 1500 },
   // Gemini
-  'gemini:gemini-1.5-pro': { requestsPerDay: 50 },
+  'gemini:gemini-2.5-pro': { requestsPerDay: 50 },
+  'gemini:gemini-2.5-flash': { requestsPerDay: 500 },
   'gemini:gemini-2.0-flash': { requestsPerDay: 1000 },
-  'gemini:gemini-1.5-flash': { requestsPerDay: 1500 },
   'gemini:gemini-2.0-flash-lite': { requestsPerDay: 1500 },
-  'gemini:gemini-1.5-flash-8b': { requestsPerDay: 1500 },
+  'gemini:gemini-2.5-flash-lite': { requestsPerDay: 1500 },
   // OpenRouter (free models, rate-limited upstream)
   'openrouter:nousresearch/hermes-3-llama-3.1-405b:free': { requestsPerDay: 50 },
   'openrouter:meta-llama/llama-3.3-70b-instruct:free': { requestsPerDay: 50 },
