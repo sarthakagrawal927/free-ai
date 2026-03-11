@@ -36,6 +36,7 @@ async function callWorkersAiRest(
       'content-type': 'application/json',
     },
     body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(15_000),
   });
 
   const json = (await response.json()) as {
@@ -74,6 +75,7 @@ async function callWorkersAiRestRaw(
       'content-type': 'application/json',
     },
     body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(15_000),
   });
 
   const json = (await response.json()) as {

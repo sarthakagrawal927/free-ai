@@ -11,10 +11,9 @@ interface ModelState {
   dailyUsed: number;
 }
 
-type StateMap = Record<string, ModelState>;
 type RoundRobinMap = Record<string, number>;
 
-const STORAGE_KEY = 'state';
+const MODEL_PREFIX = 'm:';
 const ROUND_ROBIN_STORAGE_KEY = 'round-robin';
 const HISTORY_LIMIT = 100;
 const SHORT_WINDOW = 10;
@@ -75,18 +74,31 @@ function toSnapshot(
   };
 }
 
+function storageKey(modelKey: string): string {
+  return `${MODEL_PREFIX}${modelKey}`;
+}
+
 export class HealthStateDO {
   constructor(
     private readonly ctx: DurableObjectState,
     private readonly env: HealthDoEnv,
   ) {}
 
-  private async loadState(): Promise<StateMap> {
-    return (await this.ctx.storage.get<StateMap>(STORAGE_KEY)) ?? {};
+  private async loadModel(key: string): Promise<ModelState | undefined> {
+    return this.ctx.storage.get<ModelState>(storageKey(key));
   }
 
-  private async saveState(state: StateMap): Promise<void> {
-    await this.ctx.storage.put(STORAGE_KEY, state);
+  private async saveModel(key: string, state: ModelState): Promise<void> {
+    await this.ctx.storage.put(storageKey(key), state);
+  }
+
+  private async loadAllModels(): Promise<Map<string, ModelState>> {
+    const entries = await this.ctx.storage.list<ModelState>({ prefix: MODEL_PREFIX });
+    const result = new Map<string, ModelState>();
+    for (const [k, v] of entries) {
+      result.set(k.slice(MODEL_PREFIX.length), v);
+    }
+    return result;
   }
 
   private async loadRoundRobinState(): Promise<RoundRobinMap> {
@@ -105,12 +117,12 @@ export class HealthStateDO {
     }
   }
 
-  private async persistSnapshot(state: StateMap): Promise<void> {
+  private async persistSnapshot(allModels: Map<string, ModelState>): Promise<void> {
     if (!this.env.HEALTH_KV || typeof this.env.HEALTH_KV.put !== 'function') {
       return;
     }
 
-    const payload = Object.entries(state).map(([key, modelState]) => ({
+    const payload = Array.from(allModels.entries()).map(([key, modelState]) => ({
       key,
       attempts: modelState.history.length,
       cooldownUntil: modelState.cooldownUntil,
@@ -140,8 +152,7 @@ export class HealthStateDO {
         now: number;
       };
 
-      const state = await this.loadState();
-      const modelState = state[body.key] ?? emptyModelState(body.now);
+      const modelState = (await this.loadModel(body.key)) ?? emptyModelState(body.now);
       this.resetIfNeeded(modelState, body.now);
 
       modelState.history.push({
@@ -172,9 +183,10 @@ export class HealthStateDO {
         modelState.cooldownUntil = Math.max(modelState.cooldownUntil, body.now + COOL_DOWN_MS);
       }
 
-      state[body.key] = modelState;
-      await this.saveState(state);
-      await this.persistSnapshot(state);
+      await this.saveModel(body.key, modelState);
+
+      const allModels = await this.loadAllModels();
+      await this.persistSnapshot(allModels);
 
       return json({ ok: true });
     }
@@ -186,22 +198,21 @@ export class HealthStateDO {
         now: number;
       };
 
-      const state = await this.loadState();
-      const snapshots = body.keys.map((key) => {
-        const modelState = state[key] ?? emptyModelState(body.now);
+      const snapshots: ModelStateSnapshot[] = [];
+      for (const key of body.keys) {
+        const modelState = (await this.loadModel(key)) ?? emptyModelState(body.now);
         this.resetIfNeeded(modelState, body.now);
-        state[key] = modelState;
-        return toSnapshot(key, modelState, body.limits[key], body.now);
-      });
+        await this.saveModel(key, modelState);
+        snapshots.push(toSnapshot(key, modelState, body.limits[key], body.now));
+      }
 
-      await this.saveState(state);
       return json({ snapshots });
     }
 
     if (path === '/snapshot') {
       const now = Date.now();
-      const state = await this.loadState();
-      const snapshots = Object.entries(state).map(([key, modelState]) =>
+      const allModels = await this.loadAllModels();
+      const snapshots = Array.from(allModels.entries()).map(([key, modelState]) =>
         toSnapshot(key, modelState, undefined, now),
       );
       return json({ snapshots });

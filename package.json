@@ -1,8 +1,14 @@
 {
-  "name": "free-ai-gateway",
-  "version": "0.1.0",
+  "name": "@sass-maker/ai-gateway",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/mod.ts",
+      "import": "./src/mod.ts"
+    }
+  },
   "scripts": {
     "env:sync": "node scripts/sync-dev-vars.mjs",
     "dev": "wrangler dev --remote",

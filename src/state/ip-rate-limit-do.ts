@@ -4,12 +4,14 @@ interface BucketState {
 }
 
 interface RateLimitBody {
-  key: string;
   now: number;
   cost: number;
   capacity: number;
   refillPerSecond: number;
 }
+
+const STORAGE_KEY = 'bucket';
+const INACTIVITY_TTL_MS = 24 * 60 * 60 * 1000;
 
 const json = (value: unknown, status = 200): Response =>
   Response.json(value, {
@@ -35,9 +37,8 @@ export class IpRateLimitDO {
     }
 
     const body = (await request.json()) as RateLimitBody;
-    const storageKey = `bucket:${body.key}`;
 
-    const stored = await this.ctx.storage.get<BucketState>(storageKey);
+    const stored = await this.ctx.storage.get<BucketState>(STORAGE_KEY);
     const bucket: BucketState = stored ?? {
       tokens: body.capacity,
       lastRefillAt: body.now,
@@ -50,7 +51,8 @@ export class IpRateLimitDO {
     if (bucket.tokens < body.cost) {
       const deficit = body.cost - bucket.tokens;
       const retryAfter = body.refillPerSecond > 0 ? Math.ceil(deficit / body.refillPerSecond) : 60;
-      await this.ctx.storage.put(storageKey, bucket);
+      await this.ctx.storage.put(STORAGE_KEY, bucket);
+      await this.ctx.storage.setAlarm(Date.now() + INACTIVITY_TTL_MS);
       return json(
         {
           allowed: false,
@@ -62,12 +64,17 @@ export class IpRateLimitDO {
     }
 
     bucket.tokens -= body.cost;
-    await this.ctx.storage.put(storageKey, bucket);
+    await this.ctx.storage.put(STORAGE_KEY, bucket);
+    await this.ctx.storage.setAlarm(Date.now() + INACTIVITY_TTL_MS);
 
     return json({
       allowed: true,
       remaining: Math.floor(bucket.tokens),
       retryAfter: 0,
     });
+  }
+
+  async alarm(): Promise<void> {
+    await this.ctx.storage.deleteAll();
   }
 }

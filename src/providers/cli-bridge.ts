@@ -71,6 +71,7 @@ export const callCliBridge: ProviderCaller = async (input) => {
       model: input.model === 'default' ? undefined : input.model,
       messages: input.messages,
     }),
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!response.ok) {

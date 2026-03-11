@@ -1,0 +1,82 @@
+---
+title: "Authentication"
+description: "How to obtain and use API keys with the AI Gateway."
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Bearer Token Auth
+
+All requests to protected endpoints must include an `Authorization` header with a Bearer token:
+
+```
+Authorization: Bearer <GATEWAY_API_KEY>
+```
+
+## Obtaining an API Key
+
+Request a key by sending a `POST` to `/access/request-key`. No body is required — the gateway issues a key based on your IP and a server-side secret.
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl -X POST https://your-gateway.workers.dev/access/request-key
+```
+</TabItem>
+<TabItem label="JavaScript">
+```js
+const response = await fetch('https://your-gateway.workers.dev/access/request-key', {
+  method: 'POST',
+});
+
+const { key } = await response.json();
+console.log('Your API key:', key);
+```
+</TabItem>
+</Tabs>
+
+The response contains your key:
+
+```json
+{
+  "key": "gw_..."
+}
+```
+
+Store this key securely. Treat it like a password — do not commit it to source control.
+
+## Using the Key
+
+Include the key in every request to a protected endpoint:
+
+```bash
+curl https://your-gateway.workers.dev/v1/chat/completions \
+  -H "Authorization: Bearer gw_..." \
+  -H "Content-Type: application/json" \
+  -d '{ "model": "auto", "messages": [{ "role": "user", "content": "Hi" }] }'
+```
+
+## Environment Variable Pattern
+
+Store your key in an environment variable and reference it in requests:
+
+```bash
+export GATEWAY_API_KEY="gw_..."
+
+curl https://your-gateway.workers.dev/v1/chat/completions \
+  -H "Authorization: Bearer $GATEWAY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "model": "auto", "messages": [{ "role": "user", "content": "Hi" }] }'
+```
+
+## Public Endpoints
+
+The following endpoints do **not** require authentication:
+
+| Endpoint | Method | Description |
+|---|---|---|
+| `/health` | `GET` | Provider health status |
+| `/docs` | `GET` | This documentation site |
+| `/openapi.json` | `GET` | OpenAPI specification |
+
+All `/v1/*` endpoints and `/usage` require a valid Bearer token.

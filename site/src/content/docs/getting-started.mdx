@@ -1,0 +1,92 @@
+---
+title: "Getting Started"
+description: "An OpenAI-compatible AI gateway that routes requests across free-tier providers with health-aware routing, streaming, and analytics."
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+## What is the AI Gateway?
+
+The AI Gateway is a drop-in OpenAI-compatible proxy that routes your requests across multiple free-tier AI providers. Point your existing OpenAI SDK or `curl` commands at the gateway and get resilient, load-balanced inference without managing individual provider keys.
+
+Supported providers:
+
+- **Cloudflare Workers AI** — fast inference at the edge
+- **Groq** — ultra-low latency with LPU hardware
+- **Google Gemini** — large context windows, multimodal
+- **OpenRouter** — aggregated access to many models
+- **Cerebras** — high-throughput open-weight models
+- **Voyage AI** — purpose-built embedding models
+
+## Key Features
+
+- **Health-aware routing** — the gateway tracks provider health and automatically skips degraded or rate-limited backends
+- **Auto round-robin** — when model is set to `"auto"`, requests are distributed across healthy providers
+- **Streaming** — full server-sent events (SSE) support for all chat endpoints
+- **Embeddings** — unified `/v1/embeddings` endpoint backed by Workers AI, Gemini, and Voyage AI
+- **Analytics** — per-request logging with a dashboard at `/usage`
+- **OpenAI-compatible** — works with any client that supports the OpenAI API format
+
+## Quick Start
+
+Send your first request in under a minute.
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl https://your-gateway.workers.dev/v1/chat/completions \
+  -H "Authorization: Bearer <GATEWAY_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "auto",
+    "messages": [
+      { "role": "user", "content": "Hello! What can you do?" }
+    ]
+  }'
+```
+</TabItem>
+<TabItem label="JavaScript">
+```js
+const response = await fetch('https://your-gateway.workers.dev/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer <GATEWAY_API_KEY>',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    model: 'auto',
+    messages: [
+      { role: 'user', content: 'Hello! What can you do?' },
+    ],
+  }),
+});
+
+const data = await response.json();
+console.log(data.choices[0].message.content);
+```
+</TabItem>
+<TabItem label="OpenAI SDK">
+```js
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  baseURL: 'https://your-gateway.workers.dev/v1',
+  apiKey: '<GATEWAY_API_KEY>',
+});
+
+const completion = await client.chat.completions.create({
+  model: 'auto',
+  messages: [{ role: 'user', content: 'Hello! What can you do?' }],
+});
+
+console.log(completion.choices[0].message.content);
+```
+</TabItem>
+</Tabs>
+
+## Next Steps
+
+- [Authentication](/authentication) — learn how to obtain and use your API key
+- [Chat Completions](/chat-completions) — full reference for the chat endpoint
+- [Embeddings](/embeddings) — generate vector embeddings
+- [Models](/models) — list available models and their capabilities

@@ -14,3 +14,7 @@ test-results/
 artifacts/
 .wrangler.deploy.toml
 .deploy.secrets.json
+.astro/
+.claude/
+.playwright-mcp/
+.metadata_never_index

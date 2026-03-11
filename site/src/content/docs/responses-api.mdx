@@ -1,0 +1,261 @@
+---
+title: "Responses API"
+description: "Generate responses using the OpenAI Responses API format via /v1/responses."
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Endpoint
+
+```
+POST /v1/responses
+```
+
+The Responses API is an alternative to Chat Completions that uses the [OpenAI Responses format](https://platform.openai.com/docs/api-reference/responses). It accepts a flexible `input` field instead of a structured `messages` array, making it convenient for single-turn prompts and tool-augmented workflows.
+
+## Request Body
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `model` | string | `"auto"` | Model identifier. Use `"auto"` for health-aware round-robin, or specify a model from [`GET /v1/models`](/models). |
+| `input` | string \| array \| object | required | The prompt input. Can be a plain string, an array of message objects, or a structured input object. |
+| `stream` | boolean | `false` | When `true`, responses are streamed as server-sent events. |
+| `temperature` | number | — | Sampling temperature (0–2). |
+| `max_output_tokens` | number | — | Maximum number of tokens to generate. |
+| `reasoning_effort` | string | — | Top-level reasoning budget shorthand. One of `"auto"`, `"low"`, `"medium"`, `"high"`. |
+| `reasoning` | object | — | Structured reasoning config. Use `reasoning.effort` to set the budget (same values as `reasoning_effort`). |
+| `project_id` | string | — | Optional tag for grouping requests in analytics. |
+
+### Input Formats
+
+**String** — simplest form, treated as a user message:
+
+```json
+{
+  "model": "auto",
+  "input": "What is the speed of light?"
+}
+```
+
+**Array** — list of message objects with `role` and `content`:
+
+```json
+{
+  "model": "auto",
+  "input": [
+    { "role": "system", "content": "You are a physics tutor." },
+    { "role": "user", "content": "What is the speed of light?" }
+  ]
+}
+```
+
+**Object with reasoning** — use the `reasoning` field for fine-grained control:
+
+```json
+{
+  "model": "auto",
+  "input": "Explain quantum entanglement simply.",
+  "reasoning": { "effort": "medium" }
+}
+```
+
+## Response
+
+The response follows the OpenAI Responses format:
+
+```json
+{
+  "id": "resp_abc123",
+  "object": "response",
+  "created_at": 1714000000,
+  "model": "llama-3.3-70b-versatile",
+  "output": [
+    {
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "output_text",
+          "text": "The speed of light in a vacuum is approximately 299,792,458 metres per second."
+        }
+      ]
+    }
+  ],
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 18,
+    "total_tokens": 30
+  }
+}
+```
+
+The same `x-gateway-*` headers present on Chat Completions are also returned here (see [Chat Completions](/chat-completions#non-streaming-response)).
+
+## Examples
+
+### Non-Streaming
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl https://your-gateway.workers.dev/v1/responses \
+  -H "Authorization: Bearer <GATEWAY_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "auto",
+    "input": "Summarise the French Revolution in three sentences.",
+    "temperature": 0.5,
+    "max_output_tokens": 300
+  }'
+```
+</TabItem>
+<TabItem label="JavaScript">
+```js
+const response = await fetch('https://your-gateway.workers.dev/v1/responses', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer <GATEWAY_API_KEY>',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    model: 'auto',
+    input: 'Summarise the French Revolution in three sentences.',
+    temperature: 0.5,
+    max_output_tokens: 300,
+  }),
+});
+
+const data = await response.json();
+const text = data.output[0].content[0].text;
+console.log(text);
+```
+</TabItem>
+</Tabs>
+
+### Multi-Turn Input Array
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl https://your-gateway.workers.dev/v1/responses \
+  -H "Authorization: Bearer <GATEWAY_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "auto",
+    "input": [
+      { "role": "system", "content": "You are a concise assistant." },
+      { "role": "user", "content": "What is 17 * 43?" }
+    ]
+  }'
+```
+</TabItem>
+<TabItem label="JavaScript">
+```js
+const response = await fetch('https://your-gateway.workers.dev/v1/responses', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer <GATEWAY_API_KEY>',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    model: 'auto',
+    input: [
+      { role: 'system', content: 'You are a concise assistant.' },
+      { role: 'user', content: 'What is 17 * 43?' },
+    ],
+  }),
+});
+
+const data = await response.json();
+console.log(data.output[0].content[0].text);
+```
+</TabItem>
+</Tabs>
+
+### Streaming
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl https://your-gateway.workers.dev/v1/responses \
+  -H "Authorization: Bearer <GATEWAY_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "auto",
+    "input": "Write a haiku about the ocean.",
+    "stream": true
+  }'
+```
+</TabItem>
+<TabItem label="JavaScript">
+```js
+const response = await fetch('https://your-gateway.workers.dev/v1/responses', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer <GATEWAY_API_KEY>',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    model: 'auto',
+    input: 'Write a haiku about the ocean.',
+    stream: true,
+  }),
+});
+
+const reader = response.body.getReader();
+const decoder = new TextDecoder();
+
+while (true) {
+  const { done, value } = await reader.read();
+  if (done) break;
+
+  const chunk = decoder.decode(value);
+  for (const line of chunk.split('\n')) {
+    if (!line.startsWith('data: ')) continue;
+    const payload = line.slice(6).trim();
+    if (payload === '[DONE]') break;
+
+    const event = JSON.parse(payload);
+    // Delta text is in event.delta for Responses streaming
+    if (event.delta) process.stdout.write(event.delta);
+  }
+}
+```
+</TabItem>
+</Tabs>
+
+### With Reasoning
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl https://your-gateway.workers.dev/v1/responses \
+  -H "Authorization: Bearer <GATEWAY_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "auto",
+    "input": "Prove that the square root of 2 is irrational.",
+    "reasoning": { "effort": "high" }
+  }'
+```
+</TabItem>
+<TabItem label="JavaScript">
+```js
+const response = await fetch('https://your-gateway.workers.dev/v1/responses', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer <GATEWAY_API_KEY>',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    model: 'auto',
+    input: 'Prove that the square root of 2 is irrational.',
+    reasoning: { effort: 'high' },
+  }),
+});
+
+const data = await response.json();
+console.log(data.output[0].content[0].text);
+```
+</TabItem>
+</Tabs>

@@ -21,7 +21,7 @@ function createClient<TProvider extends TextProvider | EmbeddingProvider>(
     apiKey: config.apiKey,
     baseURL: config.baseURL,
     defaultHeaders: config.defaultHeaders,
-    dangerouslyAllowBrowser: true,
+    timeout: 15_000,
   });
 }
 

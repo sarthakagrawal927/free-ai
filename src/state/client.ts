@@ -102,13 +102,12 @@ export async function consumeIpRateLimit(
     cost?: number;
   },
 ): Promise<{ allowed: boolean; remaining: number; retryAfter: number }> {
-  const id = env.RATE_LIMIT_DO.idFromName('ip-rate-limit');
+  const id = env.RATE_LIMIT_DO.idFromName(params.ipKey);
   const stub = env.RATE_LIMIT_DO.get(id);
   const response = await stub.fetch(`${DO_ORIGIN}/consume`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
-      key: params.ipKey,
       now: params.now,
       cost: params.cost ?? 1,
       capacity: params.capacity,

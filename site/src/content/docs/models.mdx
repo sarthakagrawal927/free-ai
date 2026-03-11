@@ -1,0 +1,166 @@
+---
+title: "Models"
+description: "List available models and their metadata using GET /v1/models."
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Endpoint
+
+```
+GET /v1/models
+```
+
+Returns the list of models currently registered in the gateway in OpenAI-compatible format. Each model entry includes gateway-specific metadata such as provider, reasoning tier, and streaming support.
+
+## Response
+
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "llama-3.3-70b-versatile",
+      "object": "model",
+      "created": 1714000000,
+      "owned_by": "groq",
+      "provider": "groq",
+      "reasoning_tier": null,
+      "supports_streaming": true
+    },
+    {
+      "id": "gemini-2.0-flash",
+      "object": "model",
+      "created": 1714000000,
+      "owned_by": "gemini",
+      "provider": "gemini",
+      "reasoning_tier": null,
+      "supports_streaming": true
+    },
+    {
+      "id": "gemini-2.0-flash-thinking-exp",
+      "object": "model",
+      "created": 1714000000,
+      "owned_by": "gemini",
+      "provider": "gemini",
+      "reasoning_tier": "high",
+      "supports_streaming": true
+    },
+    {
+      "id": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "object": "model",
+      "created": 1714000000,
+      "owned_by": "workers_ai",
+      "provider": "workers_ai",
+      "reasoning_tier": null,
+      "supports_streaming": true
+    },
+    {
+      "id": "voyage-3",
+      "object": "model",
+      "created": 1714000000,
+      "owned_by": "voyage_ai",
+      "provider": "voyage_ai",
+      "reasoning_tier": null,
+      "supports_streaming": false
+    }
+  ]
+}
+```
+
+## Response Fields
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | string | Model identifier to use in request bodies. |
+| `object` | string | Always `"model"`. |
+| `created` | number | Unix timestamp when the model was registered. |
+| `owned_by` | string | The provider that owns/hosts the model. |
+| `provider` | string | Gateway provider key. One of `groq`, `gemini`, `workers_ai`, `openrouter`, `cerebras`, `voyage_ai`. |
+| `reasoning_tier` | string \| null | Reasoning capability tier (`"low"`, `"medium"`, `"high"`), or `null` for standard models. |
+| `supports_streaming` | boolean | Whether the model supports SSE streaming. |
+
+## Examples
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl https://your-gateway.workers.dev/v1/models \
+  -H "Authorization: Bearer <GATEWAY_API_KEY>"
+```
+</TabItem>
+<TabItem label="JavaScript">
+```js
+const response = await fetch('https://your-gateway.workers.dev/v1/models', {
+  headers: {
+    'Authorization': 'Bearer <GATEWAY_API_KEY>',
+  },
+});
+
+const { data: models } = await response.json();
+
+// Print all model IDs grouped by provider
+const byProvider = models.reduce((acc, model) => {
+  (acc[model.provider] ??= []).push(model.id);
+  return acc;
+}, {});
+
+for (const [provider, ids] of Object.entries(byProvider)) {
+  console.log(`\n${provider}:`);
+  ids.forEach((id) => console.log(`  - ${id}`));
+}
+```
+</TabItem>
+<TabItem label="OpenAI SDK">
+```js
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  baseURL: 'https://your-gateway.workers.dev/v1',
+  apiKey: '<GATEWAY_API_KEY>',
+});
+
+const models = await client.models.list();
+
+// Filter to only streaming-capable chat models
+const chatModels = models.data.filter(
+  (m) => m.supports_streaming && m.provider !== 'voyage_ai',
+);
+
+console.log('Available chat models:');
+chatModels.forEach((m) => console.log(`  ${m.id} (${m.provider})`));
+```
+</TabItem>
+</Tabs>
+
+## Filtering by Provider
+
+You can filter client-side after fetching the full list:
+
+```js
+const response = await fetch('https://your-gateway.workers.dev/v1/models', {
+  headers: { 'Authorization': 'Bearer <GATEWAY_API_KEY>' },
+});
+
+const { data: models } = await response.json();
+
+const groqModels = models.filter((m) => m.provider === 'groq');
+const reasoningModels = models.filter((m) => m.reasoning_tier !== null);
+const embeddingModels = models.filter((m) => !m.supports_streaming);
+```
+
+## Using a Specific Model
+
+Pass any `id` value directly as the `model` field in a chat or embeddings request:
+
+```bash
+curl https://your-gateway.workers.dev/v1/chat/completions \
+  -H "Authorization: Bearer <GATEWAY_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "llama-3.3-70b-versatile",
+    "messages": [{ "role": "user", "content": "Hello from Groq!" }]
+  }'
+```
+
+Or use `"auto"` to let the gateway pick the healthiest available provider automatically.

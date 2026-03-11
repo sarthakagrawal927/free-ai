@@ -20,7 +20,8 @@ export function createSseStream(
 
   void producer(writer)
     .catch(async (error) => {
-      await writer.write(toSseComment(`stream_error ${error instanceof Error ? error.message : String(error)}`));
+      await writer.write(toSseData({ error: { message: 'Stream error', type: 'stream_error' } }));
+      console.log(`[sse] stream_error: ${error instanceof Error ? error.message : String(error)}`);
     })
     .finally(async () => {
       await writer.write(toSseDone());
