@@ -13,6 +13,7 @@ import { IpRateLimitDO } from './state/ip-rate-limit-do';
 import { createSseStream, toSseData } from './utils/sse';
 import { buildCompletionEnvelope, createRequestId, getErrorMessage, normalizeMessages } from './utils/request';
 import type {
+  ChatMessage,
   EmbeddingProvider,
   Env,
   GatewayMeta,
@@ -1339,6 +1340,190 @@ app.openapi(embeddingsRoute, async (c) => {
   );
 });
 
+// ── Speech-to-Text (Groq Whisper proxy) ─────────────────────────────
+app.post('/v1/audio/transcriptions', async (c) => {
+  if (!c.env.GROQ_API_KEY) {
+    return c.json(
+      { error: { message: 'Speech-to-text requires GROQ_API_KEY', type: 'configuration_error' } },
+      503,
+    );
+  }
+
+  const formData = await c.req.formData();
+  const file = formData.get('file');
+
+  if (!file || typeof file === 'string') {
+    return c.json(
+      {
+        error: {
+          message: '`file` is required (audio file: mp3, mp4, wav, webm, m4a)',
+          type: 'invalid_request_error',
+          code: 'missing_file',
+        },
+      },
+      400,
+    );
+  }
+
+  const model = (formData.get('model') as string) || 'whisper-large-v3-turbo';
+  const language = formData.get('language') as string | null;
+
+  const groqForm = new FormData();
+  groqForm.append('file', file, (file as File).name || 'audio.mp3');
+  groqForm.append('model', model);
+  if (language) groqForm.append('language', language);
+
+  const groqResponse = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${c.env.GROQ_API_KEY}` },
+    body: groqForm,
+  });
+
+  if (!groqResponse.ok) {
+    const errBody = await groqResponse.text();
+    const statusCode = groqResponse.status >= 500 ? 502 : groqResponse.status === 429 ? 429 : 400;
+    return c.json(
+      { error: { message: `Groq Whisper error: ${errBody}`, type: 'provider_error' } },
+      statusCode as 400,
+    );
+  }
+
+  const result = await groqResponse.json();
+  return c.json(result as never, 200);
+});
+
+// ── Speech-to-Speech (STT → LLM → TTS pipeline) ────────────────────
+app.post('/v1/audio/speech-to-speech', async (c) => {
+  if (!c.env.GROQ_API_KEY) {
+    return c.json(
+      { error: { message: 'Speech-to-speech requires GROQ_API_KEY', type: 'configuration_error' } },
+      503,
+    );
+  }
+
+  const formData = await c.req.formData();
+  const file = formData.get('file');
+
+  if (!file || typeof file === 'string') {
+    return c.json(
+      {
+        error: {
+          message: '`file` is required (audio file: mp3, mp4, wav, webm, m4a)',
+          type: 'invalid_request_error',
+          code: 'missing_file',
+        },
+      },
+      400,
+    );
+  }
+
+  const voice = (formData.get('voice') as string) || 'en-US-AriaNeural';
+  const systemPrompt = formData.get('system_prompt') as string | null;
+
+  // Step 1: Speech-to-Text via Groq Whisper
+  const sttForm = new FormData();
+  sttForm.append('file', file, (file as File).name || 'audio.mp3');
+  sttForm.append('model', 'whisper-large-v3-turbo');
+
+  const sttResponse = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${c.env.GROQ_API_KEY}` },
+    body: sttForm,
+  });
+
+  if (!sttResponse.ok) {
+    const errBody = await sttResponse.text();
+    return c.json(
+      { error: { message: `STT failed: ${errBody}`, type: 'provider_error', code: 'stt_failed' } },
+      502,
+    );
+  }
+
+  const sttResult = (await sttResponse.json()) as { text: string };
+  const transcribedText = sttResult.text;
+
+  if (!transcribedText?.trim()) {
+    return c.json(
+      { error: { message: 'No speech detected in audio', type: 'invalid_request_error', code: 'no_speech' } },
+      400,
+    );
+  }
+
+  // Step 2: LLM response via gateway providers (Groq primary, Gemini fallback)
+  const messages: ChatMessage[] = [];
+  if (systemPrompt) messages.push({ role: 'system', content: systemPrompt });
+  messages.push({ role: 'user', content: transcribedText });
+
+  let llmText: string;
+  try {
+    const llmResult = await providerCallers.groq({
+      env: c.env,
+      provider: 'groq',
+      model: 'llama-3.3-70b-versatile',
+      messages,
+      stream: false,
+    });
+    llmText = llmResult.completion?.choices?.[0]?.message?.content || '';
+  } catch {
+    try {
+      const llmResult = await providerCallers.gemini({
+        env: c.env,
+        provider: 'gemini',
+        model: 'gemini-2.0-flash',
+        messages,
+        stream: false,
+      });
+      llmText = llmResult.completion?.choices?.[0]?.message?.content || '';
+    } catch (fallbackErr) {
+      return c.json(
+        { error: { message: `LLM failed: ${getErrorMessage(fallbackErr)}`, type: 'provider_error', code: 'llm_failed' } },
+        502,
+      );
+    }
+  }
+
+  if (!llmText?.trim()) {
+    return c.json(
+      { error: { message: 'LLM returned empty response', type: 'provider_error', code: 'empty_llm_response' } },
+      502,
+    );
+  }
+
+  // Step 3: Text-to-Speech via Workers AI
+  if (!c.env.AI) {
+    return c.json(
+      { error: { message: 'TTS requires Workers AI binding', type: 'configuration_error' } },
+      503,
+    );
+  }
+
+  try {
+    const ttsResult = (await c.env.AI.run('@cf/myshell-ai/melotts', {
+      prompt: llmText,
+      lang: 'en',
+    })) as { audio: string };
+
+    const binaryString = atob(ttsResult.audio);
+    const audioBytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      audioBytes[i] = binaryString.charCodeAt(i);
+    }
+
+    return new Response(audioBytes.buffer as ArrayBuffer, {
+      headers: {
+        'content-type': 'audio/mpeg',
+        'x-transcribed-text': encodeURIComponent(transcribedText),
+        'x-llm-response': encodeURIComponent(llmText.slice(0, 500)),
+      },
+    });
+  } catch (ttsErr) {
+    return c.json(
+      { error: { message: `TTS failed: ${getErrorMessage(ttsErr)}`, type: 'provider_error', code: 'tts_failed' } },
+      502,
+    );
+  }
+});
+
 const modelsRoute = createRoute({
   method: 'get',
   path: '/v1/models',
@@ -1428,7 +1613,7 @@ app.doc('/openapi.json', {
     title: 'sass-maker AI Gateway API',
     version: '1.0.0',
     description:
-      'OpenAI-compatible text gateway with health-aware free-tier routing across Workers AI, Groq, Gemini, Voyage AI embeddings, and optional OpenRouter/Cerebras.',
+      'OpenAI-compatible AI gateway with health-aware free-tier routing across Workers AI, Groq, Gemini, Voyage AI embeddings, voice (Whisper STT + Workers AI TTS), and optional OpenRouter/Cerebras.',
   },
 });
 
@@ -1535,6 +1720,18 @@ app.get('/', (c) => {
   </div>
 
   <div class="card">
+    <h2><span>&#x1f3a4;</span> Voice &mdash; Speech-to-Text &amp; Speech-to-Speech</h2>
+    <p class="section-desc">Groq Whisper for transcription, Workers AI MeloTTS for synthesis. Fully free.</p>
+    <table>
+      <thead><tr><th>Endpoint</th><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">/v1/audio/transcriptions</td><td class="provider">POST</td><td style="font-size:0.82rem;color:#9ca3af">Speech-to-text via Groq Whisper (OpenAI-compatible)</td></tr>
+        <tr><td class="mono">/v1/audio/speech-to-speech</td><td class="provider">POST</td><td style="font-size:0.82rem;color:#9ca3af">Audio in &rarr; Groq Whisper &rarr; LLM &rarr; Workers AI TTS &rarr; Audio out</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
     <h2><span>&#x26a1;</span> What This Does &amp; Doesn't Do</h2>
     <div class="does">
       <div class="does-col yes">
@@ -1542,6 +1739,8 @@ app.get('/', (c) => {
         <ul>
           <li>OpenAI-compatible /v1/chat/completions</li>
           <li>OpenAI-compatible /v1/embeddings</li>
+          <li>Speech-to-text (Groq Whisper)</li>
+          <li>Speech-to-speech (STT + LLM + TTS)</li>
           <li>Streaming (SSE) support</li>
           <li>Health-aware provider failover</li>
           <li>IP-based rate limiting (10 burst, ~20/min)</li>
@@ -1556,7 +1755,7 @@ app.get('/', (c) => {
           <li>No API key management</li>
           <li>No usage billing or quotas</li>
           <li>No SLA or uptime guarantee</li>
-          <li>No image or audio models</li>
+          <li>No image models</li>
         </ul>
       </div>
     </div>

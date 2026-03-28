@@ -24,6 +24,7 @@ Supported providers:
 - **Auto round-robin** — when model is set to `"auto"`, requests are distributed across healthy providers
 - **Streaming** — full server-sent events (SSE) support for all chat endpoints
 - **Embeddings** — unified `/v1/embeddings` endpoint backed by Workers AI, Gemini, and Voyage AI
+- **Voice** — speech-to-text via Groq Whisper and speech-to-speech (STT + LLM + TTS) with Workers AI
 - **Analytics** — per-request logging with a dashboard at `/usage`
 - **OpenAI-compatible** — works with any client that supports the OpenAI API format
 
@@ -89,4 +90,6 @@ console.log(completion.choices[0].message.content);
 - [Authentication](/authentication) — learn how to obtain and use your API key
 - [Chat Completions](/chat-completions) — full reference for the chat endpoint
 - [Embeddings](/embeddings) — generate vector embeddings
+- [Speech-to-Text](/speech-to-text) — transcribe audio with Groq Whisper
+- [Speech-to-Speech](/speech-to-speech) — full voice pipeline (audio in → audio out)
 - [Models](/models) — list available models and their capabilities

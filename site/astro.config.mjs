@@ -28,6 +28,8 @@ export default defineConfig({
             { label: 'Chat Completions', slug: 'chat-completions' },
             { label: 'Responses API', slug: 'responses-api' },
             { label: 'Embeddings', slug: 'embeddings' },
+            { label: 'Speech-to-Text', slug: 'speech-to-text' },
+            { label: 'Speech-to-Speech', slug: 'speech-to-speech' },
             { label: 'Models', slug: 'models' },
             { label: 'Analytics', slug: 'analytics' },
             { label: 'Request Logs', slug: 'request-logs' },
