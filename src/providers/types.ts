@@ -1,4 +1,4 @@
-import type { ChatMessage, EmbeddingProvider, Env, TextProvider } from '../types';
+import type { ChatMessage, EmbeddingProvider, Env, ResponseFormat, TextProvider, Tool } from '../types';
 
 export interface ProviderCallInput {
   env: Env;
@@ -8,6 +8,9 @@ export interface ProviderCallInput {
   temperature?: number;
   max_tokens?: number;
   stream: boolean;
+  tools?: Tool[];
+  tool_choice?: 'none' | 'auto' | 'required' | { type: 'function'; function: { name: string } };
+  response_format?: ResponseFormat;
 }
 
 export interface ProviderCallResult {
@@ -24,10 +27,21 @@ export interface ProviderCallResult {
       message?: {
         role?: string;
         content?: string | null;
+        tool_calls?: Array<{
+          id: string;
+          type: 'function';
+          function: { name: string; arguments: string };
+        }>;
       };
       finish_reason?: string | null;
       delta?: {
         content?: string | null;
+        tool_calls?: Array<{
+          index: number;
+          id?: string;
+          type?: 'function';
+          function?: { name?: string; arguments?: string };
+        }>;
       };
     }>;
     usage?: {

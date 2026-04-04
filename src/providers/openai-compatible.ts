@@ -38,6 +38,9 @@ export async function runOpenAICompatibleRequest(
       temperature: input.temperature,
       max_tokens: input.max_tokens,
       stream: true as const,
+      ...(input.tools && { tools: input.tools }),
+      ...(input.tool_choice && { tool_choice: input.tool_choice }),
+      ...(input.response_format && { response_format: input.response_format }),
     };
 
     const stream = (await client.chat.completions.create(streamBody as never)) as unknown as AsyncIterable<unknown>;
@@ -55,6 +58,9 @@ export async function runOpenAICompatibleRequest(
     temperature: input.temperature,
     max_tokens: input.max_tokens,
     stream: false as const,
+    ...(input.tools && { tools: input.tools }),
+    ...(input.tool_choice && { tool_choice: input.tool_choice }),
+    ...(input.response_format && { response_format: input.response_format }),
   };
 
   const completion = (await client.chat.completions.create(

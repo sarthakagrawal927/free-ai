@@ -76,9 +76,34 @@ Returns the list of models currently registered in the gateway in OpenAI-compati
 | `object` | string | Always `"model"`. |
 | `created` | number | Unix timestamp when the model was registered. |
 | `owned_by` | string | The provider that owns/hosts the model. |
-| `provider` | string | Gateway provider key. One of `groq`, `gemini`, `workers_ai`, `openrouter`, `cerebras`, `voyage_ai`. |
+| `provider` | string | Gateway provider key. One of `groq`, `gemini`, `workers_ai`, `openrouter`, `cerebras`, `sambanova`, `nvidia`, `voyage_ai`. |
 | `reasoning_tier` | string \| null | Reasoning capability tier (`"low"`, `"medium"`, `"high"`), or `null` for standard models. |
 | `supports_streaming` | boolean | Whether the model supports SSE streaming. |
+
+## Model Capabilities
+
+Each model has capability metadata used for automatic routing:
+
+| Capability | Description | Auto-detected from |
+|---|---|---|
+| **Tool calling** | Function/tool use support | `tools` array in request |
+| **JSON mode** | Structured output (`response_format: { type: "json_object" }`) | `response_format` field |
+| **Vision** | Image input via `image_url` content parts | Image content in messages |
+| **Context window** | Maximum input tokens the model can handle | Estimated from prompt size |
+
+When your request requires a capability, the gateway automatically filters to models that support it. If no capable model is available, a `503` is returned.
+
+### Capability Summary by Provider
+
+| Provider | Tool Calling | JSON Mode | Vision | Context Window |
+|---|:---:|:---:|:---:|---|
+| **Gemini** | All models | All models | All models | 1M tokens |
+| **Groq** | All models | All models | Llama 4 models | 32K–131K |
+| **SambaNova** | All models | All models | — | 32K–131K |
+| **NVIDIA NIM** | Most models | All models | — | 32K–131K |
+| **Cerebras** | All models | All models | — | 32K–131K |
+| **OpenRouter** | Select models | Most models | Select models | 32K–131K |
+| **Workers AI** | — | — | — | 2K–131K |
 
 ## Examples
 

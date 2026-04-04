@@ -6,7 +6,7 @@ import { AbortError } from 'p-retry';
 import { getModelKey, getModelRegistry, getProviderLimits, getRateLimitConfig } from './config';
 import { providerCallers, providerEmbeddingCallers } from './providers';
 import { classifyError, isRetriableFailure } from './router/classify-error';
-import { selectCandidates } from './router/select-model';
+import { deriveRequiredCapabilities, selectCandidates } from './router/select-model';
 import { consumeIpRateLimit, healthLookup, healthRecord, healthSnapshot, nextRoundRobinOffset } from './state/client';
 import { HealthStateDO } from './state/health-do';
 import { IpRateLimitDO } from './state/ip-rate-limit-do';
@@ -21,20 +21,60 @@ import type {
   NormalizedChatRequest,
   Provider,
   ProviderLimitConfig,
+  ResponseFormat,
   TextProvider,
+  Tool,
 } from './types';
 
 const app = new OpenAPIHono<{ Bindings: Env }>();
 
+const contentPartTextSchema = z.object({
+  type: z.literal('text'),
+  text: z.string().min(1).max(100_000),
+});
+
+const contentPartImageUrlSchema = z.object({
+  type: z.literal('image_url'),
+  image_url: z.object({
+    url: z.string().min(1),
+    detail: z.enum(['auto', 'low', 'high']).optional(),
+  }),
+});
+
+const contentSchema = z.union([
+  z.string().min(1).max(100_000),
+  z.array(z.union([contentPartTextSchema, contentPartImageUrlSchema])).min(1),
+]);
+
 const messageSchema = z
   .object({
     role: z.enum(['system', 'user', 'assistant', 'tool']),
-    content: z.string().min(1).max(100_000),
+    content: contentSchema,
     name: z.string().optional(),
   })
   .openapi('ChatMessage');
 
 const projectIdSchema = z.string().min(1).max(64).regex(/^[a-zA-Z0-9._:-]+$/);
+
+const toolFunctionSchema = z.object({
+  name: z.string(),
+  description: z.string().optional(),
+  parameters: z.record(z.string(), z.unknown()).optional(),
+});
+
+const toolSchema = z.object({
+  type: z.literal('function'),
+  function: toolFunctionSchema,
+});
+
+const toolChoiceSchema = z.union([
+  z.enum(['none', 'auto', 'required']),
+  z.object({ type: z.literal('function'), function: z.object({ name: z.string() }) }),
+]);
+
+const responseFormatSchema = z.object({
+  type: z.enum(['text', 'json_object']),
+});
 
 const chatRequestSchema = z
   .object({
@@ -46,6 +86,9 @@ const chatRequestSchema = z
     max_tokens: z.number().int().min(1).max(8192).optional(),
     reasoning_effort: z.enum(['auto', 'low', 'medium', 'high']).default('auto'),
     project_id: projectIdSchema.optional(),
+    tools: z.array(toolSchema).optional(),
+    tool_choice: toolChoiceSchema.optional(),
+    response_format: responseFormatSchema.optional(),
   })
   .openapi('ChatCompletionRequest');
 
@@ -78,7 +121,7 @@ const embeddingsRequestSchema = z
 
 const gatewayMetaSchema = z
   .object({
-    provider: z.enum(['workers_ai', 'groq', 'gemini', 'voyage_ai', 'openrouter', 'cerebras', 'cli_bridge']),
+    provider: z.enum(['workers_ai', 'groq', 'gemini', 'voyage_ai', 'openrouter', 'cerebras', 'sambanova', 'nvidia', 'cli_bridge']),
     model: z.string(),
     attempts: z.number().int().min(1),
     reasoning_effort: z.enum(['auto', 'low', 'medium', 'high']),
@@ -287,7 +330,7 @@ function getForcedTextProvider(c: { req: { header: (key: string) => string | und
     return undefined;
   }
 
-  if (['workers_ai', 'groq', 'gemini', 'openrouter', 'cerebras', 'cli_bridge'].includes(value)) {
+  if (['workers_ai', 'groq', 'gemini', 'openrouter', 'cerebras', 'sambanova', 'nvidia', 'cli_bridge'].includes(value)) {
     return value as TextProvider;
   }
 
@@ -585,7 +628,12 @@ app.openapi(chatRoute, async (c) => {
   const endpoint = c.req.header('x-gateway-source-endpoint') === 'responses' ? 'responses' : 'chat.completions';
   const normalizedMessages = normalizeMessages(body.messages, body.prompt);
   const messageCount = normalizedMessages.length;
-  const promptChars = normalizedMessages.reduce((sum, message) => sum + message.content.length, 0);
+  const promptChars = normalizedMessages.reduce((sum, message) => {
+    if (typeof message.content === 'string') {
+      return sum + message.content.length;
+    }
+    return sum + JSON.stringify(message.content).length;
+  }, 0);
 
   const headerProjectId = c.req.header('x-gateway-project-id') ?? undefined;
   const explicitProjectId = resolveProjectId(headerProjectId, body.project_id);
@@ -624,6 +672,9 @@ app.openapi(chatRoute, async (c) => {
     temperature: body.temperature,
     max_tokens: body.max_tokens,
     reasoning_effort: body.reasoning_effort,
+    tools: body.tools as Tool[] | undefined,
+    tool_choice: body.tool_choice as NormalizedChatRequest['tool_choice'],
+    response_format: body.response_format as ResponseFormat | undefined,
   };
 
   const forcedProvider = getForcedTextProvider(c);
@@ -657,11 +708,18 @@ app.openapi(chatRoute, async (c) => {
   }
 
   const stateMap = await healthLookup(c.env, modelKeys, lookupLimits, now);
+  const requiredCapabilities = deriveRequiredCapabilities({
+    tools: normalized.tools,
+    response_format: normalized.response_format,
+    messages: normalized.messages,
+  });
+
   let selected = selectCandidates(registry, stateMap, {
     requestedReasoning: normalized.reasoning_effort,
     stream: normalized.stream,
     now,
     modelOverride: forcedModel,
+    requiredCapabilities,
   });
 
   const requestedModel = normalized.model.trim().toLowerCase();
@@ -728,6 +786,9 @@ app.openapi(chatRoute, async (c) => {
           temperature: normalized.temperature,
           max_tokens: normalized.max_tokens,
           stream: normalized.stream,
+          tools: normalized.tools,
+          tool_choice: normalized.tool_choice,
+          response_format: normalized.response_format,
         });
 
         const latencyMs = Date.now() - startedAt;

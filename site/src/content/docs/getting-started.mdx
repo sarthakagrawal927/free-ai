@@ -13,20 +13,27 @@ Supported providers:
 
 - **Cloudflare Workers AI** — fast inference at the edge
 - **Groq** — ultra-low latency with LPU hardware
-- **Google Gemini** — large context windows, multimodal
-- **OpenRouter** — aggregated access to many models
+- **Google Gemini** — large context windows, multimodal, tool calling
+- **OpenRouter** — aggregated access to many free models
 - **Cerebras** — high-throughput open-weight models
+- **SambaNova** — free tier with Llama 70B, DeepSeek V3, Qwen3
+- **NVIDIA NIM** — free tier with large model catalog
 - **Voyage AI** — purpose-built embedding models
 
 ## Key Features
 
 - **Health-aware routing** — the gateway tracks provider health and automatically skips degraded or rate-limited backends
 - **Auto round-robin** — when model is set to `"auto"`, requests are distributed across healthy providers
+- **Capability-based filtering** — automatically routes to models that support the features you need:
+  - Send `tools` → only routes to models with tool/function calling
+  - Send `response_format: { type: "json_object" }` → only routes to models with JSON mode
+  - Send images in messages → only routes to vision-capable models
+  - Large prompts → automatically excludes models with insufficient context windows
 - **Streaming** — full server-sent events (SSE) support for all chat endpoints
 - **Embeddings** — unified `/v1/embeddings` endpoint backed by Workers AI, Gemini, and Voyage AI
 - **Voice** — speech-to-text via Groq Whisper and speech-to-speech (STT + LLM + TTS) with Workers AI
 - **Analytics** — per-request logging with a dashboard at `/usage`
-- **OpenAI-compatible** — works with any client that supports the OpenAI API format
+- **OpenAI-compatible** — works with any client that supports the OpenAI API format, including agent frameworks like LangChain, CrewAI, and Vercel AI SDK
 
 ## Quick Start
 

@@ -1,5 +1,57 @@
 import { getTierOrder } from '../config';
-import type { ModelCandidate, ModelStateSnapshot, ReasoningEffort, ReasoningTier } from '../types';
+import type { ChatMessage, ContentPart, ModelCandidate, ModelStateSnapshot, ReasoningEffort, ReasoningTier, ResponseFormat, Tool } from '../types';
+
+export interface RequiredCapabilities {
+  toolCalling?: boolean;
+  jsonMode?: boolean;
+  vision?: boolean;
+  minContextWindow?: number;
+}
+
+function messagesContainImages(messages: ChatMessage[]): boolean {
+  return messages.some((msg) => {
+    if (!Array.isArray(msg.content)) {
+      return false;
+    }
+    return (msg.content as ContentPart[]).some((part) => part.type === 'image_url');
+  });
+}
+
+function estimateTokenCount(messages: ChatMessage[]): number {
+  let chars = 0;
+  for (const msg of messages) {
+    if (typeof msg.content === 'string') {
+      chars += msg.content.length;
+    } else if (Array.isArray(msg.content)) {
+      for (const part of msg.content as ContentPart[]) {
+        if (part.type === 'text') {
+          chars += part.text.length;
+        } else if (part.type === 'image_url') {
+          chars += 1000; // rough estimate for image tokens
+        }
+      }
+    }
+  }
+  // ~4 chars per token + overhead per message
+  return Math.ceil(chars / 4) + messages.length * 4;
+}
+
+export function deriveRequiredCapabilities(options: {
+  tools?: Tool[];
+  response_format?: ResponseFormat;
+  messages?: ChatMessage[];
+}): RequiredCapabilities {
+  const estimatedTokens = options.messages ? estimateTokenCount(options.messages) : 0;
+  // Add 20% buffer so the model has room for output
+  const minContext = estimatedTokens > 0 ? Math.ceil(estimatedTokens * 1.2) : undefined;
+
+  return {
+    toolCalling: options.tools && options.tools.length > 0 ? true : undefined,
+    jsonMode: options.response_format?.type === 'json_object' ? true : undefined,
+    vision: options.messages && messagesContainImages(options.messages) ? true : undefined,
+    minContextWindow: minContext,
+  };
+}
 
 const clamp = (value: number, min = 0, max = 1): number => Math.max(min, Math.min(max, value));
 
@@ -50,6 +102,7 @@ interface SelectOptions {
   now: number;
   modelOverride?: string;
   excludedKeys?: Set<string>;
+  requiredCapabilities?: RequiredCapabilities;
 }
 
 export function selectCandidates(
@@ -60,6 +113,8 @@ export function selectCandidates(
   const order = getTierOrder(options.requestedReasoning);
   const excluded = options.excludedKeys ?? new Set<string>();
 
+  const caps = options.requiredCapabilities;
+
   const available = registry.filter((candidate) => {
     if (options.stream && !candidate.supportsStreaming) {
       return false;
@@ -67,6 +122,21 @@ export function selectCandidates(
 
     if (options.modelOverride && candidate.model !== options.modelOverride && candidate.id !== options.modelOverride) {
       return false;
+    }
+
+    if (caps) {
+      if (caps.toolCalling && !candidate.capabilities.toolCalling) {
+        return false;
+      }
+      if (caps.jsonMode && !candidate.capabilities.jsonMode) {
+        return false;
+      }
+      if (caps.vision && !candidate.capabilities.vision) {
+        return false;
+      }
+      if (caps.minContextWindow && candidate.capabilities.contextWindow < caps.minContextWindow) {
+        return false;
+      }
     }
 
     const key = `${candidate.provider}:${candidate.model}`;

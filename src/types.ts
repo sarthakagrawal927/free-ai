@@ -1,4 +1,4 @@
-export type TextProvider = 'workers_ai' | 'groq' | 'gemini' | 'openrouter' | 'cerebras' | 'cli_bridge';
+export type TextProvider = 'workers_ai' | 'groq' | 'gemini' | 'openrouter' | 'cerebras' | 'sambanova' | 'nvidia' | 'cli_bridge';
 
 export type EmbeddingProvider = 'workers_ai' | 'gemini' | 'voyage_ai';
 
@@ -16,10 +16,30 @@ export type ReasoningTier = Exclude<ReasoningEffort, 'auto'>;
 
 export type ChatRole = 'system' | 'user' | 'assistant' | 'tool';
 
+export interface ContentPartText {
+  type: 'text';
+  text: string;
+}
+
+export interface ContentPartImageUrl {
+  type: 'image_url';
+  image_url: { url: string; detail?: 'auto' | 'low' | 'high' };
+}
+
+export type ContentPart = ContentPartText | ContentPartImageUrl;
+
 export interface ChatMessage {
   role: ChatRole;
-  content: string;
+  content: string | ContentPart[];
   name?: string;
+}
+
+export interface ModelCapabilities {
+  toolCalling: boolean;
+  jsonMode: boolean;
+  vision: boolean;
+  contextWindow: number;
+  maxOutputTokens: number;
 }
 
 export interface ModelCandidate {
@@ -30,6 +50,7 @@ export interface ModelCandidate {
   supportsStreaming: boolean;
   enabled: boolean;
   priority: number;
+  capabilities: ModelCapabilities;
 }
 
 export interface ProviderLimitConfig {
@@ -64,6 +85,21 @@ export interface GatewayMeta {
   project_id?: string;
 }
 
+export interface ToolFunction {
+  name: string;
+  description?: string;
+  parameters?: Record<string, unknown>;
+}
+
+export interface Tool {
+  type: 'function';
+  function: ToolFunction;
+}
+
+export interface ResponseFormat {
+  type: 'text' | 'json_object';
+}
+
 export interface NormalizedChatRequest {
   model: string;
   messages: ChatMessage[];
@@ -71,6 +107,9 @@ export interface NormalizedChatRequest {
   temperature?: number;
   max_tokens?: number;
   reasoning_effort: ReasoningEffort;
+  tools?: Tool[];
+  tool_choice?: 'none' | 'auto' | 'required' | { type: 'function'; function: { name: string } };
+  response_format?: ResponseFormat;
 }
 
 export interface GatewayError {
@@ -97,6 +136,8 @@ export interface Env {
   CLI_BRIDGE_PROVIDER?: string;
   OPENROUTER_API_KEY?: string;
   CEREBRAS_API_KEY?: string;
+  SAMBANOVA_API_KEY?: string;
+  NVIDIA_API_KEY?: string;
   MODEL_REGISTRY_JSON?: string;
   PROVIDER_LIMITS_JSON?: string;
   RATE_LIMIT_CONFIG_JSON?: string;
