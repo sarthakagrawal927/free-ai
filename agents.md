@@ -58,9 +58,9 @@ e2e-live/           # Playwright tests (deployed worker)
 7. Retry loop with `p-retry`: call provider, record success/failure, on retriable failure try next candidate
 8. Return OpenAI-format response with `x_gateway` metadata
 
-### Providers (6 text, 3 embedding)
+### Providers (7 text, 3 embedding)
 
-Workers AI, Groq, Gemini, OpenRouter, Cerebras, CLI Bridge, Voyage AI (embeddings)
+Workers AI, Groq, Gemini, OpenRouter, Cerebras, SambaNova, NVIDIA, Voyage AI (embeddings)
 
 ## Key Conventions
 
@@ -96,7 +96,6 @@ OPENROUTER_API_KEY=
 CEREBRAS_API_KEY=
 CLOUDFLARE_ACCOUNT_ID=          # Workers AI REST fallback (local dev)
 CLOUDFLARE_WORKERS_AI_API_KEY=
-CLI_BRIDGE_URL=
 PLAYGROUND_ENABLED=false
 ```
 

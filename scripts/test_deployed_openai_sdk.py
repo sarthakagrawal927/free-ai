@@ -53,7 +53,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--force-provider",
         default="",
-        choices=["", "workers_ai", "groq", "gemini", "cli_bridge", "openrouter", "cerebras"],
+        choices=["", "workers_ai", "groq", "gemini", "openrouter", "cerebras"],
         help="Optional x-gateway-force-provider header",
     )
     parser.add_argument(

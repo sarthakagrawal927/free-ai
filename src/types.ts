@@ -1,4 +1,4 @@
-export type TextProvider = 'workers_ai' | 'groq' | 'gemini' | 'openrouter' | 'cerebras' | 'sambanova' | 'nvidia' | 'cli_bridge';
+export type TextProvider = 'workers_ai' | 'groq' | 'gemini' | 'openrouter' | 'cerebras' | 'sambanova' | 'nvidia';
 
 export type EmbeddingProvider = 'workers_ai' | 'gemini' | 'voyage_ai';
 
@@ -132,8 +132,6 @@ export interface Env {
   VOYAGE_API_KEY?: string;
   CLOUDFLARE_ACCOUNT_ID?: string;
   CLOUDFLARE_WORKERS_AI_API_KEY?: string;
-  CLI_BRIDGE_URL?: string;
-  CLI_BRIDGE_PROVIDER?: string;
   OPENROUTER_API_KEY?: string;
   CEREBRAS_API_KEY?: string;
   SAMBANOVA_API_KEY?: string;

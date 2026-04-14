@@ -414,18 +414,6 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.71,
     capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 8192 },
   },
-
-  // ── CLI Bridge (internal) ───────────────────────────────────────────
-  {
-    id: 'cli-bridge-default',
-    provider: 'cli_bridge',
-    model: 'default',
-    reasoning: 'medium',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.65,
-    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
-  },
 ];
 
 const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = {
@@ -476,8 +464,6 @@ const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = {
   'nvidia:meta/llama-3.3-70b-instruct': { requestsPerDay: 500 },
   'nvidia:deepseek-ai/deepseek-r1': { requestsPerDay: 300 },
   'nvidia:qwen/qwen3-32b': { requestsPerDay: 500 },
-  // CLI Bridge
-  'cli_bridge:default': { requestsPerDay: 10000 },
 };
 
 export interface RateLimitConfig {
@@ -498,7 +484,6 @@ const PROVIDER_KEY_REQUIRED: Record<TextProvider, boolean> = {
   cerebras: true,
   sambanova: true,
   nvidia: true,
-  cli_bridge: true,
 };
 
 function safeParse<T>(value: string | undefined): T | null {
@@ -529,8 +514,6 @@ function hasProviderKey(env: Env, provider: TextProvider): boolean {
       return Boolean(env.SAMBANOVA_API_KEY);
     case 'nvidia':
       return Boolean(env.NVIDIA_API_KEY);
-    case 'cli_bridge':
-      return Boolean(env.CLI_BRIDGE_URL);
     default:
       return false;
   }

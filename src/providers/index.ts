@@ -1,5 +1,4 @@
 import { callCerebras } from './cerebras';
-import { callCliBridge } from './cli-bridge';
 import { callGemini, callGeminiEmbeddings } from './gemini';
 import { callGroq } from './groq';
 import { callNvidia } from './nvidia';
@@ -18,7 +17,6 @@ export const providerCallers: Record<TextProvider, ProviderCaller> = {
   cerebras: callCerebras,
   sambanova: callSambanova,
   nvidia: callNvidia,
-  cli_bridge: callCliBridge,
 };
 
 export const providerEmbeddingCallers: Record<EmbeddingProvider, ProviderEmbeddingCaller> = {

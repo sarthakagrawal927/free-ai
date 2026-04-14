@@ -121,7 +121,7 @@ const embeddingsRequestSchema = z
 
 const gatewayMetaSchema = z
   .object({
-    provider: z.enum(['workers_ai', 'groq', 'gemini', 'voyage_ai', 'openrouter', 'cerebras', 'sambanova', 'nvidia', 'cli_bridge']),
+    provider: z.enum(['workers_ai', 'groq', 'gemini', 'voyage_ai', 'openrouter', 'cerebras', 'sambanova', 'nvidia']),
     model: z.string(),
     attempts: z.number().int().min(1),
     reasoning_effort: z.enum(['auto', 'low', 'medium', 'high']),
@@ -330,7 +330,7 @@ function getForcedTextProvider(c: { req: { header: (key: string) => string | und
     return undefined;
   }
 
-  if (['workers_ai', 'groq', 'gemini', 'openrouter', 'cerebras', 'sambanova', 'nvidia', 'cli_bridge'].includes(value)) {
+  if (['workers_ai', 'groq', 'gemini', 'openrouter', 'cerebras', 'sambanova', 'nvidia'].includes(value)) {
     return value as TextProvider;
   }
 
