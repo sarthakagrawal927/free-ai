@@ -20,6 +20,7 @@ const SHORT_WINDOW = 10;
 const SHORT_FAILURE_THRESHOLD = 7;
 const COOL_DOWN_MS = 120_000;
 const RETRIABLE_BASE_COOLDOWN_MS = 45_000;
+const SNAPSHOT_DEBOUNCE_MS = 30_000;
 
 const json = (value: unknown, status = 200): Response =>
   Response.json(value, {
@@ -79,50 +80,69 @@ function storageKey(modelKey: string): string {
 }
 
 export class HealthStateDO {
+  private cache = new Map<string, ModelState>();
+  private cacheLoaded = false;
+  private roundRobinCache: RoundRobinMap | null = null;
+  private snapshotDirty = false;
+
   constructor(
     private readonly ctx: DurableObjectState,
     private readonly env: HealthDoEnv,
   ) {}
 
+  private async ensureCacheLoaded(): Promise<void> {
+    if (this.cacheLoaded) return;
+    const entries = await this.ctx.storage.list<ModelState>({ prefix: MODEL_PREFIX });
+    for (const [k, v] of entries) {
+      this.cache.set(k.slice(MODEL_PREFIX.length), v);
+    }
+    this.cacheLoaded = true;
+  }
+
   private async loadModel(key: string): Promise<ModelState | undefined> {
-    return this.ctx.storage.get<ModelState>(storageKey(key));
+    await this.ensureCacheLoaded();
+    return this.cache.get(key);
   }
 
   private async saveModel(key: string, state: ModelState): Promise<void> {
+    this.cache.set(key, state);
     await this.ctx.storage.put(storageKey(key), state);
   }
 
-  private async loadAllModels(): Promise<Map<string, ModelState>> {
-    const entries = await this.ctx.storage.list<ModelState>({ prefix: MODEL_PREFIX });
-    const result = new Map<string, ModelState>();
-    for (const [k, v] of entries) {
-      result.set(k.slice(MODEL_PREFIX.length), v);
-    }
-    return result;
-  }
-
   private async loadRoundRobinState(): Promise<RoundRobinMap> {
-    return (await this.ctx.storage.get<RoundRobinMap>(ROUND_ROBIN_STORAGE_KEY)) ?? {};
+    if (this.roundRobinCache !== null) return this.roundRobinCache;
+    this.roundRobinCache = (await this.ctx.storage.get<RoundRobinMap>(ROUND_ROBIN_STORAGE_KEY)) ?? {};
+    return this.roundRobinCache;
   }
 
   private async saveRoundRobinState(state: RoundRobinMap): Promise<void> {
+    this.roundRobinCache = state;
     await this.ctx.storage.put(ROUND_ROBIN_STORAGE_KEY, state);
   }
 
-  private resetIfNeeded(modelState: ModelState, now: number): void {
+  private resetIfNeeded(modelState: ModelState, now: number): boolean {
     const today = dayKey(now);
     if (modelState.dayKey !== today) {
       modelState.dayKey = today;
       modelState.dailyUsed = 0;
+      return true;
     }
+    return false;
   }
 
-  private async persistSnapshot(allModels: Map<string, ModelState>): Promise<void> {
+  private scheduleSnapshot(): void {
+    if (this.snapshotDirty) return;
+    this.snapshotDirty = true;
+    this.ctx.storage.setAlarm(Date.now() + SNAPSHOT_DEBOUNCE_MS).catch(() => {});
+  }
+
+  private async persistSnapshot(): Promise<void> {
     if (!this.env.HEALTH_KV || typeof this.env.HEALTH_KV.put !== 'function') {
       return;
     }
 
-    const payload = Array.from(allModels.entries()).map(([key, modelState]) => ({
+    await this.ensureCacheLoaded();
+    const payload = Array.from(this.cache.entries()).map(([key, modelState]) => ({
       key,
       attempts: modelState.history.length,
       cooldownUntil: modelState.cooldownUntil,
@@ -133,6 +153,11 @@ export class HealthStateDO {
     await this.env.HEALTH_KV.put('gateway-health-snapshot', JSON.stringify(payload), {
       expirationTtl: 300,
     });
+  }
+
+  async alarm(): Promise<void> {
+    this.snapshotDirty = false;
+    await this.persistSnapshot();
   }
 
   async fetch(request: Request): Promise<Response> {
@@ -184,9 +209,7 @@ export class HealthStateDO {
       }
 
       await this.saveModel(body.key, modelState);
-
-      const allModels = await this.loadAllModels();
-      await this.persistSnapshot(allModels);
+      this.scheduleSnapshot();
 
       return json({ ok: true });
     }
@@ -201,8 +224,12 @@ export class HealthStateDO {
       const snapshots: ModelStateSnapshot[] = [];
       for (const key of body.keys) {
         const modelState = (await this.loadModel(key)) ?? emptyModelState(body.now);
-        this.resetIfNeeded(modelState, body.now);
-        await this.saveModel(key, modelState);
+        const didReset = this.resetIfNeeded(modelState, body.now);
+        if (didReset) {
+          await this.saveModel(key, modelState);
+        } else {
+          this.cache.set(key, modelState);
+        }
         snapshots.push(toSnapshot(key, modelState, body.limits[key], body.now));
       }
 
@@ -211,8 +238,8 @@ export class HealthStateDO {
 
     if (path === '/snapshot') {
       const now = Date.now();
-      const allModels = await this.loadAllModels();
-      const snapshots = Array.from(allModels.entries()).map(([key, modelState]) =>
+      await this.ensureCacheLoaded();
+      const snapshots = Array.from(this.cache.entries()).map(([key, modelState]) =>
         toSnapshot(key, modelState, undefined, now),
       );
       return json({ snapshots });

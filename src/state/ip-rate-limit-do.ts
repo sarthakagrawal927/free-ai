@@ -23,6 +23,9 @@ const json = (value: unknown, status = 200): Response =>
   });
 
 export class IpRateLimitDO {
+  private bucketCache: BucketState | null = null;
+  private alarmSet = false;
+
   constructor(private readonly ctx: DurableObjectState) {}
 
   async fetch(request: Request): Promise<Response> {
@@ -38,11 +41,9 @@ export class IpRateLimitDO {
 
     const body = (await request.json()) as RateLimitBody;
 
-    const stored = await this.ctx.storage.get<BucketState>(STORAGE_KEY);
-    const bucket: BucketState = stored ?? {
-      tokens: body.capacity,
-      lastRefillAt: body.now,
-    };
+    const bucket: BucketState = this.bucketCache
+      ?? (await this.ctx.storage.get<BucketState>(STORAGE_KEY))
+      ?? { tokens: body.capacity, lastRefillAt: body.now };
 
     const elapsedSec = Math.max(0, (body.now - bucket.lastRefillAt) / 1000);
     bucket.tokens = Math.min(body.capacity, bucket.tokens + elapsedSec * body.refillPerSecond);
@@ -51,8 +52,12 @@ export class IpRateLimitDO {
     if (bucket.tokens < body.cost) {
       const deficit = body.cost - bucket.tokens;
       const retryAfter = body.refillPerSecond > 0 ? Math.ceil(deficit / body.refillPerSecond) : 60;
+      this.bucketCache = bucket;
       await this.ctx.storage.put(STORAGE_KEY, bucket);
-      await this.ctx.storage.setAlarm(Date.now() + INACTIVITY_TTL_MS);
+      if (!this.alarmSet) {
+        this.alarmSet = true;
+        await this.ctx.storage.setAlarm(Date.now() + INACTIVITY_TTL_MS);
+      }
       return json(
         {
           allowed: false,
@@ -64,8 +69,12 @@ export class IpRateLimitDO {
     }
 
     bucket.tokens -= body.cost;
+    this.bucketCache = bucket;
     await this.ctx.storage.put(STORAGE_KEY, bucket);
-    await this.ctx.storage.setAlarm(Date.now() + INACTIVITY_TTL_MS);
+    if (!this.alarmSet) {
+      this.alarmSet = true;
+      await this.ctx.storage.setAlarm(Date.now() + INACTIVITY_TTL_MS);
+    }
 
     return json({
       allowed: true,
@@ -75,6 +84,8 @@ export class IpRateLimitDO {
   }
 
   async alarm(): Promise<void> {
+    this.alarmSet = false;
+    this.bucketCache = null;
     await this.ctx.storage.deleteAll();
   }
 }
