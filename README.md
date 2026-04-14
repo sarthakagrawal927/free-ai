@@ -1,10 +1,25 @@
 # Free AI Gateway
 
-OpenAI-compatible API gateway that routes requests across free LLM providers with health-aware model selection and capability-based filtering. Powered by [SaaS Maker](https://sassmaker.com).
+OpenAI-compatible API gateway that routes requests across free LLM providers with health-aware model selection, capability-based filtering, and aggregated analytics. Powered by [SaaS Maker](https://sassmaker.com).
 
-## Authentication
+## Architecture & Toolkit
 
-No API key required. The gateway is open — pass any value (or nothing) as the Bearer token.
+This gateway is built to be hyper-scalable, stateless, and 100% free using the Cloudflare ecosystem:
+
+- **Compute:** Cloudflare Workers (Hono + TypeScript + Zod)
+- **Analytics:** Cloudflare D1 (Serverless SQLite) — aggregates strictly anonymous counters (no individual request logs are stored).
+- **State Management:** Cloudflare Durable Objects track rate limiting and rolling model health (success rates, latencies).
+- **Caching:** Cloudflare KV stores fast, ephemeral health snapshots to keep edge routing instant.
+
+## Authentication & Project ID
+
+The gateway is open and requires no global API key for chat requests. However, **all completion, response, and embedding requests strictly require a `project_id`** to track isolated analytics.
+
+You can provide the project ID in one of two ways:
+1. As a field in the JSON body: `"project_id": "my_project_123"`
+2. As a header: `X-Gateway-Project-Id: my_project_123`
+
+*(Note: The `/v1/analytics` endpoint does require the `GATEWAY_API_KEY` Bearer token to prevent unauthorized access to your aggregate data).*
 
 ## Chat Models
 
@@ -110,6 +125,7 @@ curl $GATEWAY_URL/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto",
+    "project_id": "demo_project",
     "messages": [{"role": "user", "content": "What is the weather in SF?"}],
     "tools": [{
       "type": "function",
@@ -134,6 +150,7 @@ curl $GATEWAY_URL/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto",
+    "project_id": "demo_project",
     "messages": [{"role": "user", "content": "List 3 colors as JSON"}],
     "response_format": { "type": "json_object" }
   }'
@@ -172,6 +189,7 @@ curl $GATEWAY_URL/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto",
+    "project_id": "demo_project",
     "messages": [{"role": "user", "content": "Hello"}],
     "stream": false
   }'
@@ -211,6 +229,7 @@ curl $GATEWAY_URL/v1/embeddings \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gemini-embedding-001",
+    "project_id": "demo_project",
     "input": ["text to embed"]
   }'
 ```
@@ -261,6 +280,8 @@ const client = new OpenAI({
 
 const response = await client.chat.completions.create({
   model: 'auto',
+  // You can pass it in the body via extra_body:
+  extra_body: { project_id: 'my_project' },
   messages: [{ role: 'user', content: 'Hello' }],
 });
 ```
@@ -270,6 +291,7 @@ const response = await client.chat.completions.create({
 ```typescript
 const response = await client.chat.completions.create({
   model: 'auto',
+  extra_body: { project_id: 'my_project' },
   messages: [{ role: 'user', content: 'What is the weather in SF?' }],
   tools: [{
     type: 'function',

@@ -100,7 +100,9 @@ def main() -> int:
         api_key, request_id = request_gateway_key(base_url)
 
     client = OpenAI(api_key=api_key, base_url=f"{base_url}/v1", timeout=45)
-    extra_headers = {"x-gateway-force-provider": force_provider} if force_provider else None
+    extra_headers = {"x-gateway-project-id": "python_example"}
+    if force_provider:
+        extra_headers["x-gateway-force-provider"] = force_provider
 
     responses_result = client.responses.create(
         model=model,

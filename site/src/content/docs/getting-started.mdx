@@ -84,6 +84,7 @@ const client = new OpenAI({
 
 const completion = await client.chat.completions.create({
   model: 'auto',
+  extra_body: { project_id: 'my_project' },
   messages: [{ role: 'user', content: 'Hello! What can you do?' }],
 });
 

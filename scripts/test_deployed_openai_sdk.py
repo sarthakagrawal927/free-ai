@@ -133,10 +133,11 @@ def request_gateway_key(gateway_base_url: str) -> tuple[str, str | None]:
     return str(api_key), str(request_id) if request_id else None
 
 
-def build_extra_headers(force_provider: str) -> dict[str, str] | None:
-    if not force_provider:
-        return None
-    return {"x-gateway-force-provider": force_provider}
+def build_extra_headers(force_provider: str) -> dict[str, str]:
+    headers = {"x-gateway-project-id": "python_test_runner"}
+    if force_provider:
+        headers["x-gateway-force-provider"] = force_provider
+    return headers
 
 
 def run_smoke(args: argparse.Namespace) -> SmokeResult:

@@ -130,32 +130,6 @@ function parseHealthKvIds(toml) {
   };
 }
 
-function parseGatewayDbConfig(toml) {
-  const inline = toml.match(
-    /binding\s*=\s*"GATEWAY_DB"\s*,\s*database_name\s*=\s*"([^"]+)"\s*,\s*database_id\s*=\s*"([^"]+)"/m,
-  );
-
-  if (inline) {
-    return {
-      databaseName: inline[1],
-      databaseId: inline[2],
-    };
-  }
-
-  const table = toml.match(
-    /\[\[d1_databases\]\][\s\S]*?binding\s*=\s*"GATEWAY_DB"[\s\S]*?database_name\s*=\s*"([^"]+)"[\s\S]*?database_id\s*=\s*"([^"]+)"/m,
-  );
-
-  if (!table) {
-    throw new Error('Could not find GATEWAY_DB binding in wrangler.toml');
-  }
-
-  return {
-    databaseName: table[1],
-    databaseId: table[2],
-  };
-}
-
 function parseIdFromCreateOutput(output) {
   const match = output.match(/id\s*=\s*"([^"]+)"/m);
   if (!match) {
@@ -184,26 +158,6 @@ function withKvIds(toml, id, previewId) {
   }
 
   throw new Error('Could not replace HEALTH_KV ids in wrangler config');
-}
-
-function withD1Config(toml, databaseName, databaseId) {
-  if (
-    /binding\s*=\s*"GATEWAY_DB"\s*,\s*database_name\s*=\s*"[^"]+"\s*,\s*database_id\s*=\s*"[^"]+"/m.test(toml)
-  ) {
-    return toml.replace(
-      /(binding\s*=\s*"GATEWAY_DB"\s*,\s*database_name\s*=\s*")([^"]+)("\s*,\s*database_id\s*=\s*")([^"]+)(")/m,
-      `$1${escapeTomlString(databaseName)}$3${databaseId}$5`,
-    );
-  }
-
-  if (/\[\[d1_databases\]\][\s\S]*?binding\s*=\s*"GATEWAY_DB"/m.test(toml)) {
-    return toml.replace(
-      /(\[\[d1_databases\]\][\s\S]*?binding\s*=\s*"GATEWAY_DB"[\s\S]*?database_name\s*=\s*")([^"]+)("[\s\S]*?database_id\s*=\s*")([^"]+)(")/m,
-      `$1${escapeTomlString(databaseName)}$3${databaseId}$5`,
-    );
-  }
-
-  throw new Error('Could not replace GATEWAY_DB values in wrangler config');
 }
 
 function withVarsFromEnv(toml, env) {
@@ -279,63 +233,6 @@ function parseD1IdFromCreateOutput(output) {
   }
 
   throw new Error(`Could not parse D1 database id from output:\n${output}`);
-}
-
-function resolveDatabaseConfig(workerName, current) {
-  const idLooksPlaceholder = current.databaseId.startsWith('replace-');
-  const nameLooksPlaceholder = current.databaseName.startsWith('replace-');
-  const targetName = nameLooksPlaceholder ? `${workerName}-gateway-db` : current.databaseName;
-
-  if (!idLooksPlaceholder && !nameLooksPlaceholder) {
-    return {
-      databaseName: current.databaseName,
-      databaseId: current.databaseId,
-    };
-  }
-
-  const databases = listDatabases();
-  const resolveName = (item) => String(item?.name ?? item?.database_name ?? '');
-  const resolveId = (item) => String(item?.uuid ?? item?.id ?? item?.database_id ?? '');
-
-  let found = databases.find((item) => resolveName(item) === targetName);
-  if (!found && !idLooksPlaceholder) {
-    found = databases.find((item) => resolveId(item) === current.databaseId);
-  }
-
-  let databaseId = found ? resolveId(found) : '';
-  if (!databaseId) {
-    console.log(`Creating D1 database ${targetName}...`);
-    const created = runCaptureAllowFailure('npx', ['wrangler', 'd1', 'create', targetName]);
-    if (created.status === 0) {
-      databaseId = parseD1IdFromCreateOutput(created.output);
-    } else if (created.output.includes('already exists')) {
-      const refreshed = listDatabases();
-      const existing = refreshed.find((item) => resolveName(item) === targetName);
-      databaseId = existing ? resolveId(existing) : '';
-    } else {
-      throw new Error(`Failed to create D1 database:\n${created.output}`);
-    }
-  }
-
-  if (!databaseId) {
-    throw new Error('Failed to resolve GATEWAY_DB database id.');
-  }
-
-  return {
-    databaseName: targetName,
-    databaseId,
-  };
-}
-
-function applyD1Migrations(configPath) {
-  const migrationsDir = resolve(ROOT, 'migrations');
-  if (!existsSync(migrationsDir)) {
-    console.log('No migrations directory found. Skipping D1 migrations.');
-    return;
-  }
-
-  console.log('Applying D1 migrations...');
-  run('npx', ['wrangler', 'd1', 'migrations', 'apply', 'GATEWAY_DB', '--remote', '--config', configPath]);
 }
 
 function resolveNamespaceIds(workerName, current) {
@@ -437,12 +334,9 @@ function main() {
 
   const workerName = parseWorkerName(template);
   const existingKv = parseHealthKvIds(template);
-  const existingDb = parseGatewayDbConfig(template);
   const resolvedKv = resolveNamespaceIds(workerName, existingKv);
-  const resolvedDb = resolveDatabaseConfig(workerName, existingDb);
 
   let deployConfig = withKvIds(template, resolvedKv.id, resolvedKv.previewId);
-  deployConfig = withD1Config(deployConfig, resolvedDb.databaseName, resolvedDb.databaseId);
   deployConfig = withVarsFromEnv(deployConfig, env);
 
   writeFileSync(WRANGLER_GENERATED, deployConfig, 'utf8');
@@ -460,8 +354,6 @@ function main() {
     console.log('Preparation complete (--prepare-only).');
     return;
   }
-
-  applyD1Migrations(WRANGLER_GENERATED);
 
   console.log('Deploying worker...');
   const deployOutput = run('npx', ['wrangler', 'deploy', '--config', WRANGLER_GENERATED], { capture: true });

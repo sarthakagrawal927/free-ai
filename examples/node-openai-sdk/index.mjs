@@ -112,7 +112,10 @@ async function main() {
     baseURL: `${gatewayBaseUrl}/v1`,
   });
 
-  const extraHeaders = forceProvider ? { 'x-gateway-force-provider': forceProvider } : undefined;
+  const extraHeaders = {
+    'x-gateway-project-id': 'node_test_runner',
+    ...(forceProvider ? { 'x-gateway-force-provider': forceProvider } : {}),
+  };
 
   const responseResult = await client.responses.create({
     model,

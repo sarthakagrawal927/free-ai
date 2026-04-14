@@ -3,6 +3,8 @@ main = "src/index.ts"
 compatibility_date = "2026-02-14"
 workers_dev = true
 
+assets = { directory = "site/dist" }
+
 [ai]
 binding = "AI"
 
@@ -16,6 +18,11 @@ bindings = [
   { name = "HEALTH_DO", class_name = "HealthStateDO" },
   { name = "RATE_LIMIT_DO", class_name = "IpRateLimitDO" }
 ]
+
+[[d1_databases]]
+binding = "GATEWAY_DB"
+database_name = "free-ai-gateway-db"
+database_id = "6e9e2880-7f07-487a-8b55-8b486be3fa32"
 
 [[migrations]]
 tag = "v1"

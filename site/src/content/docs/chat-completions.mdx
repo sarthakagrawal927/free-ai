@@ -133,6 +133,7 @@ curl https://your-gateway.workers.dev/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto",
+    "project_id": "my_project",
     "messages": [
       { "role": "system", "content": "You are a helpful assistant." },
       { "role": "user", "content": "What is the capital of France?" }
@@ -180,6 +181,7 @@ curl https://your-gateway.workers.dev/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto",
+    "project_id": "my_project",
     "messages": [{ "role": "user", "content": "Tell me a short story." }],
     "stream": true
   }'
@@ -232,6 +234,7 @@ curl https://your-gateway.workers.dev/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto",
+    "project_id": "my_project",
     "messages": [{ "role": "user", "content": "Solve: x^2 - 5x + 6 = 0" }],
     "reasoning_effort": "high"
   }'
@@ -270,6 +273,7 @@ curl https://your-gateway.workers.dev/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto",
+    "project_id": "my_project",
     "messages": [{ "role": "user", "content": "What is the weather in San Francisco?" }],
     "tools": [{
       "type": "function",
@@ -298,6 +302,7 @@ const client = new OpenAI({
 
 const completion = await client.chat.completions.create({
   model: 'auto',
+  extra_body: { project_id: 'my_project' },
   messages: [{ role: 'user', content: 'What is the weather in San Francisco?' }],
   tools: [{
     type: 'function',
@@ -332,6 +337,7 @@ curl https://your-gateway.workers.dev/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto",
+    "project_id": "my_project",
     "messages": [{ "role": "user", "content": "List 3 programming languages with their year of creation as JSON" }],
     "response_format": { "type": "json_object" }
   }'
@@ -341,6 +347,7 @@ curl https://your-gateway.workers.dev/v1/chat/completions \
 ```js
 const completion = await client.chat.completions.create({
   model: 'auto',
+  extra_body: { project_id: 'my_project' },
   messages: [{ role: 'user', content: 'List 3 programming languages with their year of creation as JSON' }],
   response_format: { type: 'json_object' },
 });
@@ -363,6 +370,7 @@ curl https://your-gateway.workers.dev/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto",
+    "project_id": "my_project",
     "messages": [{
       "role": "user",
       "content": [
@@ -377,6 +385,7 @@ curl https://your-gateway.workers.dev/v1/chat/completions \
 ```js
 const completion = await client.chat.completions.create({
   model: 'auto',
+  extra_body: { project_id: 'my_project' },
   messages: [{
     role: 'user',
     content: [

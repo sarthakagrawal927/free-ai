@@ -124,6 +124,7 @@ export interface Env {
   AI?: {
     run: (model: string, input: Record<string, unknown>) => Promise<unknown>;
   };
+  GATEWAY_DB: D1Database;
   HEALTH_DO: DurableObjectNamespace;
   RATE_LIMIT_DO: DurableObjectNamespace;
   HEALTH_KV: KVNamespace;
@@ -131,7 +132,9 @@ export interface Env {
   GEMINI_API_KEY?: string;
   VOYAGE_API_KEY?: string;
   CLOUDFLARE_ACCOUNT_ID?: string;
+  CLOUDFLARE_API_TOKEN?: string;
   CLOUDFLARE_WORKERS_AI_API_KEY?: string;
+  GATEWAY_API_KEY?: string;
   OPENROUTER_API_KEY?: string;
   CEREBRAS_API_KEY?: string;
   SAMBANOVA_API_KEY?: string;

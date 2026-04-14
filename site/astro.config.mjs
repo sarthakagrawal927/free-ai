@@ -32,7 +32,6 @@ export default defineConfig({
             { label: 'Speech-to-Speech', slug: 'speech-to-speech' },
             { label: 'Models', slug: 'models' },
             { label: 'Analytics', slug: 'analytics' },
-            { label: 'Request Logs', slug: 'request-logs' },
             { label: 'Health', slug: 'health' },
             { label: 'Key Request', slug: 'key-request' },
           ],

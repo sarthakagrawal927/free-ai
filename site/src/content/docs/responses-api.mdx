@@ -103,6 +103,7 @@ curl https://your-gateway.workers.dev/v1/responses \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto",
+    "project_id": "my_project",
     "input": "Summarise the French Revolution in three sentences.",
     "temperature": 0.5,
     "max_output_tokens": 300
@@ -142,6 +143,7 @@ curl https://your-gateway.workers.dev/v1/responses \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto",
+    "project_id": "my_project",
     "input": [
       { "role": "system", "content": "You are a concise assistant." },
       { "role": "user", "content": "What is 17 * 43?" }
@@ -182,6 +184,7 @@ curl https://your-gateway.workers.dev/v1/responses \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto",
+    "project_id": "my_project",
     "input": "Write a haiku about the ocean.",
     "stream": true
   }'
@@ -234,6 +237,7 @@ curl https://your-gateway.workers.dev/v1/responses \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto",
+    "project_id": "my_project",
     "input": "Prove that the square root of 2 is irrational.",
     "reasoning": { "effort": "high" }
   }'

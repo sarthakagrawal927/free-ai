@@ -250,6 +250,29 @@ const healthSchema = z.object({
   ),
 });
 
+const analyticsResponseSchema = z.object({
+  total_requests: z.number(),
+  successful_requests: z.number(),
+  failed_requests: z.number(),
+  success_rate: z.number(),
+  providers: z.record(
+    z.string(),
+    z.object({
+      requests: z.number(),
+      successful: z.number(),
+      failed: z.number(),
+    }),
+  ),
+  models: z.record(
+    z.string(),
+    z.object({
+      requests: z.number(),
+      successful: z.number(),
+      failed: z.number(),
+    }),
+  ),
+});
+
 interface EmbeddingCandidate {
   provider: EmbeddingProvider;
   model: string;
@@ -496,6 +519,33 @@ function resolveProjectId(headerValue: string | undefined, bodyValue: string | u
   return projectIdSchema.safeParse(candidate).success ? candidate : undefined;
 }
 
+async function recordAnalytics(params: {
+  db: D1Database;
+  projectId?: string;
+  outcome: 'ok' | 'error';
+  provider?: Provider;
+  model?: string;
+}) {
+  if (!params.projectId || !params.provider || !params.model) return;
+
+  try {
+    const date = new Date().toISOString().slice(0, 10);
+    const isOk = params.outcome === 'ok' ? 1 : 0;
+    const isError = params.outcome === 'error' ? 1 : 0;
+    
+    await params.db.prepare(`
+      INSERT INTO project_analytics (project_id, date, provider, model, total_requests, successful_requests, failed_requests)
+      VALUES (?, ?, ?, ?, 1, ?, ?)
+      ON CONFLICT(project_id, date, provider, model) DO UPDATE SET
+        total_requests = total_requests + 1,
+        successful_requests = successful_requests + excluded.successful_requests,
+        failed_requests = failed_requests + excluded.failed_requests
+    `).bind(params.projectId, date, params.provider, params.model, isOk, isError).run();
+  } catch (err) {
+    // Ignore analytics errors
+  }
+}
+
 function gatherTextFragments(input: unknown, depth = 0): string[] {
   if (depth > 10) {
     return [];
@@ -637,11 +687,11 @@ app.openapi(chatRoute, async (c) => {
 
   const headerProjectId = c.req.header('x-gateway-project-id') ?? undefined;
   const explicitProjectId = resolveProjectId(headerProjectId, body.project_id);
-  if (headerProjectId && !explicitProjectId) {
+  if (!explicitProjectId) {
     return c.json(
       {
         error: {
-          message: 'Invalid x-gateway-project-id. Use 1-64 chars [a-zA-Z0-9._:-]',
+          message: 'Missing or invalid project_id. Use 1-64 chars [a-zA-Z0-9._:-]',
           type: 'invalid_request_error',
           code: 'invalid_project_id',
         },
@@ -743,6 +793,16 @@ app.openapi(chatRoute, async (c) => {
   }
 
   if (selected.length === 0) {
+    if (!c.req.header('x-gateway-internal')) {
+      c.executionCtx.waitUntil(
+        recordAnalytics({
+          db: c.env.GATEWAY_DB,
+          projectId,
+          outcome: 'error',
+        })
+      );
+    }
+
     return c.json(
       {
         error: {
@@ -989,38 +1049,51 @@ app.openapi(chatRoute, async (c) => {
   ).catch(() => undefined);
 
   if (streamResponse) {
-    console.log(
-      JSON.stringify({
-        request_id: requestId,
-        project_id: projectId ?? null,
-        provider: chosenMeta?.provider,
-        model: chosenMeta?.model,
-        attempts: chosenMeta?.attempts,
-        stream: true,
-      }),
-    );
+    if (!c.req.header('x-gateway-internal')) {
+      c.executionCtx.waitUntil(
+        recordAnalytics({
+          db: c.env.GATEWAY_DB,
+          projectId,
+          outcome: 'ok',
+          provider: chosenMeta?.provider,
+          model: chosenMeta?.model,
+        })
+      );
+    }
 
     return streamResponse;
   }
 
   if (finalResponse && chosenMeta) {
-    console.log(
-      JSON.stringify({
-        request_id: requestId,
-        project_id: projectId ?? null,
-        provider: chosenMeta.provider,
-        model: chosenMeta.model,
-        attempts: chosenMeta.attempts,
-        status: 'ok',
-      }),
-    );
+    if (!c.req.header('x-gateway-internal')) {
+      c.executionCtx.waitUntil(
+        recordAnalytics({
+          db: c.env.GATEWAY_DB,
+          projectId,
+          outcome: 'ok',
+          provider: chosenMeta.provider,
+          model: chosenMeta.model,
+        })
+      );
+    }
 
     return c.json(finalResponse as never, 200);
   }
 
   const status = lastErrorClass === 'input_nonretriable' ? 400 : lastErrorClass === 'usage_retriable' ? 429 : 502;
 
-  console.log(`[gateway] request=${requestId} lastError=${lastErrorMessage}`);
+  if (!c.req.header('x-gateway-internal')) {
+    c.executionCtx.waitUntil(
+      recordAnalytics({
+        db: c.env.GATEWAY_DB,
+        projectId,
+        outcome: 'error',
+        provider: chosenMeta?.provider,
+        model: chosenMeta?.model,
+      })
+    );
+  }
+
   return c.json(
     {
       error: {
@@ -1078,11 +1151,11 @@ app.openapi(responsesRoute, async (c) => {
   const body = c.req.valid('json');
   const headerProjectId = c.req.header('x-gateway-project-id') ?? undefined;
   const projectId = resolveProjectId(headerProjectId, body.project_id);
-  if (headerProjectId && !projectId) {
+  if (!projectId) {
     return c.json(
       {
         error: {
-          message: 'Invalid x-gateway-project-id. Use 1-64 chars [a-zA-Z0-9._:-]',
+          message: 'Missing or invalid project_id. Use 1-64 chars [a-zA-Z0-9._:-]',
           type: 'invalid_request_error',
           code: 'invalid_project_id',
         },
@@ -1262,11 +1335,11 @@ app.openapi(embeddingsRoute, async (c) => {
   const headerProjectId = c.req.header('x-gateway-project-id') ?? undefined;
   const projectId = resolveProjectId(headerProjectId, body.project_id);
 
-  if (headerProjectId && !projectId) {
+  if (!projectId) {
     return c.json(
       {
         error: {
-          message: 'Invalid x-gateway-project-id. Use 1-64 chars [a-zA-Z0-9._:-]',
+          message: 'Missing or invalid project_id. Use 1-64 chars [a-zA-Z0-9._:-]',
           type: 'invalid_request_error',
           code: 'invalid_project_id',
         },
@@ -1384,12 +1457,30 @@ app.openapi(embeddingsRoute, async (c) => {
   ).catch(() => undefined);
 
   if (finalResponse && chosenMeta) {
+    c.executionCtx.waitUntil(
+      recordAnalytics({
+        db: c.env.GATEWAY_DB,
+        projectId,
+        outcome: 'ok',
+        provider: chosenMeta.provider,
+        model: chosenMeta.model,
+      })
+    );
     return c.json(finalResponse as never, 200);
   }
 
   const status = lastErrorClass === 'input_nonretriable' ? 400 : lastErrorClass === 'usage_retriable' ? 429 : 502;
 
-  console.log(`[gateway] embeddings lastError=${lastErrorMessage}`);
+  c.executionCtx.waitUntil(
+    recordAnalytics({
+      db: c.env.GATEWAY_DB,
+      projectId,
+      outcome: 'error',
+      provider: chosenMeta?.provider,
+      model: chosenMeta?.model,
+    })
+  );
+
   return c.json(
     {
       error: {
@@ -1668,6 +1759,86 @@ app.openapi(healthRoute, async (c) => {
   });
 });
 
+const analyticsRoute = createRoute({
+  method: 'get',
+  path: '/v1/analytics',
+  request: {
+    query: z.object({
+      project_id: z.string(),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'Usage analytics',
+      content: { 'application/json': { schema: analyticsResponseSchema } },
+    },
+    400: { description: 'Bad Request' },
+    401: { description: 'Unauthorized' },
+  },
+});
+
+app.openapi(analyticsRoute, async (c) => {
+  const auth = c.req.header('authorization');
+  const token = auth?.replace('Bearer ', '');
+  if (c.env.GATEWAY_API_KEY && token !== c.env.GATEWAY_API_KEY) {
+    return c.json({ error: { message: 'Unauthorized', type: 'authentication_error' } }, 401);
+  }
+
+  const query = c.req.valid('query');
+  const projectId = query.project_id;
+
+  const stats = await c.env.GATEWAY_DB.prepare(
+    `SELECT
+      SUM(total_requests) as total,
+      SUM(successful_requests) as successful,
+      SUM(failed_requests) as failed
+    FROM project_analytics
+    WHERE project_id = ?`
+  ).bind(projectId).first<{ total: number | null; successful: number | null; failed: number | null }>();
+
+  const providerStats = await c.env.GATEWAY_DB.prepare(
+    `SELECT
+      provider,
+      SUM(total_requests) as requests,
+      SUM(successful_requests) as successful,
+      SUM(failed_requests) as failed
+    FROM project_analytics
+    WHERE project_id = ? AND provider IS NOT NULL
+    GROUP BY provider`
+  ).bind(projectId).all<{ provider: string; requests: number; successful: number; failed: number }>();
+
+  const modelStats = await c.env.GATEWAY_DB.prepare(
+    `SELECT
+      model,
+      SUM(total_requests) as requests,
+      SUM(successful_requests) as successful,
+      SUM(failed_requests) as failed
+    FROM project_analytics
+    WHERE project_id = ? AND model IS NOT NULL
+    GROUP BY model`
+  ).bind(projectId).all<{ model: string; requests: number; successful: number; failed: number }>();
+
+  const providers: Record<string, any> = {};
+  providerStats.results.forEach((p) => {
+    providers[p.provider] = { requests: p.requests, successful: p.successful, failed: p.failed };
+  });
+
+  const models: Record<string, any> = {};
+  modelStats.results.forEach((m) => {
+    models[m.model] = { requests: m.requests, successful: m.successful, failed: m.failed };
+  });
+
+  const total = stats?.total ?? 0;
+  return c.json({
+    total_requests: total,
+    successful_requests: stats?.successful ?? 0,
+    failed_requests: stats?.failed ?? 0,
+    success_rate: total > 0 ? (stats?.successful ?? 0) / total : 0,
+    providers,
+    models,
+  });
+});
+
 app.doc('/openapi.json', {
   openapi: '3.0.0',
   info: {
@@ -1678,176 +1849,7 @@ app.doc('/openapi.json', {
   },
 });
 
-app.get('/docs', swaggerUI({ url: '/openapi.json' }));
 
-app.get('/', (c) => {
-  const models = getModelRegistry(c.env).filter((m) => m.provider !== 'cli_bridge');
-  const providers = new Set(models.map((m) => m.provider));
-  const tierOrder = ['high', 'medium', 'low'] as const;
-  const tierLabels: Record<string, string> = { high: 'High Reasoning', medium: 'Medium Reasoning', low: 'Low Reasoning (fastest)' };
-  const tierColors: Record<string, string> = { high: '#34d399', medium: '#60a5fa', low: '#9ca3af' };
-  const providerLabels: Record<string, string> = { workers_ai: 'Workers AI', groq: 'Groq', gemini: 'Gemini', openrouter: 'OpenRouter', cerebras: 'Cerebras' };
-
-  const modelRows = tierOrder.map((tier) => {
-    const tierModels = models.filter((m) => m.reasoning === tier);
-    if (tierModels.length === 0) return '';
-    const header = `<tr><td colspan="4" style="color:${tierColors[tier]};font-weight:600;font-size:0.78rem;padding:12px 12px 4px;border:none;text-transform:uppercase;letter-spacing:0.05em">${tierLabels[tier]}</td></tr>`;
-    const rows = tierModels.map((m) =>
-      `<tr><td class="mono">${m.id}</td><td class="provider">${providerLabels[m.provider] ?? m.provider}</td><td class="mono">${m.model}</td><td><span class="tier tier-${tier}">${tier}</span></td></tr>`
-    ).join('\n        ');
-    return `${header}\n        ${rows}`;
-  }).join('\n        ');
-
-  const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Free AI Gateway - SaaS Maker</title>
-<style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0f;color:#e0e0e8;line-height:1.6;min-height:100vh}
-  .container{max-width:860px;margin:0 auto;padding:48px 24px}
-  h1{font-size:2.4rem;font-weight:700;background:linear-gradient(135deg,#6366f1,#a78bfa,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
-  .subtitle{color:#9ca3af;font-size:1.1rem;margin-bottom:12px}
-  .badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:32px}
-  .badge-internal{background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.3)}
-  .card{background:#12121a;border:1px solid #1e1e2e;border-radius:12px;padding:24px;margin-bottom:20px}
-  .card h2{font-size:1.1rem;font-weight:600;color:#c4b5fd;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-  .card h2 span{font-size:1.2rem}
-  table{width:100%;border-collapse:collapse;font-size:0.88rem}
-  th{text-align:left;padding:8px 12px;color:#9ca3af;font-weight:500;border-bottom:1px solid #1e1e2e;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.04em}
-  td{padding:8px 12px;border-bottom:1px solid #16161f}
-  .mono{font-family:'SF Mono',SFMono-Regular,Consolas,monospace;font-size:0.82rem;color:#a5b4fc}
-  .provider{color:#9ca3af;font-size:0.8rem}
-  .tier{padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:500}
-  .tier-high{background:rgba(52,211,153,0.15);color:#34d399}
-  .tier-medium{background:rgba(96,165,250,0.15);color:#60a5fa}
-  .tier-low{background:rgba(156,163,175,0.15);color:#9ca3af}
-  .links{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
-  .links a{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:8px;text-decoration:none;font-size:0.88rem;font-weight:500;transition:all 0.15s ease}
-  .link-primary{background:#6366f1;color:#fff}
-  .link-primary:hover{background:#818cf8}
-  .link-secondary{background:#1e1e2e;color:#c4b5fd;border:1px solid #2e2e3e}
-  .link-secondary:hover{background:#252535}
-  .section-desc{color:#9ca3af;font-size:0.88rem;margin-bottom:16px}
-  .does{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px}
-  @media(max-width:600px){.does{grid-template-columns:1fr}}
-  .does-col h3{font-size:0.85rem;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em}
-  .does-col.yes h3{color:#34d399}
-  .does-col.no h3{color:#f87171}
-  .does-col ul{list-style:none;font-size:0.85rem;color:#d1d5db}
-  .does-col ul li{padding:3px 0}
-  .does-col ul li::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:8px;position:relative;top:-1px}
-  .does-col.yes ul li::before{background:#34d399}
-  .does-col.no ul li::before{background:#f87171}
-  .code-block{background:#0d0d14;border:1px solid #1e1e2e;border-radius:8px;padding:16px;font-family:'SF Mono',SFMono-Regular,Consolas,monospace;font-size:0.82rem;color:#c4b5fd;overflow-x:auto;margin-top:16px;white-space:pre;line-height:1.5}
-  .footer{margin-top:40px;padding-top:20px;border-top:1px solid #1e1e2e;color:#6b7280;font-size:0.8rem;text-align:center}
-  .footer a{color:#818cf8;text-decoration:none}
-</style>
-</head>
-<body>
-<div class="container">
-  <h1>Free AI Gateway</h1>
-  <p class="subtitle">OpenAI-compatible proxy with health-aware routing across free-tier providers</p>
-  <span class="badge badge-internal">Internal Use Only</span>
-
-  <div class="card">
-    <h2><span>&#x1f4ac;</span> Chat Models &mdash; ${models.length} models across ${providers.size} providers</h2>
-    <p class="section-desc">Health-aware routing picks the best available model per reasoning tier. Providers auto-activate when their API key is present.</p>
-    <table>
-      <thead><tr><th>Model ID</th><th>Provider</th><th>Actual Model</th><th>Tier</th></tr></thead>
-      <tbody>
-        ${modelRows}
-      </tbody>
-    </table>
-  </div>
-
-
-  <div class="card">
-    <h2><span>&#x1f9e9;</span> Embedding Models &mdash; 6 models across 3 providers</h2>
-    <p class="section-desc">Automatic failover with OpenAI-compatible aliases.</p>
-    <table>
-      <thead><tr><th>Model ID</th><th>Provider</th><th>Notes</th></tr></thead>
-      <tbody>
-        <tr><td class="mono">gemini-embedding-001</td><td class="provider">Gemini</td><td style="font-size:0.82rem;color:#9ca3af">Default. Aliases: text-embedding-3-small, text-embedding-3-large, text-embedding-004</td></tr>
-        <tr><td class="mono">voyage-3.5-lite</td><td class="provider">Voyage AI</td><td style="font-size:0.82rem;color:#9ca3af">Fallback #1</td></tr>
-        <tr><td class="mono">voyage-3-lite</td><td class="provider">Voyage AI</td><td style="font-size:0.82rem;color:#9ca3af">Fallback #2</td></tr>
-        <tr><td class="mono">@cf/baai/bge-large-en-v1.5</td><td class="provider">Workers AI</td><td style="font-size:0.82rem;color:#9ca3af">768-dim, largest</td></tr>
-        <tr><td class="mono">@cf/baai/bge-base-en-v1.5</td><td class="provider">Workers AI</td><td style="font-size:0.82rem;color:#9ca3af">768-dim, balanced</td></tr>
-        <tr><td class="mono">@cf/baai/bge-small-en-v1.5</td><td class="provider">Workers AI</td><td style="font-size:0.82rem;color:#9ca3af">384-dim, fastest</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="card">
-    <h2><span>&#x1f3a4;</span> Voice &mdash; Speech-to-Text &amp; Speech-to-Speech</h2>
-    <p class="section-desc">Groq Whisper for transcription, Workers AI MeloTTS for synthesis. Fully free.</p>
-    <table>
-      <thead><tr><th>Endpoint</th><th>Method</th><th>Description</th></tr></thead>
-      <tbody>
-        <tr><td class="mono">/v1/audio/transcriptions</td><td class="provider">POST</td><td style="font-size:0.82rem;color:#9ca3af">Speech-to-text via Groq Whisper (OpenAI-compatible)</td></tr>
-        <tr><td class="mono">/v1/audio/speech-to-speech</td><td class="provider">POST</td><td style="font-size:0.82rem;color:#9ca3af">Audio in &rarr; Groq Whisper &rarr; LLM &rarr; Workers AI TTS &rarr; Audio out</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="card">
-    <h2><span>&#x26a1;</span> What This Does &amp; Doesn't Do</h2>
-    <div class="does">
-      <div class="does-col yes">
-        <h3>Does</h3>
-        <ul>
-          <li>OpenAI-compatible /v1/chat/completions</li>
-          <li>OpenAI-compatible /v1/embeddings</li>
-          <li>Speech-to-text (Groq Whisper)</li>
-          <li>Speech-to-speech (STT + LLM + TTS)</li>
-          <li>Streaming (SSE) support</li>
-          <li>Health-aware provider failover</li>
-          <li>IP-based rate limiting (10 burst, ~20/min)</li>
-          <li>Reasoning tier routing (low/medium/high)</li>
-        </ul>
-      </div>
-      <div class="does-col no">
-        <h3>Doesn't Do</h3>
-        <ul>
-          <li>No authentication required</li>
-          <li>No request logging or storage</li>
-          <li>No API key management</li>
-          <li>No usage billing or quotas</li>
-          <li>No SLA or uptime guarantee</li>
-          <li>No image models</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2><span>&#x1f680;</span> Quick Start</h2>
-    <div class="code-block">curl https://free-ai-gateway.sarthakagrawal927.workers.dev/v1/chat/completions \\
-  -H "Content-Type: application/json" \\
-  -H "Authorization: Bearer anything" \\
-  -d '{
-    "model": "groq-llama-70b",
-    "messages": [{"role": "user", "content": "Hello!"}]
-  }'</div>
-  </div>
-
-  <div class="links">
-    <a href="/docs" class="link-primary">API Docs (Swagger)</a>
-    <a href="/v1/models" class="link-secondary">Live Models</a>
-    <a href="/health" class="link-secondary">Health Status</a>
-    <a href="/openapi.json" class="link-secondary">OpenAPI Spec</a>
-  </div>
-
-  <div class="footer">
-    Powered by <a href="https://sassmaker.com">SaaS Maker</a> &middot; Free-tier AI gateway for internal tools and prototyping
-  </div>
-</div>
-</body>
-</html>`;
-  return c.html(html);
-});
 
 export default app;
 export { HealthStateDO, IpRateLimitDO };
