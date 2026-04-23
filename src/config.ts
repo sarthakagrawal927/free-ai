@@ -124,15 +124,6 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.87,
     capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 8192 },
   },
-  {
-    id: 'groq-kimi-k2',
-    provider: 'groq',
-    model: 'moonshotai/kimi-k2-instruct',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.88,
-    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
   },
   {
     id: 'groq-qwen3-32b',
@@ -144,15 +135,6 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.86,
     capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 8192 },
   },
-  {
-    id: 'groq-llama4-maverick',
-    provider: 'groq',
-    model: 'meta-llama/llama-4-maverick-17b-128e-instruct',
-    reasoning: 'medium',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.85,
-    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 131072, maxOutputTokens: 8192 },
   },
   {
     id: 'groq-llama4-scout',
@@ -278,15 +260,6 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.75,
     capabilities: { toolCalling: false, jsonMode: true, vision: true, contextWindow: 131072, maxOutputTokens: 8192 },
   },
-  {
-    id: 'openrouter-mistral-small-24b-free',
-    provider: 'openrouter',
-    model: 'mistralai/mistral-small-3.1-24b-instruct:free',
-    reasoning: 'medium',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.74,
-    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 32768, maxOutputTokens: 8192 },
   },
   {
     id: 'openrouter-qwen3-coder-free',
@@ -298,15 +271,6 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.73,
     capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
   },
-  {
-    id: 'openrouter-stepfun-flash-free',
-    provider: 'openrouter',
-    model: 'stepfun/step-3.5-flash:free',
-    reasoning: 'medium',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.72,
-    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 8192 },
   },
   {
     id: 'openrouter-gemma3-12b-free',
@@ -328,25 +292,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.70,
     capabilities: { toolCalling: false, jsonMode: true, vision: true, contextWindow: 32768, maxOutputTokens: 4096 },
   },
-  {
-    id: 'openrouter-deepseek-v3.1-free',
-    provider: 'openrouter',
-    model: 'deepseek/deepseek-chat-v3.1:free',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.80,
-    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 163840, maxOutputTokens: 8192 },
   },
-  {
-    id: 'openrouter-deepseek-r1-0528-free',
-    provider: 'openrouter',
-    model: 'deepseek/deepseek-r1-0528:free',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.79,
-    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 163840, maxOutputTokens: 8192 },
   },
   {
     id: 'openrouter-glm-4.5-air-free',
@@ -358,55 +304,10 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.75,
     capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
   },
-  {
-    id: 'openrouter-qwq-32b-free',
-    provider: 'openrouter',
-    model: 'qwen/qwq-32b:free',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.74,
-    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
   },
-  {
-    id: 'openrouter-kimi-k2-free',
-    provider: 'openrouter',
-    model: 'moonshotai/kimi-k2:free',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.76,
-    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
   },
-  {
-    id: 'openrouter-mai-ds-r1-free',
-    provider: 'openrouter',
-    model: 'microsoft/mai-ds-r1:free',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.72,
-    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 163840, maxOutputTokens: 8192 },
   },
-  {
-    id: 'openrouter-deepseek-r1t2-chimera-free',
-    provider: 'openrouter',
-    model: 'tngtech/deepseek-r1t2-chimera:free',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.71,
-    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 163840, maxOutputTokens: 8192 },
   },
-  {
-    id: 'openrouter-deepcoder-14b-free',
-    provider: 'openrouter',
-    model: 'agentica-org/deepcoder-14b-preview:free',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.69,
-    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 96000, maxOutputTokens: 8192 },
   },
   {
     id: 'openrouter-llama-3.2-3b-free',
@@ -1012,6 +913,198 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.76,
     capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 131072, maxOutputTokens: 8192 },
   },
+
+  // ── Auto-added by weekly model check (review priority + capabilities) ──
+  {
+    id: 'openrouter-tencent-hy3-preview-free',
+    provider: 'openrouter',
+    model: 'tencent/hy3-preview:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-inclusionai-ling-2-6-flash-free',
+    provider: 'openrouter',
+    model: 'inclusionai/ling-2.6-flash:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-baidu-qianfan-ocr-fast-free',
+    provider: 'openrouter',
+    model: 'baidu/qianfan-ocr-fast:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemma-4-26b-a4b-it-free',
+    provider: 'openrouter',
+    model: 'google/gemma-4-26b-a4b-it:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemma-4-31b-it-free',
+    provider: 'openrouter',
+    model: 'google/gemma-4-31b-it:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-nvidia-nemotron-3-super-120b-a12b-free',
+    provider: 'openrouter',
+    model: 'nvidia/nemotron-3-super-120b-a12b:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-minimax-minimax-m2-5-free',
+    provider: 'openrouter',
+    model: 'minimax/minimax-m2.5:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openrouter-free',
+    provider: 'openrouter',
+    model: 'openrouter/free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-liquid-lfm-2-5-1-2b-thinking-free',
+    provider: 'openrouter',
+    model: 'liquid/lfm-2.5-1.2b-thinking:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-liquid-lfm-2-5-1-2b-instruct-free',
+    provider: 'openrouter',
+    model: 'liquid/lfm-2.5-1.2b-instruct:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-nvidia-nemotron-3-nano-30b-a3b-free',
+    provider: 'openrouter',
+    model: 'nvidia/nemotron-3-nano-30b-a3b:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-nvidia-nemotron-nano-9b-v2-free',
+    provider: 'openrouter',
+    model: 'nvidia/nemotron-nano-9b-v2:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-oss-20b-free',
+    provider: 'openrouter',
+    model: 'openai/gpt-oss-20b:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-cognitivecomputations-dolphin-mistral-24b-venice-',
+    provider: 'openrouter',
+    model: 'cognitivecomputations/dolphin-mistral-24b-venice-edition:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemma-3n-e2b-it-free',
+    provider: 'openrouter',
+    model: 'google/gemma-3n-e2b-it:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemma-3n-e4b-it-free',
+    provider: 'openrouter',
+    model: 'google/gemma-3n-e4b-it:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemma-3-4b-it-free',
+    provider: 'openrouter',
+    model: 'google/gemma-3-4b-it:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'cerebras-zai-glm-4-7',
+    provider: 'cerebras',
+    model: 'zai-glm-4.7',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'cerebras-qwen-3-235b-a22b-instruct-2507',
+    provider: 'cerebras',
+    model: 'qwen-3-235b-a22b-instruct-2507',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
 ];
 
 const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = {
@@ -1029,9 +1122,7 @@ const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = {
   'groq:llama-3.3-70b-versatile': { requestsPerDay: 300 },
   'groq:openai/gpt-oss-120b': { requestsPerDay: 200 },
   'groq:openai/gpt-oss-20b': { requestsPerDay: 500 },
-  'groq:moonshotai/kimi-k2-instruct': { requestsPerDay: 300 },
   'groq:qwen/qwen3-32b': { requestsPerDay: 500 },
-  'groq:meta-llama/llama-4-maverick-17b-128e-instruct': { requestsPerDay: 500 },
   'groq:meta-llama/llama-4-scout-17b-16e-instruct': { requestsPerDay: 500 },
   'groq:llama-3.1-8b-instant': { requestsPerDay: 1500 },
   // Gemini
@@ -1046,19 +1137,10 @@ const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = {
   'openrouter:openai/gpt-oss-120b:free': { requestsPerDay: 50 },
   'openrouter:qwen/qwen3-next-80b-a3b-instruct:free': { requestsPerDay: 50 },
   'openrouter:google/gemma-3-27b-it:free': { requestsPerDay: 100 },
-  'openrouter:mistralai/mistral-small-3.1-24b-instruct:free': { requestsPerDay: 100 },
   'openrouter:qwen/qwen3-coder:free': { requestsPerDay: 50 },
-  'openrouter:stepfun/step-3.5-flash:free': { requestsPerDay: 100 },
   'openrouter:google/gemma-3-12b-it:free': { requestsPerDay: 100 },
   'openrouter:nvidia/nemotron-nano-12b-v2-vl:free': { requestsPerDay: 100 },
-  'openrouter:deepseek/deepseek-chat-v3.1:free': { requestsPerDay: 50 },
-  'openrouter:deepseek/deepseek-r1-0528:free': { requestsPerDay: 50 },
   'openrouter:z-ai/glm-4.5-air:free': { requestsPerDay: 50 },
-  'openrouter:qwen/qwq-32b:free': { requestsPerDay: 50 },
-  'openrouter:moonshotai/kimi-k2:free': { requestsPerDay: 50 },
-  'openrouter:microsoft/mai-ds-r1:free': { requestsPerDay: 50 },
-  'openrouter:tngtech/deepseek-r1t2-chimera:free': { requestsPerDay: 50 },
-  'openrouter:agentica-org/deepcoder-14b-preview:free': { requestsPerDay: 50 },
   'openrouter:meta-llama/llama-3.2-3b-instruct:free': { requestsPerDay: 100 },
   // Cerebras
   'cerebras:gpt-oss-120b': { requestsPerDay: 300 },
@@ -1125,6 +1207,26 @@ const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = {
   'mistral:ministral-8b-latest': { requestsPerDay: 1000 },
   'mistral:ministral-3b-latest': { requestsPerDay: 1000 },
   'mistral:pixtral-large-latest': { requestsPerDay: 300 },
+  // AUTO-ADDED limits
+  'openrouter:tencent/hy3-preview:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:inclusionai/ling-2.6-flash:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:baidu/qianfan-ocr-fast:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemma-4-26b-a4b-it:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemma-4-31b-it:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:nvidia/nemotron-3-super-120b-a12b:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:minimax/minimax-m2.5:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openrouter/free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:liquid/lfm-2.5-1.2b-thinking:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:liquid/lfm-2.5-1.2b-instruct:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:nvidia/nemotron-3-nano-30b-a3b:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:nvidia/nemotron-nano-9b-v2:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-oss-20b:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:cognitivecomputations/dolphin-mistral-24b-venice-edition:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemma-3n-e2b-it:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemma-3n-e4b-it:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemma-3-4b-it:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'cerebras:zai-glm-4.7': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'cerebras:qwen-3-235b-a22b-instruct-2507': { requestsPerDay: 100 }, // AUTO-ADDED — tune
 };
 
 export interface RateLimitConfig {
@@ -1293,22 +1395,6 @@ const DEFAULT_VIDEO_MODELS: VideoModelCandidate[] = [
 
 const DEFAULT_TTS_MODELS: AudioTtsModelCandidate[] = [
   {
-    id: 'groq-playai',
-    provider: 'groq',
-    model: 'playai-tts',
-    enabled: false, // DECOMMISSIONED by Groq - see docs/deprecations
-    priority: 0.90,
-    voices: [
-      'Aaliyah-PlayAI', 'Adelaide-PlayAI', 'Angelo-PlayAI', 'Arista-PlayAI',
-      'Atlas-PlayAI', 'Basil-PlayAI', 'Briggs-PlayAI', 'Calum-PlayAI',
-      'Celeste-PlayAI', 'Cheyenne-PlayAI', 'Chip-PlayAI', 'Cillian-PlayAI',
-      'Deedee-PlayAI', 'Fritz-PlayAI', 'Gail-PlayAI', 'Indigo-PlayAI',
-      'Mamaw-PlayAI', 'Mason-PlayAI', 'Mikail-PlayAI', 'Mitch-PlayAI',
-      'Nia-PlayAI', 'Nova-PlayAI', 'Quinn-PlayAI', 'Ruby-PlayAI',
-      'Thunder-PlayAI',
-    ],
-  },
-  {
     id: 'cf-melotts',
     provider: 'workers_ai',
     model: '@cf/myshell-ai/melotts',
@@ -1319,8 +1405,6 @@ const DEFAULT_TTS_MODELS: AudioTtsModelCandidate[] = [
 ];
 
 const DEFAULT_STT_MODELS: AudioSttModelCandidate[] = [
-  { id: 'groq-whisper-turbo', provider: 'groq', model: 'whisper-large-v3-turbo', enabled: true, priority: 0.95 },
-  { id: 'groq-whisper-v3', provider: 'groq', model: 'whisper-large-v3', enabled: true, priority: 0.90 },
   { id: 'cf-whisper', provider: 'workers_ai', model: '@cf/openai/whisper', enabled: true, priority: 0.75 },
   { id: 'gemini-audio', provider: 'gemini', model: 'gemini-2.5-flash', enabled: true, priority: 0.78 },
 ];
@@ -1359,11 +1443,8 @@ const DEFAULT_MODALITY_LIMITS: Record<string, ProviderLimitConfig> = {
   'together:ByteDance-Seed/Seedream-3.0': { requestsPerDay: 20 },
   'together:ByteDance-Seed/Seedream-4.0': { requestsPerDay: 15 },
   // TTS
-  'groq:playai-tts': { requestsPerDay: 500 },
   'workers_ai:@cf/myshell-ai/melotts': { requestsPerDay: 500 },
   // STT
-  'groq:whisper-large-v3-turbo': { requestsPerDay: 1000 },
-  'groq:whisper-large-v3': { requestsPerDay: 500 },
   'workers_ai:@cf/openai/whisper': { requestsPerDay: 1000 },
   'gemini:gemini-2.5-flash': { requestsPerDay: 500 },
 };
