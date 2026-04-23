@@ -172,15 +172,39 @@ async function main() {
   if (PATCH && (report.stale.length > 0 || report.new.length > 0)) {
     let src = readFileSync(CONFIG_PATH, 'utf-8');
 
-    // Remove stale
-    for (const m of report.stale) {
-      const escaped = m.id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const objRe = new RegExp(
-        `\\s*\\{[^}]*?id:\\s*'${escaped}'[^}]*?\\},?\\n?`,
-        'g'
-      );
-      src = src.replace(objRe, '\n');
+    // Remove stale — uses brace-counter (regex alone fails on nested `capabilities: {...}`)
+    const removeBlockById = (source, id) => {
+      const idRe = new RegExp(`id:\\s*'${id.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}'`);
+      const idIdx = source.search(idRe);
+      if (idIdx === -1) return source;
+      // Walk back to opening `{`
+      let start = idIdx;
+      while (start > 0 && source[start] !== '{') start--;
+      // Walk back past whitespace to preceding `,` or `[`
+      let before = start - 1;
+      while (before >= 0 && /\s/.test(source[before])) before--;
+      if (source[before] === ',') start = before; // include leading comma
+      // Walk forward matching braces
+      let depth = 0;
+      let end = start;
+      for (let i = start; i < source.length; i++) {
+        if (source[i] === '{') depth++;
+        else if (source[i] === '}') {
+          depth--;
+          if (depth === 0) { end = i + 1; break; }
+        }
+      }
+      // Include trailing `,` and newline
+      if (source[end] === ',') end++;
+      while (end < source.length && /[ \t]/.test(source[end])) end++;
+      if (source[end] === '\n') end++;
+      return source.slice(0, start) + source.slice(end);
+    };
 
+    for (const m of report.stale) {
+      src = removeBlockById(src, m.id);
+
+      // Remove corresponding limit entry (not nested — simple regex OK)
       const limitKey = `${m.provider}:${m.model}`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const limitRe = new RegExp(`\\s*'${limitKey}':\\s*\\{[^}]*\\},?\\n?`, 'g');
       src = src.replace(limitRe, '\n');

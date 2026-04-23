@@ -124,7 +124,6 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.87,
     capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 8192 },
   },
-  },
   {
     id: 'groq-qwen3-32b',
     provider: 'groq',
@@ -134,7 +133,6 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     enabled: true,
     priority: 0.86,
     capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 8192 },
-  },
   },
   {
     id: 'groq-llama4-scout',
@@ -260,7 +258,6 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.75,
     capabilities: { toolCalling: false, jsonMode: true, vision: true, contextWindow: 131072, maxOutputTokens: 8192 },
   },
-  },
   {
     id: 'openrouter-qwen3-coder-free',
     provider: 'openrouter',
@@ -270,7 +267,6 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     enabled: true,
     priority: 0.73,
     capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
-  },
   },
   {
     id: 'openrouter-gemma3-12b-free',
@@ -292,8 +288,6 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.70,
     capabilities: { toolCalling: false, jsonMode: true, vision: true, contextWindow: 32768, maxOutputTokens: 4096 },
   },
-  },
-  },
   {
     id: 'openrouter-glm-4.5-air-free',
     provider: 'openrouter',
@@ -303,11 +297,6 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     enabled: true,
     priority: 0.75,
     capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
-  },
-  },
-  },
-  },
-  },
   },
   {
     id: 'openrouter-llama-3.2-3b-free',
