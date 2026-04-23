@@ -2089,6 +2089,7 @@ const videosPollRoute = createRoute({
   responses: {
     200: { description: 'Video job status', content: { 'application/json': { schema: videoGenResponseSchema } } },
     404: { description: 'Job not found', content: { 'application/json': { schema: errorSchema } } },
+    501: { description: 'Not implemented — upstream poll endpoint undocumented', content: { 'application/json': { schema: errorSchema } } },
     502: { description: 'Provider failure', content: { 'application/json': { schema: errorSchema } } },
     503: { description: 'Provider not configured', content: { 'application/json': { schema: errorSchema } } },
   },
@@ -2140,9 +2141,17 @@ app.openapi(videosPollRoute, async (c) => {
       200,
     );
   } catch (err) {
+    // Together's video poll endpoint is undocumented upstream — returns 404 on all known paths.
+    // Mark explicitly as "pending upstream support" so callers know it's not a transient error.
     return c.json(
-      { error: { message: `Video poll failed: ${getErrorMessage(err)}`, type: 'provider_error' } },
-      502,
+      {
+        error: {
+          message: `Video poll not yet supported by Together upstream (undocumented GET endpoint). Submit works; retrieval pending. Underlying error: ${getErrorMessage(err)}`,
+          type: 'not_implemented',
+          code: 'video_poll_pending_upstream',
+        },
+      },
+      501,
     );
   }
 });
