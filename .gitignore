@@ -18,3 +18,4 @@ artifacts/
 .claude/
 .playwright-mcp/
 .metadata_never_index
+site/package-lock.json
