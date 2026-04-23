@@ -11,7 +11,17 @@ import { Tabs, TabItem } from '@astrojs/starlight/components';
 POST /v1/audio/transcriptions
 ```
 
-Transcribes audio to text using Groq's hosted Whisper model. The API is OpenAI-compatible — any client that works with OpenAI's audio transcriptions API can point to this gateway instead.
+Transcribes audio to text with automatic provider fallback. The API is OpenAI-compatible — any client that works with OpenAI's audio transcriptions API can point to this gateway instead.
+
+## Provider Fallback Chain
+
+The gateway tries each provider in order until one succeeds:
+
+1. **Groq Whisper** (primary) — `whisper-large-v3-turbo`, `whisper-large-v3`. Fastest, best quality on free tier.
+2. **Cloudflare Workers AI** (fallback) — `@cf/openai/whisper`. No external key required.
+3. **Gemini audio understanding** (last resort) — `gemini-2.5-flash` with audio input. Useful when Groq is rate-limited and you still need transcription.
+
+With `model: "auto"` (or omitted), the gateway picks the healthiest provider based on live success rate and remaining daily headroom. You can also pin a specific model.
 
 ## Request
 
@@ -20,7 +30,7 @@ Transcribes audio to text using Groq's hosted Whisper model. The API is OpenAI-c
 | Field | Type | Default | Description |
 |---|---|---|---|
 | `file` | file | required | Audio file to transcribe. Supported formats: mp3, mp4, wav, webm, m4a. |
-| `model` | string | `whisper-large-v3-turbo` | Whisper model to use. |
+| `model` | string | `whisper-large-v3-turbo` | Whisper / audio model. Use `auto` for health-aware fallback across Groq → Workers AI → Gemini. |
 | `language` | string | — | ISO-639-1 language code (e.g. `en`, `es`, `fr`). Improves accuracy when specified. |
 
 ## Response

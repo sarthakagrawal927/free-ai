@@ -28,12 +28,27 @@ export default defineConfig({
             { label: 'Chat Completions', slug: 'chat-completions' },
             { label: 'Responses API', slug: 'responses-api' },
             { label: 'Embeddings', slug: 'embeddings' },
+            { label: 'Models', slug: 'models' },
+            { label: 'Key Request', slug: 'key-request' },
+          ],
+        },
+        {
+          label: 'Multimodal',
+          items: [
+            { label: 'Image Generation', slug: 'images' },
+            { label: 'Video Generation', slug: 'videos' },
+            { label: 'Text-to-Speech', slug: 'text-to-speech' },
             { label: 'Speech-to-Text', slug: 'speech-to-text' },
             { label: 'Speech-to-Speech', slug: 'speech-to-speech' },
-            { label: 'Models', slug: 'models' },
+          ],
+        },
+        {
+          label: 'Observability',
+          items: [
+            { label: 'Dashboard', slug: 'dashboard' },
             { label: 'Analytics', slug: 'analytics' },
             { label: 'Health', slug: 'health' },
-            { label: 'Key Request', slug: 'key-request' },
+            { label: 'Provider Stats', slug: 'provider-stats' },
           ],
         },
         {
