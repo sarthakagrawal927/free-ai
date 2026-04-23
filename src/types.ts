@@ -1,8 +1,16 @@
-export type TextProvider = 'workers_ai' | 'groq' | 'gemini' | 'openrouter' | 'cerebras' | 'sambanova' | 'nvidia';
+export type TextProvider = 'workers_ai' | 'groq' | 'gemini' | 'openrouter' | 'cerebras' | 'sambanova' | 'nvidia' | 'github_models' | 'pollinations' | 'cohere' | 'mistral';
 
 export type EmbeddingProvider = 'workers_ai' | 'gemini' | 'voyage_ai';
 
-export type Provider = TextProvider | EmbeddingProvider;
+export type ImageProvider = 'together' | 'workers_ai' | 'pollinations' | 'gemini' | 'nvidia';
+
+export type VideoProvider = 'together';
+
+export type AudioTtsProvider = 'workers_ai' | 'groq';
+
+export type AudioSttProvider = 'groq' | 'workers_ai' | 'gemini';
+
+export type Provider = TextProvider | EmbeddingProvider | ImageProvider | VideoProvider | AudioTtsProvider | AudioSttProvider;
 
 export type ReasoningEffort = 'auto' | 'low' | 'medium' | 'high';
 
@@ -51,6 +59,46 @@ export interface ModelCandidate {
   enabled: boolean;
   priority: number;
   capabilities: ModelCapabilities;
+}
+
+export type ImageSize = '256x256' | '512x512' | '1024x1024' | '1024x1792' | '1792x1024';
+
+export interface ImageModelCandidate {
+  id: string;
+  provider: ImageProvider;
+  model: string;
+  enabled: boolean;
+  priority: number;
+  supportedSizes?: ImageSize[];
+}
+
+export type VideoAspectRatio = '16:9' | '9:16' | '1:1';
+
+export interface VideoModelCandidate {
+  id: string;
+  provider: VideoProvider;
+  model: string;
+  enabled: boolean;
+  priority: number;
+  supportsImageToVideo?: boolean;
+  maxDurationSeconds?: number;
+}
+
+export interface AudioTtsModelCandidate {
+  id: string;
+  provider: AudioTtsProvider;
+  model: string;
+  enabled: boolean;
+  priority: number;
+  voices?: string[];
+}
+
+export interface AudioSttModelCandidate {
+  id: string;
+  provider: AudioSttProvider;
+  model: string;
+  enabled: boolean;
+  priority: number;
 }
 
 export interface ProviderLimitConfig {
@@ -124,6 +172,7 @@ export interface Env {
   AI?: {
     run: (model: string, input: Record<string, unknown>) => Promise<unknown>;
   };
+  ASSETS?: { fetch: (request: Request) => Promise<Response> };
   GATEWAY_DB: D1Database;
   HEALTH_DO: DurableObjectNamespace;
   RATE_LIMIT_DO: DurableObjectNamespace;
@@ -139,6 +188,10 @@ export interface Env {
   CEREBRAS_API_KEY?: string;
   SAMBANOVA_API_KEY?: string;
   NVIDIA_API_KEY?: string;
+  GITHUB_TOKEN?: string;
+  COHERE_API_KEY?: string;
+  MISTRAL_API_KEY?: string;
+  TOGETHER_API_KEY?: string;
   MODEL_REGISTRY_JSON?: string;
   PROVIDER_LIMITS_JSON?: string;
   RATE_LIMIT_CONFIG_JSON?: string;

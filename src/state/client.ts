@@ -1,4 +1,11 @@
+// TODO(orchestrator): register route in src/index.ts:
+//   app.openapi(providerStatsRoute, async (c) => c.json({ stats: await providerStats(c.env) }));
+// (place alongside the other health/snapshot route handlers)
+
 import type { Env, FailureClass, ModelStateSnapshot, ProviderLimitConfig } from '../types';
+import type { ProviderStats } from './health-do';
+
+export type { ProviderStats } from './health-do';
 
 const DO_ORIGIN = 'https://internal.local';
 
@@ -55,6 +62,19 @@ export async function healthSnapshot(env: Env): Promise<ModelStateSnapshot[]> {
 
   const body = (await response.json()) as { snapshots: ModelStateSnapshot[] };
   return body.snapshots;
+}
+
+export async function providerStats(env: Env): Promise<ProviderStats[]> {
+  const id = env.HEALTH_DO.idFromName('global-health');
+  const stub = env.HEALTH_DO.get(id);
+  const response = await stub.fetch(`${DO_ORIGIN}/providers/stats`);
+
+  if (!response.ok) {
+    return [];
+  }
+
+  const body = (await response.json()) as { stats: ProviderStats[] };
+  return body.stats;
 }
 
 export async function nextRoundRobinOffset(

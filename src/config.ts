@@ -328,6 +328,96 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.70,
     capabilities: { toolCalling: false, jsonMode: true, vision: true, contextWindow: 32768, maxOutputTokens: 4096 },
   },
+  {
+    id: 'openrouter-deepseek-v3.1-free',
+    provider: 'openrouter',
+    model: 'deepseek/deepseek-chat-v3.1:free',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.80,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 163840, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'openrouter-deepseek-r1-0528-free',
+    provider: 'openrouter',
+    model: 'deepseek/deepseek-r1-0528:free',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.79,
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 163840, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'openrouter-glm-4.5-air-free',
+    provider: 'openrouter',
+    model: 'z-ai/glm-4.5-air:free',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.75,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'openrouter-qwq-32b-free',
+    provider: 'openrouter',
+    model: 'qwen/qwq-32b:free',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.74,
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'openrouter-kimi-k2-free',
+    provider: 'openrouter',
+    model: 'moonshotai/kimi-k2:free',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.76,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'openrouter-mai-ds-r1-free',
+    provider: 'openrouter',
+    model: 'microsoft/mai-ds-r1:free',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.72,
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 163840, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'openrouter-deepseek-r1t2-chimera-free',
+    provider: 'openrouter',
+    model: 'tngtech/deepseek-r1t2-chimera:free',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.71,
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 163840, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'openrouter-deepcoder-14b-free',
+    provider: 'openrouter',
+    model: 'agentica-org/deepcoder-14b-preview:free',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.69,
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 96000, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'openrouter-llama-3.2-3b-free',
+    provider: 'openrouter',
+    model: 'meta-llama/llama-3.2-3b-instruct:free',
+    reasoning: 'low',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.68,
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 4096 },
+  },
 
   // ── Cerebras (needs CEREBRAS_API_KEY) ───────────────────────────────
   {
@@ -414,6 +504,514 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.71,
     capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 8192 },
   },
+  {
+    id: 'nvidia-nemotron-super-49b',
+    provider: 'nvidia',
+    model: 'nvidia/llama-3.3-nemotron-super-49b-v1',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.74,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'nvidia-nemotron-70b',
+    provider: 'nvidia',
+    model: 'nvidia/llama-3.1-nemotron-70b-instruct',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.73,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'nvidia-llama4-maverick',
+    provider: 'nvidia',
+    model: 'meta/llama-4-maverick-17b-128e-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.72,
+    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'nvidia-llama4-scout',
+    provider: 'nvidia',
+    model: 'meta/llama-4-scout-17b-16e-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.70,
+    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'nvidia-deepseek-v3',
+    provider: 'nvidia',
+    model: 'deepseek-ai/deepseek-v3',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.71,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'nvidia-deepseek-r1-distill-70b',
+    provider: 'nvidia',
+    model: 'deepseek-ai/deepseek-r1-distill-llama-70b',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.69,
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'nvidia-mixtral-8x22b',
+    provider: 'nvidia',
+    model: 'mistralai/mixtral-8x22b-instruct-v0.1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.67,
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 65536, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'nvidia-qwen-coder-32b',
+    provider: 'nvidia',
+    model: 'qwen/qwen2.5-coder-32b-instruct',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.68,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'nvidia-gemma3-27b',
+    provider: 'nvidia',
+    model: 'google/gemma-3-27b-it',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.66,
+    capabilities: { toolCalling: false, jsonMode: true, vision: true, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'nvidia-phi-4',
+    provider: 'nvidia',
+    model: 'microsoft/phi-4',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.65,
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 16384, maxOutputTokens: 4096 },
+  },
+
+  // ── GitHub Models (needs GITHUB_TOKEN, free tier) ───────────────────
+  {
+    id: 'gh-gpt-5',
+    provider: 'github_models',
+    model: 'openai/gpt-5',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.95,
+    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 272000, maxOutputTokens: 16384 },
+  },
+  {
+    id: 'gh-gpt-5-mini',
+    provider: 'github_models',
+    model: 'openai/gpt-5-mini',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.93,
+    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 272000, maxOutputTokens: 16384 },
+  },
+  {
+    id: 'gh-gpt-5-nano',
+    provider: 'github_models',
+    model: 'openai/gpt-5-nano',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.88,
+    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 272000, maxOutputTokens: 16384 },
+  },
+  {
+    id: 'gh-gpt-4.1',
+    provider: 'github_models',
+    model: 'openai/gpt-4.1',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.91,
+    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 1047576, maxOutputTokens: 32768 },
+  },
+  {
+    id: 'gh-gpt-4.1-mini',
+    provider: 'github_models',
+    model: 'openai/gpt-4.1-mini',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.89,
+    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 1047576, maxOutputTokens: 32768 },
+  },
+  {
+    id: 'gh-gpt-4o-mini',
+    provider: 'github_models',
+    model: 'openai/gpt-4o-mini',
+    reasoning: 'low',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.86,
+    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 128000, maxOutputTokens: 16384 },
+  },
+  {
+    id: 'gh-o3',
+    provider: 'github_models',
+    model: 'openai/o3',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.94,
+    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 200000, maxOutputTokens: 100000 },
+  },
+  {
+    id: 'gh-o4-mini',
+    provider: 'github_models',
+    model: 'openai/o4-mini',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.90,
+    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 200000, maxOutputTokens: 100000 },
+  },
+  {
+    id: 'gh-deepseek-r1',
+    provider: 'github_models',
+    model: 'deepseek/deepseek-r1',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.87,
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 163840, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'gh-deepseek-r1-0528',
+    provider: 'github_models',
+    model: 'deepseek/deepseek-r1-0528',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.86,
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 163840, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'gh-deepseek-v3',
+    provider: 'github_models',
+    model: 'deepseek/deepseek-v3-0324',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.85,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'gh-llama-4-maverick',
+    provider: 'github_models',
+    model: 'meta/llama-4-maverick-17b-128e-instruct-fp8',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.82,
+    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'gh-llama-4-scout',
+    provider: 'github_models',
+    model: 'meta/llama-4-scout-17b-16e-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.81,
+    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'gh-llama-3.3-70b',
+    provider: 'github_models',
+    model: 'meta/llama-3.3-70b-instruct',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.83,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'gh-grok-3',
+    provider: 'github_models',
+    model: 'xai/grok-3',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.84,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'gh-grok-3-mini',
+    provider: 'github_models',
+    model: 'xai/grok-3-mini',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.80,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'gh-codestral',
+    provider: 'github_models',
+    model: 'mistral-ai/codestral-2501',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.82,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 262144, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'gh-mistral-medium',
+    provider: 'github_models',
+    model: 'mistral-ai/mistral-medium-2505',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.79,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'gh-command-a',
+    provider: 'github_models',
+    model: 'cohere/cohere-command-a',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.78,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'gh-command-r-plus',
+    provider: 'github_models',
+    model: 'cohere/cohere-command-r-plus-08-2024',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.77,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'gh-phi-4',
+    provider: 'github_models',
+    model: 'microsoft/phi-4',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.72,
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 16384, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'gh-phi-4-reasoning',
+    provider: 'github_models',
+    model: 'microsoft/phi-4-reasoning',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.73,
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'gh-mai-ds-r1',
+    provider: 'github_models',
+    model: 'microsoft/mai-ds-r1',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.74,
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 163840, maxOutputTokens: 8192 },
+  },
+
+  // ── Pollinations (no key required) ──────────────────────────────────
+  {
+    id: 'pollinations-openai-large',
+    provider: 'pollinations',
+    model: 'openai-large',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.70,
+    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 131072, maxOutputTokens: 16384 },
+  },
+  {
+    id: 'pollinations-openai',
+    provider: 'pollinations',
+    model: 'openai',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.68,
+    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 128000, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'pollinations-deepseek-reasoning',
+    provider: 'pollinations',
+    model: 'deepseek-reasoning',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.67,
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'pollinations-qwen-coder',
+    provider: 'pollinations',
+    model: 'qwen-coder',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.66,
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'pollinations-mistral',
+    provider: 'pollinations',
+    model: 'mistral',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.65,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'pollinations-llama-scout',
+    provider: 'pollinations',
+    model: 'llamascout',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.64,
+    capabilities: { toolCalling: false, jsonMode: true, vision: true, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+
+  // ── Cohere (trial key, 1000 req/mo) ─────────────────────────────────
+  {
+    id: 'cohere-command-a',
+    provider: 'cohere',
+    model: 'command-a-03-2025',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.82,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 256000, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'cohere-command-r-plus',
+    provider: 'cohere',
+    model: 'command-r-plus-08-2024',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.78,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 128000, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'cohere-command-r',
+    provider: 'cohere',
+    model: 'command-r-08-2024',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.75,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 128000, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'cohere-command-r7b',
+    provider: 'cohere',
+    model: 'command-r7b-12-2024',
+    reasoning: 'low',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.70,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 128000, maxOutputTokens: 4096 },
+  },
+
+  // ── Mistral La Plateforme (Experiment tier, 1 RPS, 500k tok/min) ────
+  {
+    id: 'mistral-large',
+    provider: 'mistral',
+    model: 'mistral-large-latest',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.85,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'mistral-medium',
+    provider: 'mistral',
+    model: 'mistral-medium-latest',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.82,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'mistral-small',
+    provider: 'mistral',
+    model: 'mistral-small-latest',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.78,
+    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'mistral-codestral',
+    provider: 'mistral',
+    model: 'codestral-latest',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.80,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 262144, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'mistral-ministral-8b',
+    provider: 'mistral',
+    model: 'ministral-8b-latest',
+    reasoning: 'low',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.72,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'mistral-ministral-3b',
+    provider: 'mistral',
+    model: 'ministral-3b-latest',
+    reasoning: 'low',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.70,
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
+  {
+    id: 'mistral-pixtral',
+    provider: 'mistral',
+    model: 'pixtral-large-latest',
+    reasoning: 'high',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.76,
+    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 131072, maxOutputTokens: 8192 },
+  },
 ];
 
 const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = {
@@ -453,6 +1051,15 @@ const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = {
   'openrouter:stepfun/step-3.5-flash:free': { requestsPerDay: 100 },
   'openrouter:google/gemma-3-12b-it:free': { requestsPerDay: 100 },
   'openrouter:nvidia/nemotron-nano-12b-v2-vl:free': { requestsPerDay: 100 },
+  'openrouter:deepseek/deepseek-chat-v3.1:free': { requestsPerDay: 50 },
+  'openrouter:deepseek/deepseek-r1-0528:free': { requestsPerDay: 50 },
+  'openrouter:z-ai/glm-4.5-air:free': { requestsPerDay: 50 },
+  'openrouter:qwen/qwq-32b:free': { requestsPerDay: 50 },
+  'openrouter:moonshotai/kimi-k2:free': { requestsPerDay: 50 },
+  'openrouter:microsoft/mai-ds-r1:free': { requestsPerDay: 50 },
+  'openrouter:tngtech/deepseek-r1t2-chimera:free': { requestsPerDay: 50 },
+  'openrouter:agentica-org/deepcoder-14b-preview:free': { requestsPerDay: 50 },
+  'openrouter:meta-llama/llama-3.2-3b-instruct:free': { requestsPerDay: 100 },
   // Cerebras
   'cerebras:gpt-oss-120b': { requestsPerDay: 300 },
   'cerebras:llama3.1-8b': { requestsPerDay: 1000 },
@@ -464,6 +1071,60 @@ const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = {
   'nvidia:meta/llama-3.3-70b-instruct': { requestsPerDay: 500 },
   'nvidia:deepseek-ai/deepseek-r1': { requestsPerDay: 300 },
   'nvidia:qwen/qwen3-32b': { requestsPerDay: 500 },
+  'nvidia:nvidia/llama-3.3-nemotron-super-49b-v1': { requestsPerDay: 500 },
+  'nvidia:nvidia/llama-3.1-nemotron-70b-instruct': { requestsPerDay: 500 },
+  'nvidia:meta/llama-4-maverick-17b-128e-instruct': { requestsPerDay: 500 },
+  'nvidia:meta/llama-4-scout-17b-16e-instruct': { requestsPerDay: 500 },
+  'nvidia:deepseek-ai/deepseek-v3': { requestsPerDay: 300 },
+  'nvidia:deepseek-ai/deepseek-r1-distill-llama-70b': { requestsPerDay: 300 },
+  'nvidia:mistralai/mixtral-8x22b-instruct-v0.1': { requestsPerDay: 300 },
+  'nvidia:qwen/qwen2.5-coder-32b-instruct': { requestsPerDay: 500 },
+  'nvidia:google/gemma-3-27b-it': { requestsPerDay: 500 },
+  'nvidia:microsoft/phi-4': { requestsPerDay: 500 },
+  // GitHub Models (free tier ~50 req/day per high-tier, 150/day low-tier)
+  'github_models:openai/gpt-5': { requestsPerDay: 50 },
+  'github_models:openai/gpt-5-mini': { requestsPerDay: 150 },
+  'github_models:openai/gpt-5-nano': { requestsPerDay: 150 },
+  'github_models:openai/gpt-4.1': { requestsPerDay: 50 },
+  'github_models:openai/gpt-4.1-mini': { requestsPerDay: 150 },
+  'github_models:openai/gpt-4o-mini': { requestsPerDay: 150 },
+  'github_models:openai/o3': { requestsPerDay: 50 },
+  'github_models:openai/o4-mini': { requestsPerDay: 50 },
+  'github_models:deepseek/deepseek-r1': { requestsPerDay: 50 },
+  'github_models:deepseek/deepseek-r1-0528': { requestsPerDay: 50 },
+  'github_models:deepseek/deepseek-v3-0324': { requestsPerDay: 50 },
+  'github_models:meta/llama-4-maverick-17b-128e-instruct-fp8': { requestsPerDay: 150 },
+  'github_models:meta/llama-4-scout-17b-16e-instruct': { requestsPerDay: 150 },
+  'github_models:meta/llama-3.3-70b-instruct': { requestsPerDay: 150 },
+  'github_models:xai/grok-3': { requestsPerDay: 50 },
+  'github_models:xai/grok-3-mini': { requestsPerDay: 150 },
+  'github_models:mistral-ai/codestral-2501': { requestsPerDay: 150 },
+  'github_models:mistral-ai/mistral-medium-2505': { requestsPerDay: 150 },
+  'github_models:cohere/cohere-command-a': { requestsPerDay: 150 },
+  'github_models:cohere/cohere-command-r-plus-08-2024': { requestsPerDay: 150 },
+  'github_models:microsoft/phi-4': { requestsPerDay: 150 },
+  'github_models:microsoft/phi-4-reasoning': { requestsPerDay: 150 },
+  'github_models:microsoft/mai-ds-r1': { requestsPerDay: 50 },
+  // Pollinations (no key required, IP-rate-limited upstream)
+  'pollinations:openai': { requestsPerDay: 300 },
+  'pollinations:openai-large': { requestsPerDay: 300 },
+  'pollinations:mistral': { requestsPerDay: 300 },
+  'pollinations:qwen-coder': { requestsPerDay: 300 },
+  'pollinations:deepseek-reasoning': { requestsPerDay: 300 },
+  'pollinations:llamascout': { requestsPerDay: 300 },
+  // Cohere (trial: 1000 req/mo ≈ 33/day across all models)
+  'cohere:command-a-03-2025': { requestsPerDay: 10 },
+  'cohere:command-r-plus-08-2024': { requestsPerDay: 10 },
+  'cohere:command-r-08-2024': { requestsPerDay: 10 },
+  'cohere:command-r7b-12-2024': { requestsPerDay: 10 },
+  // Mistral (Experiment tier, generous but 1 RPS)
+  'mistral:mistral-large-latest': { requestsPerDay: 500 },
+  'mistral:mistral-medium-latest': { requestsPerDay: 500 },
+  'mistral:mistral-small-latest': { requestsPerDay: 1000 },
+  'mistral:codestral-latest': { requestsPerDay: 500 },
+  'mistral:ministral-8b-latest': { requestsPerDay: 1000 },
+  'mistral:ministral-3b-latest': { requestsPerDay: 1000 },
+  'mistral:pixtral-large-latest': { requestsPerDay: 300 },
 };
 
 export interface RateLimitConfig {
@@ -484,6 +1145,10 @@ const PROVIDER_KEY_REQUIRED: Record<TextProvider, boolean> = {
   cerebras: true,
   sambanova: true,
   nvidia: true,
+  github_models: true,
+  pollinations: false,
+  cohere: true,
+  mistral: true,
 };
 
 function safeParse<T>(value: string | undefined): T | null {
@@ -514,6 +1179,14 @@ function hasProviderKey(env: Env, provider: TextProvider): boolean {
       return Boolean(env.SAMBANOVA_API_KEY);
     case 'nvidia':
       return Boolean(env.NVIDIA_API_KEY);
+    case 'github_models':
+      return Boolean(env.GITHUB_TOKEN);
+    case 'pollinations':
+      return true;
+    case 'cohere':
+      return Boolean(env.COHERE_API_KEY);
+    case 'mistral':
+      return Boolean(env.MISTRAL_API_KEY);
     default:
       return false;
   }
@@ -560,4 +1233,254 @@ export function getTierOrder(reasoning: ReasoningEffort): ReasoningTier[] {
 
 export function getModelKey(provider: Provider, model: string): string {
   return `${provider}:${model}`;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Multi-modal registries: image, video, TTS, STT
+// ═══════════════════════════════════════════════════════════════════
+
+import type {
+  AudioSttModelCandidate,
+  AudioSttProvider,
+  AudioTtsModelCandidate,
+  AudioTtsProvider,
+  ImageModelCandidate,
+  ImageProvider,
+  VideoModelCandidate,
+  VideoProvider,
+} from './types';
+
+const DEFAULT_IMAGE_MODELS: ImageModelCandidate[] = [
+  // Together (free via key)
+  { id: 'flux-schnell', provider: 'together', model: 'black-forest-labs/FLUX.1-schnell', enabled: true, priority: 0.90 },
+  { id: 'flux-1.1-pro', provider: 'together', model: 'black-forest-labs/FLUX.1.1-pro', enabled: true, priority: 0.85 },
+  { id: 'flux-kontext-pro', provider: 'together', model: 'black-forest-labs/FLUX.1-kontext-pro', enabled: true, priority: 0.83 },
+  { id: 'flux-2-dev', provider: 'together', model: 'black-forest-labs/FLUX.2-dev', enabled: true, priority: 0.82 },
+  { id: 'flux-2-flex', provider: 'together', model: 'black-forest-labs/FLUX.2-flex', enabled: true, priority: 0.80 },
+  { id: 'flux-2-pro', provider: 'together', model: 'black-forest-labs/FLUX.2-pro', enabled: true, priority: 0.88 },
+  { id: 'flux-2-max', provider: 'together', model: 'black-forest-labs/FLUX.2-max', enabled: true, priority: 0.91 },
+  // Gemini Imagen
+  { id: 'imagen-4', provider: 'gemini', model: 'imagen-4.0-generate-001', enabled: true, priority: 0.86 },
+  { id: 'gemini-flash-image', provider: 'gemini', model: 'gemini-2.5-flash-image', enabled: true, priority: 0.82 },
+  // Workers AI
+  { id: 'cf-flux-schnell', provider: 'workers_ai', model: '@cf/black-forest-labs/flux-1-schnell', enabled: true, priority: 0.78 },
+  { id: 'cf-sdxl', provider: 'workers_ai', model: '@cf/stabilityai/stable-diffusion-xl-base-1.0', enabled: true, priority: 0.72 },
+  { id: 'cf-dreamshaper', provider: 'workers_ai', model: '@cf/lykon/dreamshaper-8-lcm', enabled: true, priority: 0.70 },
+  // NVIDIA NIM
+  { id: 'nvidia-flux-schnell', provider: 'nvidia', model: 'black-forest-labs/flux.1-schnell', enabled: true, priority: 0.76 },
+  { id: 'nvidia-sdxl', provider: 'nvidia', model: 'stabilityai/stable-diffusion-xl', enabled: true, priority: 0.70 },
+  // Pollinations (no key)
+  { id: 'pollinations-flux', provider: 'pollinations', model: 'flux', enabled: true, priority: 0.60 },
+  { id: 'pollinations-flux-realism', provider: 'pollinations', model: 'flux-realism', enabled: true, priority: 0.58 },
+  { id: 'pollinations-turbo', provider: 'pollinations', model: 'turbo', enabled: true, priority: 0.55 },
+];
+
+const DEFAULT_VIDEO_MODELS: VideoModelCandidate[] = [
+  { id: 'veo-3-audio', provider: 'together', model: 'google/veo-3.0-audio', enabled: true, priority: 0.95 },
+  { id: 'veo-3-fast-audio', provider: 'together', model: 'google/veo-3.0-fast-audio', enabled: true, priority: 0.93 },
+  { id: 'veo-2', provider: 'together', model: 'google/veo-2.0', enabled: true, priority: 0.88 },
+  { id: 'sora-2', provider: 'together', model: 'openai/sora-2', enabled: true, priority: 0.94 },
+  { id: 'kling-2.1-master', provider: 'together', model: 'kwaivgI/kling-2.1-master', enabled: true, priority: 0.90 },
+  { id: 'kling-2.1-pro', provider: 'together', model: 'kwaivgI/kling-2.1-pro', enabled: true, priority: 0.87 },
+  { id: 'kling-2.0-master', provider: 'together', model: 'kwaivgI/kling-2.0-master', enabled: true, priority: 0.84 },
+  { id: 'kling-1.6-pro', provider: 'together', model: 'kwaivgI/kling-1.6-pro', enabled: true, priority: 0.80 },
+  { id: 'wan-2.6-image', provider: 'together', model: 'Wan-AI/Wan2.6-image', enabled: true, priority: 0.78, supportsImageToVideo: true },
+  { id: 'wan-2.2-i2v', provider: 'together', model: 'Wan-AI/Wan2.2-I2V-A14B', enabled: true, priority: 0.76, supportsImageToVideo: true },
+  { id: 'vidu-q1', provider: 'together', model: 'vidu/vidu-q1', enabled: true, priority: 0.74 },
+  { id: 'seedream-3', provider: 'together', model: 'ByteDance-Seed/Seedream-3.0', enabled: true, priority: 0.82 },
+  { id: 'seedream-4', provider: 'together', model: 'ByteDance-Seed/Seedream-4.0', enabled: true, priority: 0.85 },
+];
+
+const DEFAULT_TTS_MODELS: AudioTtsModelCandidate[] = [
+  {
+    id: 'groq-playai',
+    provider: 'groq',
+    model: 'playai-tts',
+    enabled: false, // DECOMMISSIONED by Groq - see docs/deprecations
+    priority: 0.90,
+    voices: [
+      'Aaliyah-PlayAI', 'Adelaide-PlayAI', 'Angelo-PlayAI', 'Arista-PlayAI',
+      'Atlas-PlayAI', 'Basil-PlayAI', 'Briggs-PlayAI', 'Calum-PlayAI',
+      'Celeste-PlayAI', 'Cheyenne-PlayAI', 'Chip-PlayAI', 'Cillian-PlayAI',
+      'Deedee-PlayAI', 'Fritz-PlayAI', 'Gail-PlayAI', 'Indigo-PlayAI',
+      'Mamaw-PlayAI', 'Mason-PlayAI', 'Mikail-PlayAI', 'Mitch-PlayAI',
+      'Nia-PlayAI', 'Nova-PlayAI', 'Quinn-PlayAI', 'Ruby-PlayAI',
+      'Thunder-PlayAI',
+    ],
+  },
+  {
+    id: 'cf-melotts',
+    provider: 'workers_ai',
+    model: '@cf/myshell-ai/melotts',
+    enabled: true,
+    priority: 0.70,
+    voices: ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'],
+  },
+];
+
+const DEFAULT_STT_MODELS: AudioSttModelCandidate[] = [
+  { id: 'groq-whisper-turbo', provider: 'groq', model: 'whisper-large-v3-turbo', enabled: true, priority: 0.95 },
+  { id: 'groq-whisper-v3', provider: 'groq', model: 'whisper-large-v3', enabled: true, priority: 0.90 },
+  { id: 'cf-whisper', provider: 'workers_ai', model: '@cf/openai/whisper', enabled: true, priority: 0.75 },
+  { id: 'gemini-audio', provider: 'gemini', model: 'gemini-2.5-flash', enabled: true, priority: 0.78 },
+];
+
+const DEFAULT_MODALITY_LIMITS: Record<string, ProviderLimitConfig> = {
+  // Image: Together free tier is generous for schnell but paid for pro.
+  'together:black-forest-labs/FLUX.1-schnell': { requestsPerDay: 300 },
+  'together:black-forest-labs/FLUX.1.1-pro': { requestsPerDay: 100 },
+  'together:black-forest-labs/FLUX.1-kontext-pro': { requestsPerDay: 100 },
+  'together:black-forest-labs/FLUX.2-dev': { requestsPerDay: 150 },
+  'together:black-forest-labs/FLUX.2-flex': { requestsPerDay: 150 },
+  'together:black-forest-labs/FLUX.2-pro': { requestsPerDay: 100 },
+  'together:black-forest-labs/FLUX.2-max': { requestsPerDay: 50 },
+  'gemini:imagen-4.0-generate-001': { requestsPerDay: 50 },
+  'gemini:gemini-2.5-flash-image': { requestsPerDay: 200 },
+  'workers_ai:@cf/black-forest-labs/flux-1-schnell': { requestsPerDay: 500 },
+  'workers_ai:@cf/stabilityai/stable-diffusion-xl-base-1.0': { requestsPerDay: 500 },
+  'workers_ai:@cf/lykon/dreamshaper-8-lcm': { requestsPerDay: 500 },
+  'nvidia:black-forest-labs/flux.1-schnell': { requestsPerDay: 200 },
+  'nvidia:stabilityai/stable-diffusion-xl': { requestsPerDay: 200 },
+  'pollinations:flux': { requestsPerDay: 300 },
+  'pollinations:flux-realism': { requestsPerDay: 300 },
+  'pollinations:turbo': { requestsPerDay: 300 },
+  // Video: low per-day on free tier due to cost-per-call.
+  'together:google/veo-3.0-audio': { requestsPerDay: 10 },
+  'together:google/veo-3.0-fast-audio': { requestsPerDay: 20 },
+  'together:google/veo-2.0': { requestsPerDay: 20 },
+  'together:openai/sora-2': { requestsPerDay: 10 },
+  'together:kwaivgI/kling-2.1-master': { requestsPerDay: 10 },
+  'together:kwaivgI/kling-2.1-pro': { requestsPerDay: 15 },
+  'together:kwaivgI/kling-2.0-master': { requestsPerDay: 15 },
+  'together:kwaivgI/kling-1.6-pro': { requestsPerDay: 20 },
+  'together:Wan-AI/Wan2.6-image': { requestsPerDay: 30 },
+  'together:Wan-AI/Wan2.2-I2V-A14B': { requestsPerDay: 30 },
+  'together:vidu/vidu-q1': { requestsPerDay: 30 },
+  'together:ByteDance-Seed/Seedream-3.0': { requestsPerDay: 20 },
+  'together:ByteDance-Seed/Seedream-4.0': { requestsPerDay: 15 },
+  // TTS
+  'groq:playai-tts': { requestsPerDay: 500 },
+  'workers_ai:@cf/myshell-ai/melotts': { requestsPerDay: 500 },
+  // STT
+  'groq:whisper-large-v3-turbo': { requestsPerDay: 1000 },
+  'groq:whisper-large-v3': { requestsPerDay: 500 },
+  'workers_ai:@cf/openai/whisper': { requestsPerDay: 1000 },
+  'gemini:gemini-2.5-flash': { requestsPerDay: 500 },
+};
+
+// Merge modality limits into DEFAULT_LIMITS at module load.
+for (const [key, value] of Object.entries(DEFAULT_MODALITY_LIMITS)) {
+  if (!(key in DEFAULT_LIMITS)) {
+    DEFAULT_LIMITS[key] = value;
+  }
+}
+
+const IMAGE_PROVIDER_KEY_REQUIRED: Record<ImageProvider, boolean> = {
+  together: true,
+  workers_ai: false,
+  pollinations: false,
+  gemini: true,
+  nvidia: true,
+};
+
+const VIDEO_PROVIDER_KEY_REQUIRED: Record<VideoProvider, boolean> = {
+  together: true,
+};
+
+const TTS_PROVIDER_KEY_REQUIRED: Record<AudioTtsProvider, boolean> = {
+  workers_ai: false,
+  groq: true,
+};
+
+const STT_PROVIDER_KEY_REQUIRED: Record<AudioSttProvider, boolean> = {
+  groq: true,
+  workers_ai: false,
+  gemini: true,
+};
+
+export function hasImageProviderKey(env: Env, provider: ImageProvider): boolean {
+  switch (provider) {
+    case 'together':
+      return Boolean(env.TOGETHER_API_KEY);
+    case 'workers_ai':
+      return Boolean(env.AI) || Boolean(env.CLOUDFLARE_ACCOUNT_ID && env.CLOUDFLARE_WORKERS_AI_API_KEY);
+    case 'pollinations':
+      return true;
+    case 'gemini':
+      return Boolean(env.GEMINI_API_KEY);
+    case 'nvidia':
+      return Boolean(env.NVIDIA_API_KEY);
+    default:
+      return false;
+  }
+}
+
+export function hasVideoProviderKey(env: Env, provider: VideoProvider): boolean {
+  switch (provider) {
+    case 'together':
+      return Boolean(env.TOGETHER_API_KEY);
+    default:
+      return false;
+  }
+}
+
+export function hasTtsProviderKey(env: Env, provider: AudioTtsProvider): boolean {
+  switch (provider) {
+    case 'groq':
+      return Boolean(env.GROQ_API_KEY);
+    case 'workers_ai':
+      return Boolean(env.AI) || Boolean(env.CLOUDFLARE_ACCOUNT_ID && env.CLOUDFLARE_WORKERS_AI_API_KEY);
+    default:
+      return false;
+  }
+}
+
+export function hasSttProviderKey(env: Env, provider: AudioSttProvider): boolean {
+  switch (provider) {
+    case 'groq':
+      return Boolean(env.GROQ_API_KEY);
+    case 'workers_ai':
+      return Boolean(env.AI) || Boolean(env.CLOUDFLARE_ACCOUNT_ID && env.CLOUDFLARE_WORKERS_AI_API_KEY);
+    case 'gemini':
+      return Boolean(env.GEMINI_API_KEY);
+    default:
+      return false;
+  }
+}
+
+export function getImageRegistry(env: Env): ImageModelCandidate[] {
+  return DEFAULT_IMAGE_MODELS.filter((candidate) => {
+    if (!candidate.enabled) return false;
+    if (IMAGE_PROVIDER_KEY_REQUIRED[candidate.provider] && !hasImageProviderKey(env, candidate.provider)) {
+      return false;
+    }
+    if (!IMAGE_PROVIDER_KEY_REQUIRED[candidate.provider] && !hasImageProviderKey(env, candidate.provider)) {
+      return false;
+    }
+    return true;
+  });
+}
+
+export function getVideoRegistry(env: Env): VideoModelCandidate[] {
+  return DEFAULT_VIDEO_MODELS.filter((candidate) => {
+    if (!candidate.enabled) return false;
+    if (!hasVideoProviderKey(env, candidate.provider)) return false;
+    return true;
+  });
+}
+
+export function getTtsRegistry(env: Env): AudioTtsModelCandidate[] {
+  return DEFAULT_TTS_MODELS.filter((candidate) => {
+    if (!candidate.enabled) return false;
+    if (!hasTtsProviderKey(env, candidate.provider)) return false;
+    return true;
+  });
+}
+
+export function getSttRegistry(env: Env): AudioSttModelCandidate[] {
+  return DEFAULT_STT_MODELS.filter((candidate) => {
+    if (!candidate.enabled) return false;
+    if (!hasSttProviderKey(env, candidate.provider)) return false;
+    return true;
+  });
 }

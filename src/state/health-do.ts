@@ -13,6 +13,27 @@ interface ModelState {
 
 type RoundRobinMap = Record<string, number>;
 
+export interface ProviderStats {
+  provider: string;
+  total_models: number;
+  active_models: number;
+  total_attempts: number;
+  throttle_count: number;
+  throttle_rate: number;
+  success_rate: number;
+  avg_latency_ms: number;
+  cooldown_events: number;
+  models_in_cooldown: number;
+  failure_breakdown: {
+    safety_refusal: number;
+    usage_retriable: number;
+    input_nonretriable: number;
+    provider_fatal: number;
+  };
+  avg_attempts_before_first_throttle: number | null;
+  throttle_spacing_p50: number | null;
+}
+
 const MODEL_PREFIX = 'm:';
 const ROUND_ROBIN_STORAGE_KEY = 'round-robin';
 const HISTORY_LIMIT = 100;
@@ -77,6 +98,117 @@ function toSnapshot(
 
 function storageKey(modelKey: string): string {
   return `${MODEL_PREFIX}${modelKey}`;
+}
+
+function median(sorted: number[]): number {
+  if (sorted.length === 0) return 0;
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+}
+
+interface ProviderAccumulator {
+  totalModels: number;
+  activeModels: number;
+  totalAttempts: number;
+  successful: number;
+  latencySum: number;
+  throttleCount: number;
+  cooldownEvents: number;
+  modelsInCooldown: number;
+  failureBreakdown: Record<FailureClass, number>;
+  firstThrottleIdxs: number[];
+  throttleSpacings: number[];
+}
+
+function emptyAccumulator(): ProviderAccumulator {
+  return {
+    totalModels: 0,
+    activeModels: 0,
+    totalAttempts: 0,
+    successful: 0,
+    latencySum: 0,
+    throttleCount: 0,
+    cooldownEvents: 0,
+    modelsInCooldown: 0,
+    failureBreakdown: {
+      safety_refusal: 0,
+      usage_retriable: 0,
+      input_nonretriable: 0,
+      provider_fatal: 0,
+    },
+    firstThrottleIdxs: [],
+    throttleSpacings: [],
+  };
+}
+
+function aggregateProviderStats(cache: Map<string, ModelState>, now: number): ProviderStats[] {
+  const byProvider = new Map<string, ProviderAccumulator>();
+
+  for (const [key, state] of cache) {
+    const provider = key.split(':')[0] ?? 'unknown';
+    const acc = byProvider.get(provider) ?? emptyAccumulator();
+    acc.totalModels += 1;
+
+    const attempts = state.history.length;
+    if (attempts > 0) acc.activeModels += 1;
+    acc.totalAttempts += attempts;
+
+    if (state.cooldownUntil > 0) acc.cooldownEvents += 1;
+    if (state.cooldownUntil > now) acc.modelsInCooldown += 1;
+
+    let firstThrottleIdx = -1;
+    let lastThrottleIdx = -1;
+    for (let i = 0; i < state.history.length; i += 1) {
+      const item = state.history[i];
+      acc.latencySum += item.latencyMs;
+      if (item.success) {
+        acc.successful += 1;
+        continue;
+      }
+      if (item.failureClass) {
+        acc.failureBreakdown[item.failureClass] += 1;
+        if (item.failureClass === 'usage_retriable') {
+          acc.throttleCount += 1;
+          if (firstThrottleIdx === -1) firstThrottleIdx = i;
+          if (lastThrottleIdx !== -1) {
+            acc.throttleSpacings.push(i - lastThrottleIdx);
+          }
+          lastThrottleIdx = i;
+        }
+      }
+    }
+    if (firstThrottleIdx !== -1) acc.firstThrottleIdxs.push(firstThrottleIdx);
+
+    byProvider.set(provider, acc);
+  }
+
+  const result: ProviderStats[] = [];
+  for (const [provider, acc] of byProvider) {
+    const avgFirst =
+      acc.firstThrottleIdxs.length === 0
+        ? null
+        : acc.firstThrottleIdxs.reduce((s, n) => s + n, 0) / acc.firstThrottleIdxs.length;
+    const spacingSorted = acc.throttleSpacings.slice().sort((a, b) => a - b);
+    const spacingP50 = spacingSorted.length >= 1 ? median(spacingSorted) : null;
+
+    result.push({
+      provider,
+      total_models: acc.totalModels,
+      active_models: acc.activeModels,
+      total_attempts: acc.totalAttempts,
+      throttle_count: acc.throttleCount,
+      throttle_rate: acc.totalAttempts === 0 ? 0 : acc.throttleCount / acc.totalAttempts,
+      success_rate: acc.totalAttempts === 0 ? 0 : acc.successful / acc.totalAttempts,
+      avg_latency_ms: acc.totalAttempts === 0 ? 0 : acc.latencySum / acc.totalAttempts,
+      cooldown_events: acc.cooldownEvents,
+      models_in_cooldown: acc.modelsInCooldown,
+      failure_breakdown: acc.failureBreakdown,
+      avg_attempts_before_first_throttle: avgFirst,
+      throttle_spacing_p50: spacingP50,
+    });
+  }
+
+  return result.sort((a, b) => a.provider.localeCompare(b.provider));
 }
 
 export class HealthStateDO {
@@ -164,7 +296,7 @@ export class HealthStateDO {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    if (request.method !== 'POST' && path !== '/snapshot') {
+    if (request.method !== 'POST' && path !== '/snapshot' && path !== '/providers/stats') {
       return json({ error: 'Method not allowed' }, 405);
     }
 
@@ -243,6 +375,13 @@ export class HealthStateDO {
         toSnapshot(key, modelState, undefined, now),
       );
       return json({ snapshots });
+    }
+
+    if (path === '/providers/stats') {
+      const now = Date.now();
+      await this.ensureCacheLoaded();
+      const stats = aggregateProviderStats(this.cache, now);
+      return json({ stats });
     }
 
     if (path === '/round-robin-next') {
