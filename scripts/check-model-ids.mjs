@@ -94,7 +94,13 @@ async function main() {
   const providerSets = { groq, openrouter, cerebras, gemini };
   const configModels = parseConfigModels();
 
-  const report = { stale: [], ok: [], skipped: [] };
+  const report = { stale: [], ok: [], skipped: [], new: [] };
+
+  // Build a map of provider -> configured model IDs (for new-detection)
+  const configured = { groq: new Set(), openrouter: new Set(), cerebras: new Set(), gemini: new Set() };
+  for (const entry of configModels) {
+    if (configured[entry.provider]) configured[entry.provider].add(entry.model);
+  }
 
   for (const entry of configModels) {
     const set = providerSets[entry.provider];
@@ -106,6 +112,16 @@ async function main() {
       report.ok.push(entry);
     } else {
       report.stale.push(entry);
+    }
+  }
+
+  // Detect new models — upstream has but config doesn't
+  for (const [provider, set] of Object.entries(providerSets)) {
+    if (!set) continue;
+    for (const model of set) {
+      if (!configured[provider].has(model)) {
+        report.new.push({ provider, model });
+      }
     }
   }
 
@@ -121,13 +137,18 @@ async function main() {
       }
       console.log(`\n✓ ${report.ok.length} valid, ${report.skipped.length} skipped`);
     }
+    if (report.new.length > 0) {
+      console.log(`\n✨ ${report.new.length} new model(s) upstream not in config:`);
+      for (const m of report.new) console.log(`  ${m.provider}/${m.model}`);
+    }
   }
 
   // ── Patch config if requested ──────────────────────────────────────────
-  if (PATCH && report.stale.length > 0) {
+  if (PATCH && (report.stale.length > 0 || report.new.length > 0)) {
     let src = readFileSync(CONFIG_PATH, 'utf-8');
+
+    // Remove stale
     for (const m of report.stale) {
-      // Remove the entire object block for this model id
       const escaped = m.id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const objRe = new RegExp(
         `\\s*\\{[^}]*?id:\\s*'${escaped}'[^}]*?\\},?\\n?`,
@@ -135,20 +156,53 @@ async function main() {
       );
       src = src.replace(objRe, '\n');
 
-      // Also remove the corresponding limit entry
       const limitKey = `${m.provider}:${m.model}`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const limitRe = new RegExp(`\\s*'${limitKey}':\\s*\\{[^}]*\\},?\\n?`, 'g');
       src = src.replace(limitRe, '\n');
     }
-    // Clean up double newlines
+
+    // Add new — inject safe defaults just before DEFAULT_MODELS closing `];`
+    if (report.new.length > 0) {
+      const provComment = { groq: 'Groq', openrouter: 'OpenRouter', cerebras: 'Cerebras', gemini: 'Gemini' };
+      const stubs = report.new.map((m) => {
+        // slugify id from provider+model
+        const slug = `${m.provider}-${m.model.replace(/[^a-z0-9]+/gi, '-')}`.toLowerCase().slice(0, 60);
+        return `  {
+    id: '${slug}',
+    provider: '${m.provider}',
+    model: '${m.model}',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },`;
+      }).join('\n');
+
+      const marker = /(const DEFAULT_MODELS: ModelCandidate\[\] = \[[\s\S]*?)(\n\];)/;
+      const match = marker.exec(src);
+      if (match) {
+        src = src.replace(marker, `$1\n\n  // ── Auto-added by weekly model check (review priority + capabilities) ──\n${stubs}$2`);
+      }
+
+      // Add limits section entries
+      const limitStubs = report.new.map((m) => `  '${m.provider}:${m.model}': { requestsPerDay: 100 }, // AUTO-ADDED — tune`).join('\n');
+      const limitMarker = /(const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = \{[\s\S]*?)(\n\};)/;
+      if (limitMarker.test(src)) {
+        src = src.replace(limitMarker, `$1\n  // AUTO-ADDED limits\n${limitStubs}$2`);
+      }
+    }
+
     src = src.replace(/\n{3,}/g, '\n\n');
     writeFileSync(CONFIG_PATH, src);
-    console.log(`\nPatched config.ts — removed ${report.stale.length} stale model(s)`);
+    const parts = [];
+    if (report.stale.length) parts.push(`removed ${report.stale.length} stale`);
+    if (report.new.length) parts.push(`added ${report.new.length} new`);
+    console.log(`\nPatched config.ts — ${parts.join(', ')}`);
   }
 
-  // Exit with code 1 if stale models found AND we didn't patch — signals CI to act.
-  // When --patch is used, patching IS the success action, so exit 0.
-  if (report.stale.length > 0 && !PATCH) process.exit(1);
+  // Signal CI to act only when read-only and there's drift
+  if (!PATCH && (report.stale.length > 0 || report.new.length > 0)) process.exit(1);
 }
 
 main().catch((err) => {

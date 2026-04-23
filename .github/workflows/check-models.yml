@@ -29,11 +29,14 @@ jobs:
         run: |
           node scripts/check-model-ids.mjs --json > report.json 2>&1 || true
           STALE=$(node -e "const r=JSON.parse(require('fs').readFileSync('report.json','utf-8')); console.log(r.stale.length)")
+          NEW=$(node -e "const r=JSON.parse(require('fs').readFileSync('report.json','utf-8')); console.log((r.new||[]).length)")
           echo "stale=$STALE" >> "$GITHUB_OUTPUT"
+          echo "new=$NEW" >> "$GITHUB_OUTPUT"
+          echo "drift=$((STALE + NEW))" >> "$GITHUB_OUTPUT"
           cat report.json
 
       - name: Patch config and create PR
-        if: steps.check.outputs.stale != '0'
+        if: steps.check.outputs.drift != '0'
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
@@ -43,12 +46,12 @@ jobs:
         run: |
           node scripts/check-model-ids.mjs --patch
 
-          BRANCH="chore/stale-models-$(date +%Y%m%d-%H%M%S)"
+          BRANCH="chore/model-sync-$(date +%Y%m%d-%H%M%S)"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
           git add src/config.ts
-          git commit -m "chore: remove stale model IDs
+          git commit -m "chore: sync model registry with upstream providers
 
           Auto-detected by weekly model check.
           See report.json in workflow run for details."
@@ -58,14 +61,22 @@ jobs:
             const r=JSON.parse(require('fs').readFileSync('report.json','utf-8'));
             r.stale.forEach(m => console.log('- \`'+m.provider+'/'+m.model+'\` (id: '+m.id+')'));
           ")
+          NEW_LIST=$(node -e "
+            const r=JSON.parse(require('fs').readFileSync('report.json','utf-8'));
+            (r.new||[]).forEach(m => console.log('- \`'+m.provider+'/'+m.model+'\`'));
+          ")
 
           gh pr create \
-            --title "chore: remove stale model IDs" \
+            --title "chore: sync model registry with upstream" \
             --body "## Stale models removed
 
-          $STALE_LIST
+          ${STALE_LIST:-_none_}
 
-          Detected by the weekly \`check-models\` workflow. These models no longer appear in their provider's \`/v1/models\` response.
+          ## New models added (auto-stubbed, review defaults)
 
-          **Action needed:** Review removals, then consider adding replacement models if coverage gaps exist." \
+          ${NEW_LIST:-_none_}
+
+          New models use conservative defaults: \`priority: 0.50\`, \`reasoning: 'medium'\`, \`toolCalling: false\`, \`vision: false\`, \`contextWindow: 32768\`. Review & tune before merge.
+
+          Detected by the weekly \`check-models\` workflow." \
             --base main
