@@ -124,15 +124,6 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.87,
     capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 8192 },
   },
-  {
-    id: 'groq-kimi-k2',
-    provider: 'groq',
-    model: 'moonshotai/kimi-k2-instruct',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.88,
-    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
   },
   {
     id: 'groq-qwen3-32b',
@@ -144,15 +135,6 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.86,
     capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 8192 },
   },
-  {
-    id: 'groq-llama4-maverick',
-    provider: 'groq',
-    model: 'meta-llama/llama-4-maverick-17b-128e-instruct',
-    reasoning: 'medium',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.85,
-    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 131072, maxOutputTokens: 8192 },
   },
   {
     id: 'groq-llama4-scout',
@@ -278,15 +260,6 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.75,
     capabilities: { toolCalling: false, jsonMode: true, vision: true, contextWindow: 131072, maxOutputTokens: 8192 },
   },
-  {
-    id: 'openrouter-mistral-small-24b-free',
-    provider: 'openrouter',
-    model: 'mistralai/mistral-small-3.1-24b-instruct:free',
-    reasoning: 'medium',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.74,
-    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 32768, maxOutputTokens: 8192 },
   },
   {
     id: 'openrouter-qwen3-coder-free',
@@ -298,15 +271,6 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.73,
     capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
   },
-  {
-    id: 'openrouter-stepfun-flash-free',
-    provider: 'openrouter',
-    model: 'stepfun/step-3.5-flash:free',
-    reasoning: 'medium',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.72,
-    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 8192 },
   },
   {
     id: 'openrouter-gemma3-12b-free',
@@ -328,25 +292,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.70,
     capabilities: { toolCalling: false, jsonMode: true, vision: true, contextWindow: 32768, maxOutputTokens: 4096 },
   },
-  {
-    id: 'openrouter-deepseek-v3.1-free',
-    provider: 'openrouter',
-    model: 'deepseek/deepseek-chat-v3.1:free',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.80,
-    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 163840, maxOutputTokens: 8192 },
   },
-  {
-    id: 'openrouter-deepseek-r1-0528-free',
-    provider: 'openrouter',
-    model: 'deepseek/deepseek-r1-0528:free',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.79,
-    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 163840, maxOutputTokens: 8192 },
   },
   {
     id: 'openrouter-glm-4.5-air-free',
@@ -358,55 +304,10 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.75,
     capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
   },
-  {
-    id: 'openrouter-qwq-32b-free',
-    provider: 'openrouter',
-    model: 'qwen/qwq-32b:free',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.74,
-    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
   },
-  {
-    id: 'openrouter-kimi-k2-free',
-    provider: 'openrouter',
-    model: 'moonshotai/kimi-k2:free',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.76,
-    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 131072, maxOutputTokens: 8192 },
   },
-  {
-    id: 'openrouter-mai-ds-r1-free',
-    provider: 'openrouter',
-    model: 'microsoft/mai-ds-r1:free',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.72,
-    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 163840, maxOutputTokens: 8192 },
   },
-  {
-    id: 'openrouter-deepseek-r1t2-chimera-free',
-    provider: 'openrouter',
-    model: 'tngtech/deepseek-r1t2-chimera:free',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.71,
-    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 163840, maxOutputTokens: 8192 },
   },
-  {
-    id: 'openrouter-deepcoder-14b-free',
-    provider: 'openrouter',
-    model: 'agentica-org/deepcoder-14b-preview:free',
-    reasoning: 'high',
-    supportsStreaming: true,
-    enabled: true,
-    priority: 0.69,
-    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 96000, maxOutputTokens: 8192 },
   },
   {
     id: 'openrouter-llama-3.2-3b-free',
@@ -1012,6 +913,3498 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     priority: 0.76,
     capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 131072, maxOutputTokens: 8192 },
   },
+
+  // ── Auto-added by weekly model check (review priority + capabilities) ──
+  {
+    id: 'groq-meta-llama-llama-prompt-guard-2-86m',
+    provider: 'groq',
+    model: 'meta-llama/llama-prompt-guard-2-86m',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'groq-openai-gpt-oss-safeguard-20b',
+    provider: 'groq',
+    model: 'openai/gpt-oss-safeguard-20b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'groq-meta-llama-llama-prompt-guard-2-22m',
+    provider: 'groq',
+    model: 'meta-llama/llama-prompt-guard-2-22m',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'groq-allam-2-7b',
+    provider: 'groq',
+    model: 'allam-2-7b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'groq-groq-compound-mini',
+    provider: 'groq',
+    model: 'groq/compound-mini',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'groq-canopylabs-orpheus-v1-english',
+    provider: 'groq',
+    model: 'canopylabs/orpheus-v1-english',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'groq-groq-compound',
+    provider: 'groq',
+    model: 'groq/compound',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'groq-canopylabs-orpheus-arabic-saudi',
+    provider: 'groq',
+    model: 'canopylabs/orpheus-arabic-saudi',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-tencent-hy3-preview-free',
+    provider: 'openrouter',
+    model: 'tencent/hy3-preview:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-xiaomi-mimo-v2-5-pro',
+    provider: 'openrouter',
+    model: 'xiaomi/mimo-v2.5-pro',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-xiaomi-mimo-v2-5',
+    provider: 'openrouter',
+    model: 'xiaomi/mimo-v2.5',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-4-image-2',
+    provider: 'openrouter',
+    model: 'openai/gpt-5.4-image-2',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-inclusionai-ling-2-6-flash-free',
+    provider: 'openrouter',
+    model: 'inclusionai/ling-2.6-flash:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter--anthropic-claude-opus-latest',
+    provider: 'openrouter',
+    model: '~anthropic/claude-opus-latest',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openrouter-pareto-code',
+    provider: 'openrouter',
+    model: 'openrouter/pareto-code',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-baidu-qianfan-ocr-fast-free',
+    provider: 'openrouter',
+    model: 'baidu/qianfan-ocr-fast:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-moonshotai-kimi-k2-6',
+    provider: 'openrouter',
+    model: 'moonshotai/kimi-k2.6',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-anthropic-claude-opus-4-7',
+    provider: 'openrouter',
+    model: 'anthropic/claude-opus-4.7',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-anthropic-claude-opus-4-6-fast',
+    provider: 'openrouter',
+    model: 'anthropic/claude-opus-4.6-fast',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-z-ai-glm-5-1',
+    provider: 'openrouter',
+    model: 'z-ai/glm-5.1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemma-4-26b-a4b-it-free',
+    provider: 'openrouter',
+    model: 'google/gemma-4-26b-a4b-it:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemma-4-26b-a4b-it',
+    provider: 'openrouter',
+    model: 'google/gemma-4-26b-a4b-it',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemma-4-31b-it-free',
+    provider: 'openrouter',
+    model: 'google/gemma-4-31b-it:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemma-4-31b-it',
+    provider: 'openrouter',
+    model: 'google/gemma-4-31b-it',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-6-plus',
+    provider: 'openrouter',
+    model: 'qwen/qwen3.6-plus',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-z-ai-glm-5v-turbo',
+    provider: 'openrouter',
+    model: 'z-ai/glm-5v-turbo',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-arcee-ai-trinity-large-thinking',
+    provider: 'openrouter',
+    model: 'arcee-ai/trinity-large-thinking',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-x-ai-grok-4-20-multi-agent',
+    provider: 'openrouter',
+    model: 'x-ai/grok-4.20-multi-agent',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-x-ai-grok-4-20',
+    provider: 'openrouter',
+    model: 'x-ai/grok-4.20',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-lyria-3-pro-preview',
+    provider: 'openrouter',
+    model: 'google/lyria-3-pro-preview',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-lyria-3-clip-preview',
+    provider: 'openrouter',
+    model: 'google/lyria-3-clip-preview',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-kwaipilot-kat-coder-pro-v2',
+    provider: 'openrouter',
+    model: 'kwaipilot/kat-coder-pro-v2',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-rekaai-reka-edge',
+    provider: 'openrouter',
+    model: 'rekaai/reka-edge',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-xiaomi-mimo-v2-omni',
+    provider: 'openrouter',
+    model: 'xiaomi/mimo-v2-omni',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-xiaomi-mimo-v2-pro',
+    provider: 'openrouter',
+    model: 'xiaomi/mimo-v2-pro',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-minimax-minimax-m2-7',
+    provider: 'openrouter',
+    model: 'minimax/minimax-m2.7',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-4-nano',
+    provider: 'openrouter',
+    model: 'openai/gpt-5.4-nano',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-4-mini',
+    provider: 'openrouter',
+    model: 'openai/gpt-5.4-mini',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-mistral-small-2603',
+    provider: 'openrouter',
+    model: 'mistralai/mistral-small-2603',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-z-ai-glm-5-turbo',
+    provider: 'openrouter',
+    model: 'z-ai/glm-5-turbo',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-nvidia-nemotron-3-super-120b-a12b-free',
+    provider: 'openrouter',
+    model: 'nvidia/nemotron-3-super-120b-a12b:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-nvidia-nemotron-3-super-120b-a12b',
+    provider: 'openrouter',
+    model: 'nvidia/nemotron-3-super-120b-a12b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-bytedance-seed-seed-2-0-lite',
+    provider: 'openrouter',
+    model: 'bytedance-seed/seed-2.0-lite',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-5-9b',
+    provider: 'openrouter',
+    model: 'qwen/qwen3.5-9b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-4-pro',
+    provider: 'openrouter',
+    model: 'openai/gpt-5.4-pro',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-4',
+    provider: 'openrouter',
+    model: 'openai/gpt-5.4',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-inception-mercury-2',
+    provider: 'openrouter',
+    model: 'inception/mercury-2',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-3-chat',
+    provider: 'openrouter',
+    model: 'openai/gpt-5.3-chat',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemini-3-1-flash-lite-preview',
+    provider: 'openrouter',
+    model: 'google/gemini-3.1-flash-lite-preview',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-bytedance-seed-seed-2-0-mini',
+    provider: 'openrouter',
+    model: 'bytedance-seed/seed-2.0-mini',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemini-3-1-flash-image-preview',
+    provider: 'openrouter',
+    model: 'google/gemini-3.1-flash-image-preview',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-5-35b-a3b',
+    provider: 'openrouter',
+    model: 'qwen/qwen3.5-35b-a3b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-5-27b',
+    provider: 'openrouter',
+    model: 'qwen/qwen3.5-27b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-5-122b-a10b',
+    provider: 'openrouter',
+    model: 'qwen/qwen3.5-122b-a10b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-5-flash-02-23',
+    provider: 'openrouter',
+    model: 'qwen/qwen3.5-flash-02-23',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-liquid-lfm-2-24b-a2b',
+    provider: 'openrouter',
+    model: 'liquid/lfm-2-24b-a2b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemini-3-1-pro-preview-customtools',
+    provider: 'openrouter',
+    model: 'google/gemini-3.1-pro-preview-customtools',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-3-codex',
+    provider: 'openrouter',
+    model: 'openai/gpt-5.3-codex',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-aion-labs-aion-2-0',
+    provider: 'openrouter',
+    model: 'aion-labs/aion-2.0',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemini-3-1-pro-preview',
+    provider: 'openrouter',
+    model: 'google/gemini-3.1-pro-preview',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-anthropic-claude-sonnet-4-6',
+    provider: 'openrouter',
+    model: 'anthropic/claude-sonnet-4.6',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-5-plus-02-15',
+    provider: 'openrouter',
+    model: 'qwen/qwen3.5-plus-02-15',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-5-397b-a17b',
+    provider: 'openrouter',
+    model: 'qwen/qwen3.5-397b-a17b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-minimax-minimax-m2-5-free',
+    provider: 'openrouter',
+    model: 'minimax/minimax-m2.5:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-minimax-minimax-m2-5',
+    provider: 'openrouter',
+    model: 'minimax/minimax-m2.5',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-z-ai-glm-5',
+    provider: 'openrouter',
+    model: 'z-ai/glm-5',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-max-thinking',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-max-thinking',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-anthropic-claude-opus-4-6',
+    provider: 'openrouter',
+    model: 'anthropic/claude-opus-4.6',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-coder-next',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-coder-next',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openrouter-free',
+    provider: 'openrouter',
+    model: 'openrouter/free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-stepfun-step-3-5-flash',
+    provider: 'openrouter',
+    model: 'stepfun/step-3.5-flash',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-arcee-ai-trinity-large-preview',
+    provider: 'openrouter',
+    model: 'arcee-ai/trinity-large-preview',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-moonshotai-kimi-k2-5',
+    provider: 'openrouter',
+    model: 'moonshotai/kimi-k2.5',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-upstage-solar-pro-3',
+    provider: 'openrouter',
+    model: 'upstage/solar-pro-3',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-minimax-minimax-m2-her',
+    provider: 'openrouter',
+    model: 'minimax/minimax-m2-her',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-writer-palmyra-x5',
+    provider: 'openrouter',
+    model: 'writer/palmyra-x5',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-liquid-lfm-2-5-1-2b-thinking-free',
+    provider: 'openrouter',
+    model: 'liquid/lfm-2.5-1.2b-thinking:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-liquid-lfm-2-5-1-2b-instruct-free',
+    provider: 'openrouter',
+    model: 'liquid/lfm-2.5-1.2b-instruct:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-audio',
+    provider: 'openrouter',
+    model: 'openai/gpt-audio',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-audio-mini',
+    provider: 'openrouter',
+    model: 'openai/gpt-audio-mini',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-z-ai-glm-4-7-flash',
+    provider: 'openrouter',
+    model: 'z-ai/glm-4.7-flash',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-2-codex',
+    provider: 'openrouter',
+    model: 'openai/gpt-5.2-codex',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-allenai-olmo-3-1-32b-instruct',
+    provider: 'openrouter',
+    model: 'allenai/olmo-3.1-32b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-bytedance-seed-seed-1-6-flash',
+    provider: 'openrouter',
+    model: 'bytedance-seed/seed-1.6-flash',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-bytedance-seed-seed-1-6',
+    provider: 'openrouter',
+    model: 'bytedance-seed/seed-1.6',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-minimax-minimax-m2-1',
+    provider: 'openrouter',
+    model: 'minimax/minimax-m2.1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-z-ai-glm-4-7',
+    provider: 'openrouter',
+    model: 'z-ai/glm-4.7',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemini-3-flash-preview',
+    provider: 'openrouter',
+    model: 'google/gemini-3-flash-preview',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-mistral-small-creative',
+    provider: 'openrouter',
+    model: 'mistralai/mistral-small-creative',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-xiaomi-mimo-v2-flash',
+    provider: 'openrouter',
+    model: 'xiaomi/mimo-v2-flash',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-nvidia-nemotron-3-nano-30b-a3b-free',
+    provider: 'openrouter',
+    model: 'nvidia/nemotron-3-nano-30b-a3b:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-nvidia-nemotron-3-nano-30b-a3b',
+    provider: 'openrouter',
+    model: 'nvidia/nemotron-3-nano-30b-a3b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-2-chat',
+    provider: 'openrouter',
+    model: 'openai/gpt-5.2-chat',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-2-pro',
+    provider: 'openrouter',
+    model: 'openai/gpt-5.2-pro',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-2',
+    provider: 'openrouter',
+    model: 'openai/gpt-5.2',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-devstral-2512',
+    provider: 'openrouter',
+    model: 'mistralai/devstral-2512',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-relace-relace-search',
+    provider: 'openrouter',
+    model: 'relace/relace-search',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-z-ai-glm-4-6v',
+    provider: 'openrouter',
+    model: 'z-ai/glm-4.6v',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-nex-agi-deepseek-v3-1-nex-n1',
+    provider: 'openrouter',
+    model: 'nex-agi/deepseek-v3.1-nex-n1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-essentialai-rnj-1-instruct',
+    provider: 'openrouter',
+    model: 'essentialai/rnj-1-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openrouter-bodybuilder',
+    provider: 'openrouter',
+    model: 'openrouter/bodybuilder',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-1-codex-max',
+    provider: 'openrouter',
+    model: 'openai/gpt-5.1-codex-max',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-amazon-nova-2-lite-v1',
+    provider: 'openrouter',
+    model: 'amazon/nova-2-lite-v1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-ministral-14b-2512',
+    provider: 'openrouter',
+    model: 'mistralai/ministral-14b-2512',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-ministral-8b-2512',
+    provider: 'openrouter',
+    model: 'mistralai/ministral-8b-2512',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-ministral-3b-2512',
+    provider: 'openrouter',
+    model: 'mistralai/ministral-3b-2512',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-mistral-large-2512',
+    provider: 'openrouter',
+    model: 'mistralai/mistral-large-2512',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-arcee-ai-trinity-mini',
+    provider: 'openrouter',
+    model: 'arcee-ai/trinity-mini',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-deepseek-deepseek-v3-2-speciale',
+    provider: 'openrouter',
+    model: 'deepseek/deepseek-v3.2-speciale',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-deepseek-deepseek-v3-2',
+    provider: 'openrouter',
+    model: 'deepseek/deepseek-v3.2',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-prime-intellect-intellect-3',
+    provider: 'openrouter',
+    model: 'prime-intellect/intellect-3',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-anthropic-claude-opus-4-5',
+    provider: 'openrouter',
+    model: 'anthropic/claude-opus-4.5',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-allenai-olmo-3-32b-think',
+    provider: 'openrouter',
+    model: 'allenai/olmo-3-32b-think',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemini-3-pro-image-preview',
+    provider: 'openrouter',
+    model: 'google/gemini-3-pro-image-preview',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-x-ai-grok-4-1-fast',
+    provider: 'openrouter',
+    model: 'x-ai/grok-4.1-fast',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-1',
+    provider: 'openrouter',
+    model: 'openai/gpt-5.1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-1-chat',
+    provider: 'openrouter',
+    model: 'openai/gpt-5.1-chat',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-1-codex',
+    provider: 'openrouter',
+    model: 'openai/gpt-5.1-codex',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-1-codex-mini',
+    provider: 'openrouter',
+    model: 'openai/gpt-5.1-codex-mini',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-moonshotai-kimi-k2-thinking',
+    provider: 'openrouter',
+    model: 'moonshotai/kimi-k2-thinking',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-amazon-nova-premier-v1',
+    provider: 'openrouter',
+    model: 'amazon/nova-premier-v1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-perplexity-sonar-pro-search',
+    provider: 'openrouter',
+    model: 'perplexity/sonar-pro-search',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-voxtral-small-24b-2507',
+    provider: 'openrouter',
+    model: 'mistralai/voxtral-small-24b-2507',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-oss-safeguard-20b',
+    provider: 'openrouter',
+    model: 'openai/gpt-oss-safeguard-20b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-nvidia-nemotron-nano-12b-v2-vl',
+    provider: 'openrouter',
+    model: 'nvidia/nemotron-nano-12b-v2-vl',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-minimax-minimax-m2',
+    provider: 'openrouter',
+    model: 'minimax/minimax-m2',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-vl-32b-instruct',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-vl-32b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-ibm-granite-granite-4-0-h-micro',
+    provider: 'openrouter',
+    model: 'ibm-granite/granite-4.0-h-micro',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-image-mini',
+    provider: 'openrouter',
+    model: 'openai/gpt-5-image-mini',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-anthropic-claude-haiku-4-5',
+    provider: 'openrouter',
+    model: 'anthropic/claude-haiku-4.5',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-vl-8b-thinking',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-vl-8b-thinking',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-vl-8b-instruct',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-vl-8b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-image',
+    provider: 'openrouter',
+    model: 'openai/gpt-5-image',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-o3-deep-research',
+    provider: 'openrouter',
+    model: 'openai/o3-deep-research',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-o4-mini-deep-research',
+    provider: 'openrouter',
+    model: 'openai/o4-mini-deep-research',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-nvidia-llama-3-3-nemotron-super-49b-v1-5',
+    provider: 'openrouter',
+    model: 'nvidia/llama-3.3-nemotron-super-49b-v1.5',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-baidu-ernie-4-5-21b-a3b-thinking',
+    provider: 'openrouter',
+    model: 'baidu/ernie-4.5-21b-a3b-thinking',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemini-2-5-flash-image',
+    provider: 'openrouter',
+    model: 'google/gemini-2.5-flash-image',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-vl-30b-a3b-thinking',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-vl-30b-a3b-thinking',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-vl-30b-a3b-instruct',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-vl-30b-a3b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-pro',
+    provider: 'openrouter',
+    model: 'openai/gpt-5-pro',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-z-ai-glm-4-6',
+    provider: 'openrouter',
+    model: 'z-ai/glm-4.6',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-anthropic-claude-sonnet-4-5',
+    provider: 'openrouter',
+    model: 'anthropic/claude-sonnet-4.5',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-deepseek-deepseek-v3-2-exp',
+    provider: 'openrouter',
+    model: 'deepseek/deepseek-v3.2-exp',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-thedrummer-cydonia-24b-v4-1',
+    provider: 'openrouter',
+    model: 'thedrummer/cydonia-24b-v4.1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-relace-relace-apply-3',
+    provider: 'openrouter',
+    model: 'relace/relace-apply-3',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemini-2-5-flash-lite-preview-09-2025',
+    provider: 'openrouter',
+    model: 'google/gemini-2.5-flash-lite-preview-09-2025',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-vl-235b-a22b-thinking',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-vl-235b-a22b-thinking',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-vl-235b-a22b-instruct',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-vl-235b-a22b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-max',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-max',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-coder-plus',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-coder-plus',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-codex',
+    provider: 'openrouter',
+    model: 'openai/gpt-5-codex',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-deepseek-deepseek-v3-1-terminus',
+    provider: 'openrouter',
+    model: 'deepseek/deepseek-v3.1-terminus',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-x-ai-grok-4-fast',
+    provider: 'openrouter',
+    model: 'x-ai/grok-4-fast',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-alibaba-tongyi-deepresearch-30b-a3b',
+    provider: 'openrouter',
+    model: 'alibaba/tongyi-deepresearch-30b-a3b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-coder-flash',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-coder-flash',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-next-80b-a3b-thinking',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-next-80b-a3b-thinking',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-next-80b-a3b-instruct',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-next-80b-a3b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen-plus-2025-07-28-thinking',
+    provider: 'openrouter',
+    model: 'qwen/qwen-plus-2025-07-28:thinking',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen-plus-2025-07-28',
+    provider: 'openrouter',
+    model: 'qwen/qwen-plus-2025-07-28',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-nvidia-nemotron-nano-9b-v2-free',
+    provider: 'openrouter',
+    model: 'nvidia/nemotron-nano-9b-v2:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-nvidia-nemotron-nano-9b-v2',
+    provider: 'openrouter',
+    model: 'nvidia/nemotron-nano-9b-v2',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-moonshotai-kimi-k2-0905',
+    provider: 'openrouter',
+    model: 'moonshotai/kimi-k2-0905',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-30b-a3b-thinking-2507',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-30b-a3b-thinking-2507',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-x-ai-grok-code-fast-1',
+    provider: 'openrouter',
+    model: 'x-ai/grok-code-fast-1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-nousresearch-hermes-4-70b',
+    provider: 'openrouter',
+    model: 'nousresearch/hermes-4-70b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-nousresearch-hermes-4-405b',
+    provider: 'openrouter',
+    model: 'nousresearch/hermes-4-405b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-deepseek-deepseek-chat-v3-1',
+    provider: 'openrouter',
+    model: 'deepseek/deepseek-chat-v3.1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-4o-audio-preview',
+    provider: 'openrouter',
+    model: 'openai/gpt-4o-audio-preview',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-mistral-medium-3-1',
+    provider: 'openrouter',
+    model: 'mistralai/mistral-medium-3.1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-baidu-ernie-4-5-21b-a3b',
+    provider: 'openrouter',
+    model: 'baidu/ernie-4.5-21b-a3b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-baidu-ernie-4-5-vl-28b-a3b',
+    provider: 'openrouter',
+    model: 'baidu/ernie-4.5-vl-28b-a3b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-z-ai-glm-4-5v',
+    provider: 'openrouter',
+    model: 'z-ai/glm-4.5v',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-ai21-jamba-large-1-7',
+    provider: 'openrouter',
+    model: 'ai21/jamba-large-1.7',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-chat',
+    provider: 'openrouter',
+    model: 'openai/gpt-5-chat',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5',
+    provider: 'openrouter',
+    model: 'openai/gpt-5',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-mini',
+    provider: 'openrouter',
+    model: 'openai/gpt-5-mini',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-5-nano',
+    provider: 'openrouter',
+    model: 'openai/gpt-5-nano',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-oss-120b',
+    provider: 'openrouter',
+    model: 'openai/gpt-oss-120b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-oss-20b-free',
+    provider: 'openrouter',
+    model: 'openai/gpt-oss-20b:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-oss-20b',
+    provider: 'openrouter',
+    model: 'openai/gpt-oss-20b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-anthropic-claude-opus-4-1',
+    provider: 'openrouter',
+    model: 'anthropic/claude-opus-4.1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-codestral-2508',
+    provider: 'openrouter',
+    model: 'mistralai/codestral-2508',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-coder-30b-a3b-instruct',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-coder-30b-a3b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-30b-a3b-instruct-2507',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-30b-a3b-instruct-2507',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-z-ai-glm-4-5',
+    provider: 'openrouter',
+    model: 'z-ai/glm-4.5',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-z-ai-glm-4-5-air',
+    provider: 'openrouter',
+    model: 'z-ai/glm-4.5-air',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-235b-a22b-thinking-2507',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-235b-a22b-thinking-2507',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-z-ai-glm-4-32b',
+    provider: 'openrouter',
+    model: 'z-ai/glm-4-32b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-coder',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-coder',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-bytedance-ui-tars-1-5-7b',
+    provider: 'openrouter',
+    model: 'bytedance/ui-tars-1.5-7b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemini-2-5-flash-lite',
+    provider: 'openrouter',
+    model: 'google/gemini-2.5-flash-lite',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-235b-a22b-2507',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-235b-a22b-2507',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-switchpoint-router',
+    provider: 'openrouter',
+    model: 'switchpoint/router',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-moonshotai-kimi-k2',
+    provider: 'openrouter',
+    model: 'moonshotai/kimi-k2',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-devstral-medium',
+    provider: 'openrouter',
+    model: 'mistralai/devstral-medium',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-devstral-small',
+    provider: 'openrouter',
+    model: 'mistralai/devstral-small',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-cognitivecomputations-dolphin-mistral-24b-venice-',
+    provider: 'openrouter',
+    model: 'cognitivecomputations/dolphin-mistral-24b-venice-edition:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-x-ai-grok-4',
+    provider: 'openrouter',
+    model: 'x-ai/grok-4',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemma-3n-e2b-it-free',
+    provider: 'openrouter',
+    model: 'google/gemma-3n-e2b-it:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-tencent-hunyuan-a13b-instruct',
+    provider: 'openrouter',
+    model: 'tencent/hunyuan-a13b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-tngtech-deepseek-r1t2-chimera',
+    provider: 'openrouter',
+    model: 'tngtech/deepseek-r1t2-chimera',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-morph-morph-v3-large',
+    provider: 'openrouter',
+    model: 'morph/morph-v3-large',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-morph-morph-v3-fast',
+    provider: 'openrouter',
+    model: 'morph/morph-v3-fast',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-baidu-ernie-4-5-vl-424b-a47b',
+    provider: 'openrouter',
+    model: 'baidu/ernie-4.5-vl-424b-a47b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-baidu-ernie-4-5-300b-a47b',
+    provider: 'openrouter',
+    model: 'baidu/ernie-4.5-300b-a47b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-mistral-small-3-2-24b-instruct',
+    provider: 'openrouter',
+    model: 'mistralai/mistral-small-3.2-24b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-minimax-minimax-m1',
+    provider: 'openrouter',
+    model: 'minimax/minimax-m1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemini-2-5-flash',
+    provider: 'openrouter',
+    model: 'google/gemini-2.5-flash',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemini-2-5-pro',
+    provider: 'openrouter',
+    model: 'google/gemini-2.5-pro',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-o3-pro',
+    provider: 'openrouter',
+    model: 'openai/o3-pro',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-x-ai-grok-3-mini',
+    provider: 'openrouter',
+    model: 'x-ai/grok-3-mini',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-x-ai-grok-3',
+    provider: 'openrouter',
+    model: 'x-ai/grok-3',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemini-2-5-pro-preview',
+    provider: 'openrouter',
+    model: 'google/gemini-2.5-pro-preview',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-deepseek-deepseek-r1-0528',
+    provider: 'openrouter',
+    model: 'deepseek/deepseek-r1-0528',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-anthropic-claude-opus-4',
+    provider: 'openrouter',
+    model: 'anthropic/claude-opus-4',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-anthropic-claude-sonnet-4',
+    provider: 'openrouter',
+    model: 'anthropic/claude-sonnet-4',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemma-3n-e4b-it-free',
+    provider: 'openrouter',
+    model: 'google/gemma-3n-e4b-it:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemma-3n-e4b-it',
+    provider: 'openrouter',
+    model: 'google/gemma-3n-e4b-it',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-mistral-medium-3',
+    provider: 'openrouter',
+    model: 'mistralai/mistral-medium-3',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemini-2-5-pro-preview-05-06',
+    provider: 'openrouter',
+    model: 'google/gemini-2.5-pro-preview-05-06',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-arcee-ai-spotlight',
+    provider: 'openrouter',
+    model: 'arcee-ai/spotlight',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-arcee-ai-maestro-reasoning',
+    provider: 'openrouter',
+    model: 'arcee-ai/maestro-reasoning',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-arcee-ai-virtuoso-large',
+    provider: 'openrouter',
+    model: 'arcee-ai/virtuoso-large',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-arcee-ai-coder-large',
+    provider: 'openrouter',
+    model: 'arcee-ai/coder-large',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-meta-llama-llama-guard-4-12b',
+    provider: 'openrouter',
+    model: 'meta-llama/llama-guard-4-12b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-30b-a3b',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-30b-a3b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-8b',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-8b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-14b',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-14b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-32b',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-32b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen3-235b-a22b',
+    provider: 'openrouter',
+    model: 'qwen/qwen3-235b-a22b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-o4-mini-high',
+    provider: 'openrouter',
+    model: 'openai/o4-mini-high',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-o3',
+    provider: 'openrouter',
+    model: 'openai/o3',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-o4-mini',
+    provider: 'openrouter',
+    model: 'openai/o4-mini',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-4-1',
+    provider: 'openrouter',
+    model: 'openai/gpt-4.1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-4-1-mini',
+    provider: 'openrouter',
+    model: 'openai/gpt-4.1-mini',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-4-1-nano',
+    provider: 'openrouter',
+    model: 'openai/gpt-4.1-nano',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-alfredpros-codellama-7b-instruct-solidity',
+    provider: 'openrouter',
+    model: 'alfredpros/codellama-7b-instruct-solidity',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-x-ai-grok-3-mini-beta',
+    provider: 'openrouter',
+    model: 'x-ai/grok-3-mini-beta',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-x-ai-grok-3-beta',
+    provider: 'openrouter',
+    model: 'x-ai/grok-3-beta',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-meta-llama-llama-4-maverick',
+    provider: 'openrouter',
+    model: 'meta-llama/llama-4-maverick',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-meta-llama-llama-4-scout',
+    provider: 'openrouter',
+    model: 'meta-llama/llama-4-scout',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-deepseek-deepseek-chat-v3-0324',
+    provider: 'openrouter',
+    model: 'deepseek/deepseek-chat-v3-0324',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-o1-pro',
+    provider: 'openrouter',
+    model: 'openai/o1-pro',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-mistral-small-3-1-24b-instruct',
+    provider: 'openrouter',
+    model: 'mistralai/mistral-small-3.1-24b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemma-3-4b-it-free',
+    provider: 'openrouter',
+    model: 'google/gemma-3-4b-it:free',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemma-3-4b-it',
+    provider: 'openrouter',
+    model: 'google/gemma-3-4b-it',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemma-3-12b-it',
+    provider: 'openrouter',
+    model: 'google/gemma-3-12b-it',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-cohere-command-a',
+    provider: 'openrouter',
+    model: 'cohere/command-a',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-4o-mini-search-preview',
+    provider: 'openrouter',
+    model: 'openai/gpt-4o-mini-search-preview',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-4o-search-preview',
+    provider: 'openrouter',
+    model: 'openai/gpt-4o-search-preview',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-rekaai-reka-flash-3',
+    provider: 'openrouter',
+    model: 'rekaai/reka-flash-3',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemma-3-27b-it',
+    provider: 'openrouter',
+    model: 'google/gemma-3-27b-it',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-thedrummer-skyfall-36b-v2',
+    provider: 'openrouter',
+    model: 'thedrummer/skyfall-36b-v2',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-perplexity-sonar-reasoning-pro',
+    provider: 'openrouter',
+    model: 'perplexity/sonar-reasoning-pro',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-perplexity-sonar-pro',
+    provider: 'openrouter',
+    model: 'perplexity/sonar-pro',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-perplexity-sonar-deep-research',
+    provider: 'openrouter',
+    model: 'perplexity/sonar-deep-research',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwq-32b',
+    provider: 'openrouter',
+    model: 'qwen/qwq-32b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemini-2-0-flash-lite-001',
+    provider: 'openrouter',
+    model: 'google/gemini-2.0-flash-lite-001',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-anthropic-claude-3-7-sonnet',
+    provider: 'openrouter',
+    model: 'anthropic/claude-3.7-sonnet',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-anthropic-claude-3-7-sonnet-thinking',
+    provider: 'openrouter',
+    model: 'anthropic/claude-3.7-sonnet:thinking',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-mistral-saba',
+    provider: 'openrouter',
+    model: 'mistralai/mistral-saba',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-meta-llama-llama-guard-3-8b',
+    provider: 'openrouter',
+    model: 'meta-llama/llama-guard-3-8b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-o3-mini-high',
+    provider: 'openrouter',
+    model: 'openai/o3-mini-high',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemini-2-0-flash-001',
+    provider: 'openrouter',
+    model: 'google/gemini-2.0-flash-001',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen-vl-plus',
+    provider: 'openrouter',
+    model: 'qwen/qwen-vl-plus',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-aion-labs-aion-1-0',
+    provider: 'openrouter',
+    model: 'aion-labs/aion-1.0',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-aion-labs-aion-1-0-mini',
+    provider: 'openrouter',
+    model: 'aion-labs/aion-1.0-mini',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-aion-labs-aion-rp-llama-3-1-8b',
+    provider: 'openrouter',
+    model: 'aion-labs/aion-rp-llama-3.1-8b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen-vl-max',
+    provider: 'openrouter',
+    model: 'qwen/qwen-vl-max',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen-turbo',
+    provider: 'openrouter',
+    model: 'qwen/qwen-turbo',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen2-5-vl-72b-instruct',
+    provider: 'openrouter',
+    model: 'qwen/qwen2.5-vl-72b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen-plus',
+    provider: 'openrouter',
+    model: 'qwen/qwen-plus',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen-max',
+    provider: 'openrouter',
+    model: 'qwen/qwen-max',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-o3-mini',
+    provider: 'openrouter',
+    model: 'openai/o3-mini',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-mistral-small-24b-instruct-2501',
+    provider: 'openrouter',
+    model: 'mistralai/mistral-small-24b-instruct-2501',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-deepseek-deepseek-r1-distill-qwen-32b',
+    provider: 'openrouter',
+    model: 'deepseek/deepseek-r1-distill-qwen-32b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-perplexity-sonar',
+    provider: 'openrouter',
+    model: 'perplexity/sonar',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-deepseek-deepseek-r1-distill-llama-70b',
+    provider: 'openrouter',
+    model: 'deepseek/deepseek-r1-distill-llama-70b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-deepseek-deepseek-r1',
+    provider: 'openrouter',
+    model: 'deepseek/deepseek-r1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-minimax-minimax-01',
+    provider: 'openrouter',
+    model: 'minimax/minimax-01',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-microsoft-phi-4',
+    provider: 'openrouter',
+    model: 'microsoft/phi-4',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-sao10k-l3-1-70b-hanami-x1',
+    provider: 'openrouter',
+    model: 'sao10k/l3.1-70b-hanami-x1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-deepseek-deepseek-chat',
+    provider: 'openrouter',
+    model: 'deepseek/deepseek-chat',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-sao10k-l3-3-euryale-70b',
+    provider: 'openrouter',
+    model: 'sao10k/l3.3-euryale-70b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-o1',
+    provider: 'openrouter',
+    model: 'openai/o1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-cohere-command-r7b-12-2024',
+    provider: 'openrouter',
+    model: 'cohere/command-r7b-12-2024',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-meta-llama-llama-3-3-70b-instruct',
+    provider: 'openrouter',
+    model: 'meta-llama/llama-3.3-70b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-amazon-nova-lite-v1',
+    provider: 'openrouter',
+    model: 'amazon/nova-lite-v1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-amazon-nova-micro-v1',
+    provider: 'openrouter',
+    model: 'amazon/nova-micro-v1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-amazon-nova-pro-v1',
+    provider: 'openrouter',
+    model: 'amazon/nova-pro-v1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-4o-2024-11-20',
+    provider: 'openrouter',
+    model: 'openai/gpt-4o-2024-11-20',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-mistral-large-2411',
+    provider: 'openrouter',
+    model: 'mistralai/mistral-large-2411',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-mistral-large-2407',
+    provider: 'openrouter',
+    model: 'mistralai/mistral-large-2407',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-pixtral-large-2411',
+    provider: 'openrouter',
+    model: 'mistralai/pixtral-large-2411',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen-2-5-coder-32b-instruct',
+    provider: 'openrouter',
+    model: 'qwen/qwen-2.5-coder-32b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-thedrummer-unslopnemo-12b',
+    provider: 'openrouter',
+    model: 'thedrummer/unslopnemo-12b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-anthropic-claude-3-5-haiku',
+    provider: 'openrouter',
+    model: 'anthropic/claude-3.5-haiku',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-anthracite-org-magnum-v4-72b',
+    provider: 'openrouter',
+    model: 'anthracite-org/magnum-v4-72b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen-2-5-7b-instruct',
+    provider: 'openrouter',
+    model: 'qwen/qwen-2.5-7b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-nvidia-llama-3-1-nemotron-70b-instruct',
+    provider: 'openrouter',
+    model: 'nvidia/llama-3.1-nemotron-70b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-inflection-inflection-3-productivity',
+    provider: 'openrouter',
+    model: 'inflection/inflection-3-productivity',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-inflection-inflection-3-pi',
+    provider: 'openrouter',
+    model: 'inflection/inflection-3-pi',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-thedrummer-rocinante-12b',
+    provider: 'openrouter',
+    model: 'thedrummer/rocinante-12b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-meta-llama-llama-3-2-3b-instruct',
+    provider: 'openrouter',
+    model: 'meta-llama/llama-3.2-3b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-meta-llama-llama-3-2-1b-instruct',
+    provider: 'openrouter',
+    model: 'meta-llama/llama-3.2-1b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-meta-llama-llama-3-2-11b-vision-instruct',
+    provider: 'openrouter',
+    model: 'meta-llama/llama-3.2-11b-vision-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-qwen-qwen-2-5-72b-instruct',
+    provider: 'openrouter',
+    model: 'qwen/qwen-2.5-72b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-cohere-command-r-plus-08-2024',
+    provider: 'openrouter',
+    model: 'cohere/command-r-plus-08-2024',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-cohere-command-r-08-2024',
+    provider: 'openrouter',
+    model: 'cohere/command-r-08-2024',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-sao10k-l3-1-euryale-70b',
+    provider: 'openrouter',
+    model: 'sao10k/l3.1-euryale-70b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-nousresearch-hermes-3-llama-3-1-70b',
+    provider: 'openrouter',
+    model: 'nousresearch/hermes-3-llama-3.1-70b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-nousresearch-hermes-3-llama-3-1-405b',
+    provider: 'openrouter',
+    model: 'nousresearch/hermes-3-llama-3.1-405b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-sao10k-l3-lunaris-8b',
+    provider: 'openrouter',
+    model: 'sao10k/l3-lunaris-8b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-4o-2024-08-06',
+    provider: 'openrouter',
+    model: 'openai/gpt-4o-2024-08-06',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-meta-llama-llama-3-1-8b-instruct',
+    provider: 'openrouter',
+    model: 'meta-llama/llama-3.1-8b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-meta-llama-llama-3-1-70b-instruct',
+    provider: 'openrouter',
+    model: 'meta-llama/llama-3.1-70b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-mistral-nemo',
+    provider: 'openrouter',
+    model: 'mistralai/mistral-nemo',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-4o-mini-2024-07-18',
+    provider: 'openrouter',
+    model: 'openai/gpt-4o-mini-2024-07-18',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-4o-mini',
+    provider: 'openrouter',
+    model: 'openai/gpt-4o-mini',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-google-gemma-2-27b-it',
+    provider: 'openrouter',
+    model: 'google/gemma-2-27b-it',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-sao10k-l3-euryale-70b',
+    provider: 'openrouter',
+    model: 'sao10k/l3-euryale-70b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-nousresearch-hermes-2-pro-llama-3-8b',
+    provider: 'openrouter',
+    model: 'nousresearch/hermes-2-pro-llama-3-8b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-4o-2024-05-13',
+    provider: 'openrouter',
+    model: 'openai/gpt-4o-2024-05-13',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-4o',
+    provider: 'openrouter',
+    model: 'openai/gpt-4o',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-meta-llama-llama-3-8b-instruct',
+    provider: 'openrouter',
+    model: 'meta-llama/llama-3-8b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-meta-llama-llama-3-70b-instruct',
+    provider: 'openrouter',
+    model: 'meta-llama/llama-3-70b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-mixtral-8x22b-instruct',
+    provider: 'openrouter',
+    model: 'mistralai/mixtral-8x22b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-microsoft-wizardlm-2-8x22b',
+    provider: 'openrouter',
+    model: 'microsoft/wizardlm-2-8x22b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-4-turbo',
+    provider: 'openrouter',
+    model: 'openai/gpt-4-turbo',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-anthropic-claude-3-haiku',
+    provider: 'openrouter',
+    model: 'anthropic/claude-3-haiku',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-mistral-large',
+    provider: 'openrouter',
+    model: 'mistralai/mistral-large',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-4-turbo-preview',
+    provider: 'openrouter',
+    model: 'openai/gpt-4-turbo-preview',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-3-5-turbo-0613',
+    provider: 'openrouter',
+    model: 'openai/gpt-3.5-turbo-0613',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-mixtral-8x7b-instruct',
+    provider: 'openrouter',
+    model: 'mistralai/mixtral-8x7b-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-alpindale-goliath-120b',
+    provider: 'openrouter',
+    model: 'alpindale/goliath-120b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openrouter-auto',
+    provider: 'openrouter',
+    model: 'openrouter/auto',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-4-1106-preview',
+    provider: 'openrouter',
+    model: 'openai/gpt-4-1106-preview',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-3-5-turbo-instruct',
+    provider: 'openrouter',
+    model: 'openai/gpt-3.5-turbo-instruct',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mistralai-mistral-7b-instruct-v0-1',
+    provider: 'openrouter',
+    model: 'mistralai/mistral-7b-instruct-v0.1',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-3-5-turbo-16k',
+    provider: 'openrouter',
+    model: 'openai/gpt-3.5-turbo-16k',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-mancer-weaver',
+    provider: 'openrouter',
+    model: 'mancer/weaver',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-undi95-remm-slerp-l2-13b',
+    provider: 'openrouter',
+    model: 'undi95/remm-slerp-l2-13b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-gryphe-mythomax-l2-13b',
+    provider: 'openrouter',
+    model: 'gryphe/mythomax-l2-13b',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-4-0314',
+    provider: 'openrouter',
+    model: 'openai/gpt-4-0314',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-4',
+    provider: 'openrouter',
+    model: 'openai/gpt-4',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'openrouter-openai-gpt-3-5-turbo',
+    provider: 'openrouter',
+    model: 'openai/gpt-3.5-turbo',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'cerebras-zai-glm-4-7',
+    provider: 'cerebras',
+    model: 'zai-glm-4.7',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
+  {
+    id: 'cerebras-qwen-3-235b-a22b-instruct-2507',
+    provider: 'cerebras',
+    model: 'qwen-3-235b-a22b-instruct-2507',
+    reasoning: 'medium',
+    supportsStreaming: true,
+    enabled: true,
+    priority: 0.50, // AUTO-ADDED by check-model-ids — review caps + priority
+    capabilities: { toolCalling: false, jsonMode: true, vision: false, contextWindow: 32768, maxOutputTokens: 4096 },
+  },
 ];
 
 const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = {
@@ -1029,9 +4422,7 @@ const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = {
   'groq:llama-3.3-70b-versatile': { requestsPerDay: 300 },
   'groq:openai/gpt-oss-120b': { requestsPerDay: 200 },
   'groq:openai/gpt-oss-20b': { requestsPerDay: 500 },
-  'groq:moonshotai/kimi-k2-instruct': { requestsPerDay: 300 },
   'groq:qwen/qwen3-32b': { requestsPerDay: 500 },
-  'groq:meta-llama/llama-4-maverick-17b-128e-instruct': { requestsPerDay: 500 },
   'groq:meta-llama/llama-4-scout-17b-16e-instruct': { requestsPerDay: 500 },
   'groq:llama-3.1-8b-instant': { requestsPerDay: 1500 },
   // Gemini
@@ -1046,19 +4437,10 @@ const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = {
   'openrouter:openai/gpt-oss-120b:free': { requestsPerDay: 50 },
   'openrouter:qwen/qwen3-next-80b-a3b-instruct:free': { requestsPerDay: 50 },
   'openrouter:google/gemma-3-27b-it:free': { requestsPerDay: 100 },
-  'openrouter:mistralai/mistral-small-3.1-24b-instruct:free': { requestsPerDay: 100 },
   'openrouter:qwen/qwen3-coder:free': { requestsPerDay: 50 },
-  'openrouter:stepfun/step-3.5-flash:free': { requestsPerDay: 100 },
   'openrouter:google/gemma-3-12b-it:free': { requestsPerDay: 100 },
   'openrouter:nvidia/nemotron-nano-12b-v2-vl:free': { requestsPerDay: 100 },
-  'openrouter:deepseek/deepseek-chat-v3.1:free': { requestsPerDay: 50 },
-  'openrouter:deepseek/deepseek-r1-0528:free': { requestsPerDay: 50 },
   'openrouter:z-ai/glm-4.5-air:free': { requestsPerDay: 50 },
-  'openrouter:qwen/qwq-32b:free': { requestsPerDay: 50 },
-  'openrouter:moonshotai/kimi-k2:free': { requestsPerDay: 50 },
-  'openrouter:microsoft/mai-ds-r1:free': { requestsPerDay: 50 },
-  'openrouter:tngtech/deepseek-r1t2-chimera:free': { requestsPerDay: 50 },
-  'openrouter:agentica-org/deepcoder-14b-preview:free': { requestsPerDay: 50 },
   'openrouter:meta-llama/llama-3.2-3b-instruct:free': { requestsPerDay: 100 },
   // Cerebras
   'cerebras:gpt-oss-120b': { requestsPerDay: 300 },
@@ -1125,6 +4507,356 @@ const DEFAULT_LIMITS: Record<string, ProviderLimitConfig> = {
   'mistral:ministral-8b-latest': { requestsPerDay: 1000 },
   'mistral:ministral-3b-latest': { requestsPerDay: 1000 },
   'mistral:pixtral-large-latest': { requestsPerDay: 300 },
+  // AUTO-ADDED limits
+  'groq:meta-llama/llama-prompt-guard-2-86m': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'groq:openai/gpt-oss-safeguard-20b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'groq:meta-llama/llama-prompt-guard-2-22m': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'groq:allam-2-7b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'groq:groq/compound-mini': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'groq:canopylabs/orpheus-v1-english': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'groq:groq/compound': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'groq:canopylabs/orpheus-arabic-saudi': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:tencent/hy3-preview:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:xiaomi/mimo-v2.5-pro': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:xiaomi/mimo-v2.5': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5.4-image-2': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:inclusionai/ling-2.6-flash:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:~anthropic/claude-opus-latest': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openrouter/pareto-code': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:baidu/qianfan-ocr-fast:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:moonshotai/kimi-k2.6': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:anthropic/claude-opus-4.7': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:anthropic/claude-opus-4.6-fast': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:z-ai/glm-5.1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemma-4-26b-a4b-it:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemma-4-26b-a4b-it': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemma-4-31b-it:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemma-4-31b-it': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3.6-plus': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:z-ai/glm-5v-turbo': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:arcee-ai/trinity-large-thinking': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:x-ai/grok-4.20-multi-agent': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:x-ai/grok-4.20': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/lyria-3-pro-preview': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/lyria-3-clip-preview': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:kwaipilot/kat-coder-pro-v2': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:rekaai/reka-edge': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:xiaomi/mimo-v2-omni': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:xiaomi/mimo-v2-pro': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:minimax/minimax-m2.7': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5.4-nano': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5.4-mini': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/mistral-small-2603': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:z-ai/glm-5-turbo': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:nvidia/nemotron-3-super-120b-a12b:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:nvidia/nemotron-3-super-120b-a12b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:bytedance-seed/seed-2.0-lite': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3.5-9b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5.4-pro': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5.4': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:inception/mercury-2': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5.3-chat': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemini-3.1-flash-lite-preview': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:bytedance-seed/seed-2.0-mini': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemini-3.1-flash-image-preview': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3.5-35b-a3b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3.5-27b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3.5-122b-a10b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3.5-flash-02-23': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:liquid/lfm-2-24b-a2b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemini-3.1-pro-preview-customtools': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5.3-codex': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:aion-labs/aion-2.0': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemini-3.1-pro-preview': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:anthropic/claude-sonnet-4.6': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3.5-plus-02-15': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3.5-397b-a17b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:minimax/minimax-m2.5:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:minimax/minimax-m2.5': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:z-ai/glm-5': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-max-thinking': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:anthropic/claude-opus-4.6': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-coder-next': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openrouter/free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:stepfun/step-3.5-flash': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:arcee-ai/trinity-large-preview': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:moonshotai/kimi-k2.5': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:upstage/solar-pro-3': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:minimax/minimax-m2-her': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:writer/palmyra-x5': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:liquid/lfm-2.5-1.2b-thinking:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:liquid/lfm-2.5-1.2b-instruct:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-audio': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-audio-mini': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:z-ai/glm-4.7-flash': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5.2-codex': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:allenai/olmo-3.1-32b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:bytedance-seed/seed-1.6-flash': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:bytedance-seed/seed-1.6': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:minimax/minimax-m2.1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:z-ai/glm-4.7': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemini-3-flash-preview': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/mistral-small-creative': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:xiaomi/mimo-v2-flash': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:nvidia/nemotron-3-nano-30b-a3b:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:nvidia/nemotron-3-nano-30b-a3b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5.2-chat': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5.2-pro': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5.2': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/devstral-2512': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:relace/relace-search': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:z-ai/glm-4.6v': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:nex-agi/deepseek-v3.1-nex-n1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:essentialai/rnj-1-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openrouter/bodybuilder': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5.1-codex-max': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:amazon/nova-2-lite-v1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/ministral-14b-2512': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/ministral-8b-2512': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/ministral-3b-2512': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/mistral-large-2512': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:arcee-ai/trinity-mini': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:deepseek/deepseek-v3.2-speciale': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:deepseek/deepseek-v3.2': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:prime-intellect/intellect-3': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:anthropic/claude-opus-4.5': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:allenai/olmo-3-32b-think': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemini-3-pro-image-preview': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:x-ai/grok-4.1-fast': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5.1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5.1-chat': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5.1-codex': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5.1-codex-mini': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:moonshotai/kimi-k2-thinking': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:amazon/nova-premier-v1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:perplexity/sonar-pro-search': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/voxtral-small-24b-2507': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-oss-safeguard-20b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:nvidia/nemotron-nano-12b-v2-vl': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:minimax/minimax-m2': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-vl-32b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:ibm-granite/granite-4.0-h-micro': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5-image-mini': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:anthropic/claude-haiku-4.5': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-vl-8b-thinking': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-vl-8b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5-image': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/o3-deep-research': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/o4-mini-deep-research': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:nvidia/llama-3.3-nemotron-super-49b-v1.5': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:baidu/ernie-4.5-21b-a3b-thinking': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemini-2.5-flash-image': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-vl-30b-a3b-thinking': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-vl-30b-a3b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5-pro': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:z-ai/glm-4.6': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:anthropic/claude-sonnet-4.5': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:deepseek/deepseek-v3.2-exp': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:thedrummer/cydonia-24b-v4.1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:relace/relace-apply-3': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemini-2.5-flash-lite-preview-09-2025': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-vl-235b-a22b-thinking': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-vl-235b-a22b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-max': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-coder-plus': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5-codex': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:deepseek/deepseek-v3.1-terminus': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:x-ai/grok-4-fast': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:alibaba/tongyi-deepresearch-30b-a3b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-coder-flash': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-next-80b-a3b-thinking': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-next-80b-a3b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen-plus-2025-07-28:thinking': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen-plus-2025-07-28': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:nvidia/nemotron-nano-9b-v2:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:nvidia/nemotron-nano-9b-v2': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:moonshotai/kimi-k2-0905': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-30b-a3b-thinking-2507': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:x-ai/grok-code-fast-1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:nousresearch/hermes-4-70b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:nousresearch/hermes-4-405b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:deepseek/deepseek-chat-v3.1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-4o-audio-preview': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/mistral-medium-3.1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:baidu/ernie-4.5-21b-a3b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:baidu/ernie-4.5-vl-28b-a3b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:z-ai/glm-4.5v': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:ai21/jamba-large-1.7': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5-chat': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5-mini': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-5-nano': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-oss-120b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-oss-20b:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-oss-20b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:anthropic/claude-opus-4.1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/codestral-2508': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-coder-30b-a3b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-30b-a3b-instruct-2507': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:z-ai/glm-4.5': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:z-ai/glm-4.5-air': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-235b-a22b-thinking-2507': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:z-ai/glm-4-32b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-coder': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:bytedance/ui-tars-1.5-7b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemini-2.5-flash-lite': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-235b-a22b-2507': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:switchpoint/router': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:moonshotai/kimi-k2': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/devstral-medium': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/devstral-small': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:cognitivecomputations/dolphin-mistral-24b-venice-edition:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:x-ai/grok-4': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemma-3n-e2b-it:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:tencent/hunyuan-a13b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:tngtech/deepseek-r1t2-chimera': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:morph/morph-v3-large': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:morph/morph-v3-fast': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:baidu/ernie-4.5-vl-424b-a47b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:baidu/ernie-4.5-300b-a47b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/mistral-small-3.2-24b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:minimax/minimax-m1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemini-2.5-flash': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemini-2.5-pro': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/o3-pro': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:x-ai/grok-3-mini': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:x-ai/grok-3': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemini-2.5-pro-preview': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:deepseek/deepseek-r1-0528': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:anthropic/claude-opus-4': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:anthropic/claude-sonnet-4': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemma-3n-e4b-it:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemma-3n-e4b-it': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/mistral-medium-3': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemini-2.5-pro-preview-05-06': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:arcee-ai/spotlight': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:arcee-ai/maestro-reasoning': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:arcee-ai/virtuoso-large': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:arcee-ai/coder-large': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:meta-llama/llama-guard-4-12b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-30b-a3b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-8b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-14b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-32b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen3-235b-a22b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/o4-mini-high': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/o3': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/o4-mini': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-4.1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-4.1-mini': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-4.1-nano': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:alfredpros/codellama-7b-instruct-solidity': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:x-ai/grok-3-mini-beta': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:x-ai/grok-3-beta': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:meta-llama/llama-4-maverick': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:meta-llama/llama-4-scout': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:deepseek/deepseek-chat-v3-0324': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/o1-pro': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/mistral-small-3.1-24b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemma-3-4b-it:free': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemma-3-4b-it': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemma-3-12b-it': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:cohere/command-a': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-4o-mini-search-preview': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-4o-search-preview': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:rekaai/reka-flash-3': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemma-3-27b-it': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:thedrummer/skyfall-36b-v2': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:perplexity/sonar-reasoning-pro': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:perplexity/sonar-pro': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:perplexity/sonar-deep-research': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwq-32b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemini-2.0-flash-lite-001': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:anthropic/claude-3.7-sonnet': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:anthropic/claude-3.7-sonnet:thinking': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/mistral-saba': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:meta-llama/llama-guard-3-8b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/o3-mini-high': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemini-2.0-flash-001': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen-vl-plus': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:aion-labs/aion-1.0': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:aion-labs/aion-1.0-mini': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:aion-labs/aion-rp-llama-3.1-8b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen-vl-max': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen-turbo': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen2.5-vl-72b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen-plus': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen-max': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/o3-mini': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/mistral-small-24b-instruct-2501': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:deepseek/deepseek-r1-distill-qwen-32b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:perplexity/sonar': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:deepseek/deepseek-r1-distill-llama-70b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:deepseek/deepseek-r1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:minimax/minimax-01': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:microsoft/phi-4': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:sao10k/l3.1-70b-hanami-x1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:deepseek/deepseek-chat': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:sao10k/l3.3-euryale-70b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/o1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:cohere/command-r7b-12-2024': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:meta-llama/llama-3.3-70b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:amazon/nova-lite-v1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:amazon/nova-micro-v1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:amazon/nova-pro-v1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-4o-2024-11-20': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/mistral-large-2411': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/mistral-large-2407': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/pixtral-large-2411': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen-2.5-coder-32b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:thedrummer/unslopnemo-12b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:anthropic/claude-3.5-haiku': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:anthracite-org/magnum-v4-72b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen-2.5-7b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:nvidia/llama-3.1-nemotron-70b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:inflection/inflection-3-productivity': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:inflection/inflection-3-pi': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:thedrummer/rocinante-12b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:meta-llama/llama-3.2-3b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:meta-llama/llama-3.2-1b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:meta-llama/llama-3.2-11b-vision-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:qwen/qwen-2.5-72b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:cohere/command-r-plus-08-2024': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:cohere/command-r-08-2024': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:sao10k/l3.1-euryale-70b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:nousresearch/hermes-3-llama-3.1-70b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:nousresearch/hermes-3-llama-3.1-405b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:sao10k/l3-lunaris-8b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-4o-2024-08-06': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:meta-llama/llama-3.1-8b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:meta-llama/llama-3.1-70b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/mistral-nemo': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-4o-mini-2024-07-18': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-4o-mini': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:google/gemma-2-27b-it': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:sao10k/l3-euryale-70b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:nousresearch/hermes-2-pro-llama-3-8b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-4o-2024-05-13': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-4o': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:meta-llama/llama-3-8b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:meta-llama/llama-3-70b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/mixtral-8x22b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:microsoft/wizardlm-2-8x22b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-4-turbo': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:anthropic/claude-3-haiku': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/mistral-large': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-4-turbo-preview': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-3.5-turbo-0613': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/mixtral-8x7b-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:alpindale/goliath-120b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openrouter/auto': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-4-1106-preview': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-3.5-turbo-instruct': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mistralai/mistral-7b-instruct-v0.1': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-3.5-turbo-16k': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:mancer/weaver': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:undi95/remm-slerp-l2-13b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:gryphe/mythomax-l2-13b': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-4-0314': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-4': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'openrouter:openai/gpt-3.5-turbo': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'cerebras:zai-glm-4.7': { requestsPerDay: 100 }, // AUTO-ADDED — tune
+  'cerebras:qwen-3-235b-a22b-instruct-2507': { requestsPerDay: 100 }, // AUTO-ADDED — tune
 };
 
 export interface RateLimitConfig {
@@ -1293,22 +5025,6 @@ const DEFAULT_VIDEO_MODELS: VideoModelCandidate[] = [
 
 const DEFAULT_TTS_MODELS: AudioTtsModelCandidate[] = [
   {
-    id: 'groq-playai',
-    provider: 'groq',
-    model: 'playai-tts',
-    enabled: false, // DECOMMISSIONED by Groq - see docs/deprecations
-    priority: 0.90,
-    voices: [
-      'Aaliyah-PlayAI', 'Adelaide-PlayAI', 'Angelo-PlayAI', 'Arista-PlayAI',
-      'Atlas-PlayAI', 'Basil-PlayAI', 'Briggs-PlayAI', 'Calum-PlayAI',
-      'Celeste-PlayAI', 'Cheyenne-PlayAI', 'Chip-PlayAI', 'Cillian-PlayAI',
-      'Deedee-PlayAI', 'Fritz-PlayAI', 'Gail-PlayAI', 'Indigo-PlayAI',
-      'Mamaw-PlayAI', 'Mason-PlayAI', 'Mikail-PlayAI', 'Mitch-PlayAI',
-      'Nia-PlayAI', 'Nova-PlayAI', 'Quinn-PlayAI', 'Ruby-PlayAI',
-      'Thunder-PlayAI',
-    ],
-  },
-  {
     id: 'cf-melotts',
     provider: 'workers_ai',
     model: '@cf/myshell-ai/melotts',
@@ -1359,7 +5075,6 @@ const DEFAULT_MODALITY_LIMITS: Record<string, ProviderLimitConfig> = {
   'together:ByteDance-Seed/Seedream-3.0': { requestsPerDay: 20 },
   'together:ByteDance-Seed/Seedream-4.0': { requestsPerDay: 15 },
   // TTS
-  'groq:playai-tts': { requestsPerDay: 500 },
   'workers_ai:@cf/myshell-ai/melotts': { requestsPerDay: 500 },
   // STT
   'groq:whisper-large-v3-turbo': { requestsPerDay: 1000 },
