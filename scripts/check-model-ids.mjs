@@ -22,6 +22,8 @@ const JSON_OUT = process.argv.includes('--json');
 
 // ── Provider API fetchers ────────────────────────────────────────────────────
 
+// Each fetcher returns { all: Set (every id upstream, for stale check),
+//                         addable: Set (filtered for new-add candidates) }
 async function fetchGroqModels() {
   const key = process.env.GROQ_API_KEY;
   if (!key) return null;
@@ -30,9 +32,11 @@ async function fetchGroqModels() {
   });
   if (!res.ok) return null;
   const data = await res.json();
-  // Skip non-chat: whisper (STT), playai-tts, prompt-guard/llama-guard, orpheus, allam (arabic-only), compound (agentic)
+  const all = new Set(data.data.map((m) => m.id));
+  // Only chat-suitable models added automatically
   const isChat = (id) => !/whisper|playai-tts|prompt-guard|guard|orpheus|allam|compound/i.test(id);
-  return new Set(data.data.filter((m) => isChat(m.id)).map((m) => m.id));
+  const addable = new Set(data.data.filter((m) => isChat(m.id)).map((m) => m.id));
+  return { all, addable };
 }
 
 async function fetchOpenRouterModels() {
@@ -43,8 +47,7 @@ async function fetchOpenRouterModels() {
   });
   if (!res.ok) return null;
   const data = await res.json();
-  // FREE models only — pricing.prompt === "0" AND pricing.completion === "0"
-  // AND must be a chat/completion model (not image/audio/moderation/search-preview)
+  const all = new Set(data.data.map((m) => m.id));
   const isFree = (m) => {
     const p = m.pricing || {};
     return String(p.prompt) === '0' && String(p.completion) === '0';
@@ -52,14 +55,13 @@ async function fetchOpenRouterModels() {
   const isTextChat = (m) => {
     const id = String(m.id).toLowerCase();
     if (/image|audio|tts|search-preview|deep-research|moderation|guard|palmyra|embed|speech|voxtral|lyria|reka-edge/.test(id)) return false;
-    // Exclude multi-modal non-chat (image-gen, TTS, search)
     if (m.architecture && m.architecture.output_modalities) {
-      const mods = m.architecture.output_modalities;
-      if (!mods.includes('text')) return false;
+      if (!m.architecture.output_modalities.includes('text')) return false;
     }
     return true;
   };
-  return new Set(data.data.filter((m) => isFree(m) && isTextChat(m)).map((m) => m.id));
+  const addable = new Set(data.data.filter((m) => isFree(m) && isTextChat(m)).map((m) => m.id));
+  return { all, addable };
 }
 
 async function fetchCerebrasModels() {
@@ -70,7 +72,8 @@ async function fetchCerebrasModels() {
   });
   if (!res.ok) return null;
   const data = await res.json();
-  return new Set(data.data.map((m) => m.id));
+  const all = new Set(data.data.map((m) => m.id));
+  return { all, addable: all };
 }
 
 async function fetchGeminiModels() {
@@ -81,8 +84,11 @@ async function fetchGeminiModels() {
   );
   if (!res.ok) return null;
   const data = await res.json();
-  // Gemini model names look like "models/gemini-1.5-pro" — strip prefix
-  return new Set(data.models.map((m) => m.name.replace('models/', '')));
+  const all = new Set(data.models.map((m) => m.name.replace('models/', '')));
+  // Only chat-capable generative models for addition (skip embedding / tts / imagen variants here via name prefix)
+  const isChat = (id) => /^gemini-/.test(id) && !/embedding|image/i.test(id);
+  const addable = new Set([...all].filter(isChat));
+  return { all, addable };
 }
 
 // ── Parse current config ─────────────────────────────────────────────────────
@@ -121,22 +127,23 @@ async function main() {
   }
 
   for (const entry of configModels) {
-    const set = providerSets[entry.provider];
-    if (set === null || set === undefined) {
+    const sets = providerSets[entry.provider];
+    if (sets === null || sets === undefined) {
       report.skipped.push({ ...entry, reason: 'no API key / fetch failed' });
       continue;
     }
-    if (set.has(entry.model)) {
+    // Use .all for stale check — if ANY upstream list has the id, it's valid
+    if (sets.all.has(entry.model)) {
       report.ok.push(entry);
     } else {
       report.stale.push(entry);
     }
   }
 
-  // Detect new models — upstream has but config doesn't
-  for (const [provider, set] of Object.entries(providerSets)) {
-    if (!set) continue;
-    for (const model of set) {
+  // Detect new models — use .addable (filtered) so we only auto-add chat/free ones
+  for (const [provider, sets] of Object.entries(providerSets)) {
+    if (!sets) continue;
+    for (const model of sets.addable) {
       if (!configured[provider].has(model)) {
         report.new.push({ provider, model });
       }
