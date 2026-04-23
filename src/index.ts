@@ -340,7 +340,19 @@ const EMBEDDING_MODEL_ALIASES: Record<string, string> = {
   'text-embedding-004': 'gemini-embedding-001',
 };
 
+// Paths exempt from IP rate limiting — public read-only endpoints
+const RATE_LIMIT_EXEMPT_GET = new Set([
+  '/v1/analytics',
+  '/v1/stats/providers',
+  '/v1/models',
+  '/v1/dashboard',
+]);
+
 app.use('/v1/*', async (c, next) => {
+  if (c.req.method === 'GET' && RATE_LIMIT_EXEMPT_GET.has(new URL(c.req.url).pathname)) {
+    return next();
+  }
+
   const config = getRateLimitConfig(c.env);
   const ip = c.req.header('cf-connecting-ip') ?? 'unknown';
   const now = Date.now();
@@ -2830,16 +2842,15 @@ const DASHBOARD_HTML = `<!doctype html>
 </body>
 </html>`;
 
-const dashboardHandler = (c: { html: (s: string) => Response; header: (k: string, v: string) => void }) => {
+const setDashboardHeaders = (c: { header: (k: string, v: string) => void }) => {
   c.header('cache-control', 'no-store, no-cache, must-revalidate, max-age=0');
   c.header('cdn-cache-control', 'no-store');
   c.header('cloudflare-cdn-cache-control', 'no-store');
-  return c.html(DASHBOARD_HTML) as Response;
 };
-app.get('/dashboard', (c) => dashboardHandler(c));
+app.get('/dashboard', (c) => { setDashboardHeaders(c); return c.html(DASHBOARD_HTML); });
 app.get('/dashboard/', (c) => c.redirect('/dashboard'));
-app.get('/live', (c) => dashboardHandler(c));
-app.get('/v1/dashboard', (c) => dashboardHandler(c));
+app.get('/live', (c) => { setDashboardHeaders(c); return c.html(DASHBOARD_HTML); });
+app.get('/v1/dashboard', (c) => { setDashboardHeaders(c); return c.html(DASHBOARD_HTML); });
 
 const healthRoute = createRoute({
   method: 'get',

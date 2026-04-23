@@ -146,8 +146,9 @@ async function main() {
     console.log(`\nPatched config.ts — removed ${report.stale.length} stale model(s)`);
   }
 
-  // Exit with code 1 if stale models found (for CI)
-  if (report.stale.length > 0) process.exit(1);
+  // Exit with code 1 if stale models found AND we didn't patch — signals CI to act.
+  // When --patch is used, patching IS the success action, so exit 0.
+  if (report.stale.length > 0 && !PATCH) process.exit(1);
 }
 
 main().catch((err) => {

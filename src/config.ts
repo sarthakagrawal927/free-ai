@@ -1268,7 +1268,7 @@ const DEFAULT_IMAGE_MODELS: ImageModelCandidate[] = [
   { id: 'cf-dreamshaper', provider: 'workers_ai', model: '@cf/lykon/dreamshaper-8-lcm', enabled: true, priority: 0.70 },
   // NVIDIA NIM
   { id: 'nvidia-flux-schnell', provider: 'nvidia', model: 'black-forest-labs/flux.1-schnell', enabled: true, priority: 0.76 },
-  { id: 'nvidia-sdxl', provider: 'nvidia', model: 'stabilityai/stable-diffusion-xl', enabled: true, priority: 0.70 },
+  { id: 'nvidia-sdxl', provider: 'nvidia', model: 'stabilityai/stable-diffusion-xl', enabled: false, priority: 0.70 }, // NVIDIA NIM function id not found (404)
   // Pollinations (no key)
   { id: 'pollinations-flux', provider: 'pollinations', model: 'flux', enabled: true, priority: 0.60 },
   { id: 'pollinations-flux-realism', provider: 'pollinations', model: 'flux-realism', enabled: true, priority: 0.58 },
