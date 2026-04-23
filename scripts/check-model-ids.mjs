@@ -30,7 +30,9 @@ async function fetchGroqModels() {
   });
   if (!res.ok) return null;
   const data = await res.json();
-  return new Set(data.data.map((m) => m.id));
+  // Skip non-chat: whisper (STT), playai-tts, prompt-guard/llama-guard, orpheus, allam (arabic-only), compound (agentic)
+  const isChat = (id) => !/whisper|playai-tts|prompt-guard|guard|orpheus|allam|compound/i.test(id);
+  return new Set(data.data.filter((m) => isChat(m.id)).map((m) => m.id));
 }
 
 async function fetchOpenRouterModels() {
@@ -41,7 +43,23 @@ async function fetchOpenRouterModels() {
   });
   if (!res.ok) return null;
   const data = await res.json();
-  return new Set(data.data.map((m) => m.id));
+  // FREE models only — pricing.prompt === "0" AND pricing.completion === "0"
+  // AND must be a chat/completion model (not image/audio/moderation/search-preview)
+  const isFree = (m) => {
+    const p = m.pricing || {};
+    return String(p.prompt) === '0' && String(p.completion) === '0';
+  };
+  const isTextChat = (m) => {
+    const id = String(m.id).toLowerCase();
+    if (/image|audio|tts|search-preview|deep-research|moderation|guard|palmyra|embed|speech|voxtral|lyria|reka-edge/.test(id)) return false;
+    // Exclude multi-modal non-chat (image-gen, TTS, search)
+    if (m.architecture && m.architecture.output_modalities) {
+      const mods = m.architecture.output_modalities;
+      if (!mods.includes('text')) return false;
+    }
+    return true;
+  };
+  return new Set(data.data.filter((m) => isFree(m) && isTextChat(m)).map((m) => m.id));
 }
 
 async function fetchCerebrasModels() {
