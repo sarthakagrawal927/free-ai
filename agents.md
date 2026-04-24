@@ -1,119 +1,71 @@
-# Free AI Gateway
+# agents.md — free-ai
 
-OpenAI-compatible API gateway that routes requests across free LLM providers with health-aware model selection. Deployed as a Cloudflare Worker. Part of the SaaS Maker ecosystem (`@sass-maker/ai-gateway`).
+## Purpose
+OpenAI-compatible API gateway on Cloudflare Workers — routes requests across 30+ free LLM providers with health-aware model selection, capability filtering, per-IP rate limiting, and aggregate analytics.
 
-## Tech Stack
+## Stack
+- Framework: Hono + CF Workers (`@hono/zod-openapi` for typed routes + Swagger UI at `/docs`)
+- Language: TypeScript (strict, ESM, ES2022)
+- DB: Cloudflare D1 (SQLite) — anonymous aggregate analytics (`GATEWAY_DB`)
+- Auth: None on chat/embedding endpoints; `GATEWAY_API_KEY` Bearer required for `/v1/analytics` — NOT yet enforced (known gap)
+- Testing: Vitest (unit), Playwright (e2e mock + live smoke)
+- Deploy: Cloudflare Workers via `wrangler deploy`
+- Package manager: pnpm
 
-- **Runtime**: Cloudflare Workers
-- **Framework**: Hono (with `@hono/zod-openapi` for typed routes + Swagger UI)
-- **State**: Durable Objects (SQLite-backed) for health tracking + IP rate limiting; KV for health snapshot cache
-- **Validation**: Zod v4
-- **Playground**: React 19 + Zustand + React Query (Vite-built SPA served from worker)
-- **Docs site**: Astro + Starlight (`site/` dir, separate package)
-- **Testing**: Vitest (unit), Playwright (e2e for playground + live smoke tests)
-- **Language**: TypeScript (strict, ES2022)
-
-## Architecture
-
+## Repo structure
 ```
 src/
-  index.ts          # Main Hono app: all route handlers
-  config.ts         # Model registry (30+ models), provider limits, rate limit config
-  types.ts          # Shared types (Env, ModelCandidate, Provider, etc.)
-  mod.ts            # npm entry point (re-exports app, DOs, types)
-  providers/
-    index.ts        # Maps provider name -> caller function
-    groq.ts         # Groq API caller
-    gemini.ts       # Gemini API caller (chat + embeddings)
-    workers-ai.ts   # Cloudflare Workers AI caller
-    openrouter.ts   # OpenRouter API caller
-    cerebras.ts     # Cerebras API caller
-    voyage.ts       # Voyage AI embeddings caller
-    openai-compatible.ts # Shared OpenAI-format caller
+  index.ts              # Hono app + all route handlers (monolithic, ~55KB — known TODO to split)
+  config.ts             # Model registry (30+ chat + 6 embedding models), tier ordering
+  types.ts              # Shared types (Env, ModelCandidate, Provider)
+  dashboard-html.ts     # Bundled HTML for /dashboard
+  providers/            # One file per provider (groq, gemini, workers-ai, openrouter, cerebras, etc.)
   router/
-    select-model.ts # Scoring algorithm: selects best model based on success rate, headroom, latency
-    classify-error.ts # Classifies errors into failure classes
+    select-model.ts     # Health-aware scoring + candidate selection
+    classify-error.ts   # Error classification for retry/cooldown
   state/
-    health-do.ts    # HealthStateDO: per-model attempt history, cooldowns, daily usage
-    ip-rate-limit-do.ts # IpRateLimitDO: token-bucket rate limiter per IP
-    client.ts       # Client functions to call DOs from worker code
+    health-do.ts        # HealthStateDO: per-model success rate, latency, cooldowns
+    ip-rate-limit-do.ts # IpRateLimitDO: token-bucket per IP (10 burst / ~20 rpm)
+    client.ts           # DO client helpers
   utils/
-    request.ts      # Request normalization
-    sse.ts          # SSE stream helpers
-playground/         # React playground SPA
-site/               # Astro Starlight docs site
-test/               # Unit tests
-e2e/                # Playwright tests (playground)
-e2e-live/           # Playwright tests (deployed worker)
+    request.ts          # Request normalization
+    sse.ts              # SSE streaming helpers
+playground/             # Vite + React 19 demo SPA (served via ASSETS binding)
+site/                   # Astro docs/marketing (separate package.json)
+migrations/             # D1 SQL migrations (0001–0005)
+scripts/                # Deploy, env sync, model ID validation
+test/                   # Vitest unit tests
+e2e/                    # Playwright e2e (mock server)
+e2e-live/               # Playwright e2e (live deployed gateway)
+examples/               # Node.js + Python OpenAI SDK usage examples
+wrangler.toml           # CF config: D1, KV, Durable Objects, AI binding, assets
 ```
 
-### Request Flow
-
-1. IP rate limit check via `IpRateLimitDO`
-2. Parse + validate request body (Zod)
-3. Build model registry from config (filtered by available API keys)
-4. Fetch health snapshots from `HealthStateDO`
-5. `selectCandidates()` scores and ranks models
-6. Round-robin within top-tier candidates
-7. Retry loop with `p-retry`: call provider, record success/failure, on retriable failure try next candidate
-8. Return OpenAI-format response with `x_gateway` metadata
-
-### Providers (7 text, 3 embedding)
-
-Workers AI, Groq, Gemini, OpenRouter, Cerebras, SambaNova, NVIDIA, Voyage AI (embeddings)
-
-## Key Conventions
-
-- **Naming**: snake_case for provider names, camelCase for everything else
-- **Error handling**: All provider errors classified into 4 failure classes; only `usage_retriable` triggers retry
-- **OpenAPI**: Routes defined with `@hono/zod-openapi` createRoute pattern; Swagger UI at `/docs`
-- **State**: Single global `HealthStateDO` instance; per-IP `IpRateLimitDO` instances
-- **Monolithic index.ts**: All routes live in `src/index.ts`
-
-## Commands
-
+## Key commands
 ```bash
-pnpm dev                        # Dev with wrangler (remote mode)
-pnpm dev:local                  # Dev with wrangler (local mode)
-pnpm test                       # Unit tests (vitest)
-pnpm run typecheck              # TypeScript check
-pnpm test:e2e                   # Playwright tests (playground)
-pnpm test:e2e:live              # Playwright tests (deployed worker)
-pnpm deploy                     # Deploy to Cloudflare Workers
-pnpm run build:playground       # Build playground SPA
+pnpm dev                  # wrangler dev --remote (uses remote CF resources)
+pnpm dev:local            # sync env vars + wrangler dev --local
+pnpm deploy               # wrangler deploy (production)
+pnpm test                 # vitest run
+pnpm test:watch           # vitest watch
+pnpm test:e2e             # playwright (mock e2e)
+pnpm test:e2e:live        # playwright against live gateway
+pnpm typecheck            # tsc --noEmit
+pnpm check                # typecheck + unit tests
+pnpm build                # build playground Vite SPA
+node scripts/sync-dev-vars.mjs  # sync .env to wrangler dev vars
 ```
 
-## Environment Variables
+## Architecture notes
+- **Request flow**: IP rate limit → parse/validate (Zod) → build model registry from available API keys → fetch health snapshots from `HealthStateDO` → `selectCandidates()` scores + ranks → retry loop (`p-retry`) calling provider → return OpenAI-format response with `x_gateway` metadata.
+- **Scoring formula**: `successRate×0.6 + headroom×0.2 + latencyScore×0.15 + reasoningFit×0.05 + priority×0.02`. Failed models cooled down and excluded.
+- **Capability filtering**: requests with `tools` → tool-capable models only; `response_format: json_object` → JSON-mode only; image content → vision-capable only. Returns 503 if no capable model available.
+- **Known gaps**: (1) Bearer auth not enforced on analytics endpoint. (2) `model=auto` vision routing: `select-model.ts` has partial fix but needs end-to-end verification on image payloads.
+- **State**: single global `HealthStateDO`; per-IP `IpRateLimitDO`. KV (`HEALTH_KV`) for fast health snapshots.
+- **Providers requiring API keys**: OpenRouter, Cerebras, SambaNova, NVIDIA, Groq, Gemini, Voyage. Workers AI uses CF AI binding (no extra key).
+- **30+ chat models + 6 embedding models** in config registry.
+- **Monolithic `index.ts`** (~55KB) — splitting is a known TODO.
+- `site/` is an Astro site with its own `package.json`; managed separately.
+- Playground Vite SPA served via `ASSETS` binding in `wrangler.toml`.
 
-```bash
-# Required for non-Workers-AI providers
-GROQ_API_KEY=                   # Groq free tier
-GEMINI_API_KEY=                 # Gemini free tier
-VOYAGE_API_KEY=                 # Voyage AI embeddings
-
-# Optional
-OPENROUTER_API_KEY=
-CEREBRAS_API_KEY=
-CLOUDFLARE_ACCOUNT_ID=          # Workers AI REST fallback (local dev)
-CLOUDFLARE_WORKERS_AI_API_KEY=
-PLAYGROUND_ENABLED=false
-```
-
-## Current State
-
-**Done:**
-- Full OpenAI-compatible API (chat completions, embeddings, responses API)
-- 30+ models across 6 providers
-- Health-aware model selection with scoring, cooldowns, daily limits
-- SSE streaming support
-- IP rate limiting (token bucket via Durable Objects)
-- OpenAPI spec + Swagger UI
-- React playground SPA
-- Unit + e2e + live smoke tests
-- Astro docs site
-
-**Not done:**
-- `index.ts` is monolithic (~55KB) -- could be split
-- No auth system (gateway is fully open)
-- No per-user usage tracking
-- No persistent logging/analytics
+## Active context
