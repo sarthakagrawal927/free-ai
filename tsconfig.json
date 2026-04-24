@@ -1,18 +1,3 @@
 {
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "strict": true,
-    "skipLibCheck": true,
-    "lib": ["ES2022", "WebWorker", "DOM", "DOM.Iterable"],
-    "types": ["@cloudflare/workers-types", "vitest/globals"],
-    "jsx": "react-jsx",
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true
-  },
-  "include": ["src/**/*.ts", "test/**/*.ts", "playground/src/**/*.ts", "playground/src/**/*.tsx", "vitest.config.ts"],
-  "exclude": ["node_modules", "dist"]
+  "extends": "@saas-maker/tsconfig/vite.json"
 }
