@@ -1,5 +1,6 @@
 import { swaggerUI } from '@hono/swagger-ui';
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
+import { configurePostHog, trace, flushPostHog } from '@saas-maker/ops';
 import pLimit from 'p-limit';
 import pRetry from 'p-retry';
 import { AbortError } from 'p-retry';
@@ -350,6 +351,17 @@ const RATE_LIMIT_EXEMPT_GET = new Set([
   '/v1/models',
   '/v1/dashboard',
 ]);
+
+// PostHog tracing middleware
+let phConfigured = false;
+app.use('*', async (c, next) => {
+  if (!phConfigured && c.env.POSTHOG_API_KEY) {
+    configurePostHog(c.env.POSTHOG_API_KEY, 'https://us.i.posthog.com');
+    phConfigured = true;
+  }
+  await next();
+  if (c.env.POSTHOG_API_KEY) c.executionCtx.waitUntil(flushPostHog());
+});
 
 app.use('/v1/*', async (c, next) => {
   if (c.req.method === 'GET' && RATE_LIMIT_EXEMPT_GET.has(new URL(c.req.url).pathname)) {
@@ -802,13 +814,13 @@ app.openapi(chatRoute, async (c) => {
     messages: normalized.messages,
   });
 
-  let selected = selectCandidates(registry, stateMap, {
+  let selected = await trace('ai:route', () => Promise.resolve(selectCandidates(registry, stateMap, {
     min_reasoning_level: normalized.min_reasoning_level,
     stream: normalized.stream,
     now,
     modelOverride: forcedModel,
     requiredCapabilities,
-  });
+  })), { project: projectId, meta: { model: normalized.model } });
 
   const requestedModel = normalized.model.trim().toLowerCase();
   const shouldRoundRobin =

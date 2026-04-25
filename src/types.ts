@@ -197,4 +197,5 @@ export interface Env {
   PROVIDER_LIMITS_JSON?: string;
   RATE_LIMIT_CONFIG_JSON?: string;
   DOCS_SITE_URL?: string;
+  POSTHOG_API_KEY?: string;
 }
