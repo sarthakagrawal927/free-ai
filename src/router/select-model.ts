@@ -17,6 +17,28 @@ function messagesContainImages(messages: ChatMessage[]): boolean {
   });
 }
 
+const GITHUB_MODELS_IMAGE_INCOMPATIBLE = new Set([
+  'openai/gpt-5',
+  'openai/gpt-5-mini',
+  'openai/gpt-5-nano',
+  'openai/o3',
+  'openai/o4-mini',
+]);
+
+function supportsVisionInput(candidate: ModelCandidate): boolean {
+  if (!candidate.capabilities.vision) {
+    return false;
+  }
+
+  // GitHub Models exposes these through chat completions, but the endpoint
+  // rejects OpenAI image_url message parts for them.
+  if (candidate.provider === 'github_models' && GITHUB_MODELS_IMAGE_INCOMPATIBLE.has(candidate.model)) {
+    return false;
+  }
+
+  return true;
+}
+
 function estimateTokenCount(messages: ChatMessage[]): number {
   let chars = 0;
   for (const msg of messages) {
@@ -97,7 +119,7 @@ export function computeScore(
 }
 
 interface SelectOptions {
-  requestedReasoning: ReasoningEffort;
+  min_reasoning_level?: ReasoningTier;
   stream: boolean;
   now: number;
   modelOverride?: string;
@@ -105,12 +127,19 @@ interface SelectOptions {
   requiredCapabilities?: RequiredCapabilities;
 }
 
+const reasoningRank: Record<ReasoningTier, number> = {
+  low: 0,
+  medium: 1,
+  high: 2,
+};
+
 export function selectCandidates(
   registry: ModelCandidate[],
   stateMap: Map<string, ModelStateSnapshot>,
   options: SelectOptions,
 ): ModelCandidate[] {
-  const order = getTierOrder(options.requestedReasoning);
+  const scoringReasoning: ReasoningEffort = options.min_reasoning_level ?? 'auto';
+  const order = getTierOrder(scoringReasoning);
   const excluded = options.excludedKeys ?? new Set<string>();
 
   const caps = options.requiredCapabilities;
@@ -124,6 +153,10 @@ export function selectCandidates(
       return false;
     }
 
+    if (options.min_reasoning_level && reasoningRank[candidate.reasoning] < reasoningRank[options.min_reasoning_level]) {
+      return false;
+    }
+
     if (caps) {
       if (caps.toolCalling && !candidate.capabilities.toolCalling) {
         return false;
@@ -131,7 +164,7 @@ export function selectCandidates(
       if (caps.jsonMode && !candidate.capabilities.jsonMode) {
         return false;
       }
-      if (caps.vision && !candidate.capabilities.vision) {
+      if (caps.vision && !supportsVisionInput(candidate)) {
         return false;
       }
       if (caps.minContextWindow && candidate.capabilities.contextWindow < caps.minContextWindow) {
@@ -167,7 +200,7 @@ export function selectCandidates(
 
     ranked.push({
       candidate,
-      score: computeScore(options.requestedReasoning, candidate, state),
+      score: computeScore(scoringReasoning, candidate, state),
       tierIndex,
     });
   }

@@ -107,6 +107,7 @@ const chatRequestSchema = z
     temperature: z.number().min(0).max(2).optional(),
     max_tokens: z.number().int().min(1).max(8192).optional(),
     reasoning_effort: z.enum(['auto', 'low', 'medium', 'high']).default('auto'),
+    min_reasoning_level: z.enum(['low', 'medium', 'high']).optional(),
     project_id: projectIdSchema.optional(),
     tools: z.array(toolSchema).optional(),
     tool_choice: toolChoiceSchema.optional(),
@@ -122,6 +123,7 @@ const responsesRequestSchema = z
     temperature: z.number().min(0).max(2).optional(),
     max_output_tokens: z.number().int().min(1).max(8192).optional(),
     reasoning_effort: z.enum(['auto', 'low', 'medium', 'high']).optional(),
+    min_reasoning_level: z.enum(['low', 'medium', 'high']).optional(),
     reasoning: z
       .object({
         effort: z.enum(['low', 'medium', 'high']).optional(),
@@ -497,12 +499,12 @@ function rotateByOffset<T>(items: T[], offset: number): T[] {
 
 function buildChatRoundRobinKey(params: {
   endpoint: 'chat.completions' | 'responses';
-  reasoningEffort: NormalizedChatRequest['reasoning_effort'];
+  min_reasoning_level?: NormalizedChatRequest['min_reasoning_level'];
   stream: boolean;
   candidates: ModelCandidate[];
 }): string {
   const providerSet = params.candidates.map((candidate) => getModelKey(candidate.provider, candidate.model)).join(',');
-  return `chat:${params.endpoint}:${params.reasoningEffort}:${params.stream ? 'stream' : 'nonstream'}:${providerSet}`;
+  return `chat:${params.endpoint}:${params.min_reasoning_level ?? 'auto'}:${params.stream ? 'stream' : 'nonstream'}:${providerSet}`;
 }
 
 function isSafetyRefusal(completion: Record<string, unknown> | undefined): boolean {
@@ -757,6 +759,7 @@ app.openapi(chatRoute, async (c) => {
     temperature: body.temperature,
     max_tokens: body.max_tokens,
     reasoning_effort: body.reasoning_effort,
+    min_reasoning_level: body.min_reasoning_level ?? (body.reasoning_effort === 'auto' ? undefined : body.reasoning_effort),
     tools: body.tools as Tool[] | undefined,
     tool_choice: body.tool_choice as NormalizedChatRequest['tool_choice'],
     response_format: body.response_format as ResponseFormat | undefined,
@@ -800,7 +803,7 @@ app.openapi(chatRoute, async (c) => {
   });
 
   let selected = selectCandidates(registry, stateMap, {
-    requestedReasoning: normalized.reasoning_effort,
+    min_reasoning_level: normalized.min_reasoning_level,
     stream: normalized.stream,
     now,
     modelOverride: forcedModel,
@@ -814,7 +817,7 @@ app.openapi(chatRoute, async (c) => {
   if (shouldRoundRobin) {
     const roundRobinKey = buildChatRoundRobinKey({
       endpoint,
-      reasoningEffort: normalized.reasoning_effort,
+      min_reasoning_level: normalized.min_reasoning_level,
       stream: normalized.stream,
       candidates: selected,
     });
@@ -1227,6 +1230,7 @@ app.openapi(responsesRoute, async (c) => {
   }
 
   const reasoningEffort = body.reasoning_effort ?? body.reasoning?.effort ?? 'auto';
+  const min_reasoning_level = body.min_reasoning_level ?? (reasoningEffort === 'auto' ? undefined : reasoningEffort);
 
   const headers = new Headers();
   headers.set('content-type', 'application/json');
@@ -1262,6 +1266,7 @@ app.openapi(responsesRoute, async (c) => {
       temperature: body.temperature,
       max_tokens: body.max_output_tokens,
       reasoning_effort: reasoningEffort,
+      min_reasoning_level: min_reasoning_level,
       project_id: projectId,
     }),
   });

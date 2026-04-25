@@ -8,7 +8,7 @@ import { z } from 'zod';
 const formSchema = z.object({
   apiKey: z.string().min(1),
   prompt: z.string().min(1),
-  reasoning_effort: z.enum(['auto', 'low', 'medium', 'high']),
+  min_reasoning_level: z.enum(['auto', 'low', 'medium', 'high']),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -29,7 +29,7 @@ export function App() {
     defaultValues: {
       apiKey: '',
       prompt: '',
-      reasoning_effort: 'auto',
+      min_reasoning_level: 'auto',
     },
   });
 
@@ -47,7 +47,7 @@ export function App() {
         body: JSON.stringify({
           model: 'auto',
           prompt: values.prompt,
-          reasoning_effort: values.reasoning_effort,
+          ...(values.min_reasoning_level !== 'auto' && { min_reasoning_level: values.min_reasoning_level }),
           stream: false,
         }),
       });
@@ -77,7 +77,7 @@ export function App() {
         <textarea placeholder="Prompt" rows={5} {...register('prompt')} />
         {formState.errors.prompt ? <small style={{ color: '#dc2626' }}>{formState.errors.prompt.message}</small> : null}
 
-        <select {...register('reasoning_effort')}>
+        <select {...register('min_reasoning_level')}>
           <option value="auto">auto</option>
           <option value="low">low</option>
           <option value="medium">medium</option>
@@ -99,7 +99,7 @@ export function App() {
         <ul>
           {history.map((entry, index) => (
             <li key={`${entry.prompt.slice(0, 8)}-${index}`}>
-              <code>{entry.reasoning_effort}</code> - {entry.prompt.slice(0, 80)}
+              <code>{entry.min_reasoning_level}</code> - {entry.prompt.slice(0, 80)}
             </li>
           ))}
         </ul>

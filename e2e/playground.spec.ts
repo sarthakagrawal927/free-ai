@@ -12,7 +12,7 @@ test.describe('Playground FE (mocked API)', () => {
       const body = request.postDataJSON() as {
         model: string;
         prompt: string;
-        reasoning_effort: string;
+        min_reasoning_level: string;
         stream: boolean;
       };
 
@@ -20,7 +20,7 @@ test.describe('Playground FE (mocked API)', () => {
       expect(body).toEqual({
         model: 'auto',
         prompt: 'Explain edge runtimes briefly',
-        reasoning_effort: 'medium',
+        min_reasoning_level: 'medium',
         stream: false,
       });
 
@@ -53,7 +53,7 @@ test.describe('Playground FE (mocked API)', () => {
     await page.goto('/');
     await page.getByPlaceholder('API key').fill('test-key');
     await page.getByPlaceholder('Prompt').fill('Explain edge runtimes briefly');
-    await page.selectOption('select[name="reasoning_effort"]', 'medium');
+    await page.selectOption('select[name="min_reasoning_level"]', 'medium');
     await page.getByRole('button', { name: 'Send' }).click();
 
     await expect.poll(() => seenRequest).toBe(true);

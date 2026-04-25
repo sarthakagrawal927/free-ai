@@ -22,8 +22,7 @@ The Responses API is an alternative to Chat Completions that uses the [OpenAI Re
 | `stream` | boolean | `false` | When `true`, responses are streamed as server-sent events. |
 | `temperature` | number | — | Sampling temperature (0–2). |
 | `max_output_tokens` | number | — | Maximum number of tokens to generate. |
-| `reasoning_effort` | string | — | Top-level reasoning budget shorthand. One of `"auto"`, `"low"`, `"medium"`, `"high"`. |
-| `reasoning` | object | — | Structured reasoning config. Use `reasoning.effort` to set the budget (same values as `reasoning_effort`). |
+| `min_reasoning_level` | string | — | Minimum reasoning tier for auto-routing. One of `"low"`, `"medium"`, `"high"`. |
 | `project_id` | string | — | Optional tag for grouping requests in analytics. |
 
 ### Input Formats
@@ -49,13 +48,13 @@ The Responses API is an alternative to Chat Completions that uses the [OpenAI Re
 }
 ```
 
-**Object with reasoning** — use the `reasoning` field for fine-grained control:
+**Object with minimum reasoning** — use `min_reasoning_level` to avoid routing below a tier:
 
 ```json
 {
   "model": "auto",
   "input": "Explain quantum entanglement simply.",
-  "reasoning": { "effort": "medium" }
+  "min_reasoning_level": "medium"
 }
 ```
 
@@ -239,7 +238,7 @@ curl https://your-gateway.workers.dev/v1/responses \
     "model": "auto",
     "project_id": "my_project",
     "input": "Prove that the square root of 2 is irrational.",
-    "reasoning": { "effort": "high" }
+    "min_reasoning_level": "high"
   }'
 ```
 </TabItem>
@@ -254,7 +253,7 @@ const response = await fetch('https://your-gateway.workers.dev/v1/responses', {
   body: JSON.stringify({
     model: 'auto',
     input: 'Prove that the square root of 2 is irrational.',
-    reasoning: { effort: 'high' },
+    min_reasoning_level: 'high',
   }),
 });
 

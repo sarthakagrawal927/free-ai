@@ -155,6 +155,7 @@ export interface NormalizedChatRequest {
   temperature?: number;
   max_tokens?: number;
   reasoning_effort: ReasoningEffort;
+  min_reasoning_level?: ReasoningTier;
   tools?: Tool[];
   tool_choice?: 'none' | 'auto' | 'required' | { type: 'function'; function: { name: string } };
   response_format?: ResponseFormat;

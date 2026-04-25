@@ -504,7 +504,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     supportsStreaming: true,
     enabled: true,
     priority: 0.95,
-    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 272000, maxOutputTokens: 16384 },
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 272000, maxOutputTokens: 16384 },
   },
   {
     id: 'gh-gpt-5-mini',
@@ -514,7 +514,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     supportsStreaming: true,
     enabled: true,
     priority: 0.93,
-    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 272000, maxOutputTokens: 16384 },
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 272000, maxOutputTokens: 16384 },
   },
   {
     id: 'gh-gpt-5-nano',
@@ -524,7 +524,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     supportsStreaming: true,
     enabled: true,
     priority: 0.88,
-    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 272000, maxOutputTokens: 16384 },
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 272000, maxOutputTokens: 16384 },
   },
   {
     id: 'gh-gpt-4.1',
@@ -564,7 +564,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     supportsStreaming: true,
     enabled: true,
     priority: 0.94,
-    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 200000, maxOutputTokens: 100000 },
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 200000, maxOutputTokens: 100000 },
   },
   {
     id: 'gh-o4-mini',
@@ -574,7 +574,7 @@ const DEFAULT_MODELS: ModelCandidate[] = [
     supportsStreaming: true,
     enabled: true,
     priority: 0.90,
-    capabilities: { toolCalling: true, jsonMode: true, vision: true, contextWindow: 200000, maxOutputTokens: 100000 },
+    capabilities: { toolCalling: true, jsonMode: true, vision: false, contextWindow: 200000, maxOutputTokens: 100000 },
   },
   {
     id: 'gh-deepseek-r1',
