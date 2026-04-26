@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #131315;
+            color: #e5e1e4;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .spectral-gradient {
+            background: linear-gradient(45deg, #00dbe9, #d1bcff);
+        }
+        .glass-panel {
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(0, 219, 233, 0.05), transparent);
+            background-size: 200% 100%;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#5700c9",
+                    "surface-dim": "#131315",
+                    "on-tertiary-fixed-variant": "#5700c9",
+                    "surface-container-low": "#1c1b1e",
+                    "on-background": "#e5e1e4",
+                    "primary-container": "#004f54",
+                    "outline": "#919191",
+                    "secondary": "#fface8",
+                    "background": "#131315",
+                    "surface-variant": "#353437",
+                    "inverse-surface": "#e5e1e4",
+                    "primary-fixed": "#7df4ff",
+                    "surface-container-highest": "#353437",
+                    "on-secondary-fixed-variant": "#840076",
+                    "on-error": "#690005",
+                    "primary-fixed-dim": "#00dbe9",
+                    "primary": "#00dbe9",
+                    "on-primary-fixed-variant": "#004f54",
+                    "outline-variant": "#474747",
+                    "inverse-primary": "#006970",
+                    "secondary-fixed": "#ffd7f0",
+                    "tertiary-fixed": "#e9ddff",
+                    "error": "#ffb4ab",
+                    "on-tertiary": "#3c0090",
+                    "secondary-container": "#840076",
+                    "on-error-container": "#ffdad6",
+                    "on-secondary-container": "#ffd7f0",
+                    "on-surface": "#e5e1e4",
+                    "tertiary-fixed-dim": "#d1bcff",
+                    "error-container": "#93000a",
+                    "on-primary-fixed": "#002022",
+                    "surface": "#131315",
+                    "surface-bright": "#39393b",
+                    "on-primary": "#00363a",
+                    "on-primary-container": "#7df4ff",
+                    "on-secondary": "#5e0053",
+                    "surface-container": "#201f22",
+                    "on-secondary-fixed": "#3a0033",
+                    "surface-tint": "#00dbe9",
+                    "inverse-on-surface": "#313032",
+                    "surface-container-lowest": "#0e0e10",
+                    "secondary-fixed-dim": "#fface8",
+                    "on-tertiary-fixed": "#23005b",
+                    "on-tertiary-container": "#e9ddff",
+                    "surface-container-high": "#2a2a2c",
+                    "on-surface-variant": "#c6c6c6",
+                    "tertiary": "#d1bcff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.75rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "display": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface overflow-hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-zinc-950/80 backdrop-blur-xl border-b border-white/5 shadow-[0_0_20px_rgba(0,229,255,0.05)] flex items-center justify-between px-6 h-16">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-cyan-400" data-icon="blur_on">blur_on</span>
+<h1 class="text-2xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 font-['Inter']">FreeAI</h1>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex gap-6">
+<a class="text-cyan-400 font-bold font-['Inter'] tracking-tight hover:text-white transition-colors duration-300 active:scale-95 transition-transform" href="#">Playground</a>
+<a class="text-zinc-400 font-['Inter'] tracking-tight hover:text-white transition-colors duration-300 active:scale-95 transition-transform" href="#">Community</a>
+<a class="text-zinc-400 font-['Inter'] tracking-tight hover:text-white transition-colors duration-300 active:scale-95 transition-transform" href="#">API</a>
+</nav>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-primary/20">
+<img alt="User" data-alt="minimalist avatar icon of a digital entity with glowing cyan features" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoO9iGTRX0OhX_YvOY4yMd6RBNEIvsOwtwTWIk4xMxcaRDdJ0gn8re_jUK9eg1mmo5mHuPWssVR0pf_1ZUCE7TMgLA0watWFMTnVgy3MeTzAYGcVNpL7gpi6EL_LOodA-jRA4CqKj4D1Xq7VdTFpY--YsCUf6xKRRkWl752rbwD3hD-gPKGPPAlgkYsFrzgWHYE6QU-_M4PU07dc3BqQFsmJFpfj5H0Wp4JudEWzB7u3C-Z9dYDOifcmKusExxQ_zog7EDleuIOG0Q"/>
+</div>
+</div>
+</header>
+<div class="flex h-screen pt-16">
+<!-- NavigationDrawer / Model Selector -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-zinc-900/60 backdrop-blur-2xl rounded-r-xl shadow-2xl flex flex-col py-6 gap-2 z-40 border-r border-white/5">
+<div class="px-6 mb-4">
+<h2 class="text-cyan-400 font-bold font-['Inter'] uppercase text-[11px] tracking-[0.05em]">CONDUIT v1.0</h2>
+</div>
+<div class="flex flex-col gap-1 px-2">
+<div class="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 text-cyan-400 border-r-2 border-cyan-400 px-4 py-3 flex items-center gap-3 cursor-pointer font-['Inter'] uppercase text-[11px] tracking-[0.05em] font-semibold">
+<span class="material-symbols-outlined text-lg" data-icon="psychology">psychology</span>
+<span>LLM Models</span>
+</div>
+<div class="text-zinc-500 px-4 py-3 flex items-center gap-3 cursor-pointer hover:bg-white/5 hover:text-zinc-200 transition-all duration-200 active:opacity-80 font-['Inter'] uppercase text-[11px] tracking-[0.05em] font-semibold">
+<span class="material-symbols-outlined text-lg" data-icon="auto_awesome">auto_awesome</span>
+<span>Diffusion Art</span>
+</div>
+<div class="text-zinc-500 px-4 py-3 flex items-center gap-3 cursor-pointer hover:bg-white/5 hover:text-zinc-200 transition-all duration-200 active:opacity-80 font-['Inter'] uppercase text-[11px] tracking-[0.05em] font-semibold">
+<span class="material-symbols-outlined text-lg" data-icon="tune">tune</span>
+<span>Fine-tuning</span>
+</div>
+<div class="text-zinc-500 px-4 py-3 flex items-center gap-3 cursor-pointer hover:bg-white/5 hover:text-zinc-200 transition-all duration-200 active:opacity-80 font-['Inter'] uppercase text-[11px] tracking-[0.05em] font-semibold">
+<span class="material-symbols-outlined text-lg" data-icon="terminal">terminal</span>
+<span>System Logs</span>
+</div>
+</div>
+<div class="mt-auto px-4">
+<div class="p-4 rounded-xl bg-surface-container-low border border-white/5">
+<p class="text-[10px] text-zinc-500 mb-2 uppercase tracking-widest">Active Model</p>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+<span class="text-sm font-medium text-on-surface">Llama 3 70B</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 flex-1 relative overflow-hidden flex flex-col p-8 bg-surface">
+<!-- Center Generation Area -->
+<div class="flex-1 flex flex-col items-center justify-center max-w-5xl mx-auto w-full">
+<!-- Real-time Generation Visualizer -->
+<div class="w-full aspect-video md:aspect-[21/9] rounded-2xl bg-surface-container-lowest border border-white/5 overflow-hidden relative group">
+<!-- Shimmer Background -->
+<div class="absolute inset-0 shimmer opacity-20"></div>
+<!-- Content Layer -->
+<div class="relative z-10 w-full h-full p-8 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div class="flex gap-2">
+<span class="px-2 py-1 rounded bg-primary-container text-[10px] text-primary-fixed uppercase font-bold tracking-tighter">Processing</span>
+<span class="px-2 py-1 rounded bg-surface-container-highest text-[10px] text-zinc-400 uppercase font-bold tracking-tighter">SDXL-V1</span>
+</div>
+<div class="flex gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container border border-white/10 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="thumb_up">thumb_up</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container border border-white/10 text-on-surface-variant hover:text-tertiary transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="fork_right">fork_right</span>
+</button>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<div class="relative overflow-hidden rounded-xl border border-white/10 h-64 w-full bg-surface-container-low group-hover:border-primary/30 transition-colors">
+<img alt="Generated visual" class="w-full h-full object-cover opacity-50 grayscale group-hover:grayscale-0 transition-all duration-700" data-alt="abstract digital landscape with bioluminescent structures and flowing neon particles in deep purple and cyan tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrzwC7UvIY7Hg3jtdNcGJbF8EYJUFE7Wsp2-JnXykcQglWUeb2gqvVVFQTgfjLk9VXyvQZ6P0u1T8s2YesVp-CAq_gwbgvVa_Du4xIWJHdkAK2tgRs1cWmOUbHL688jOwJy5KzPLgTq77BjNqqLjgfraNpZPUKKG2X7hPzzhres2ui3YMFUkU9iFU4TslKHhvhdG8dMXwHvPyiWzx4Ysw5G3t2EPUZsGxJE0iiCjbnogsH8w7kBia5nSKJpyjxv3LepkjdgRqWgF-c"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="flex flex-col items-center gap-3">
+<div class="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+<p class="text-xs font-mono text-primary uppercase tracking-[0.2em]">Fluxing Reality...</p>
+</div>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="w-full h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full spectral-gradient w-2/3 shadow-[0_0_10px_#00dbe9]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Text Sample (Secondary View) -->
+<div class="mt-8 w-full glass-panel rounded-2xl p-6 bg-surface-container-low/40">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="chat_bubble_outline">chat_bubble_outline</span>
+<h3 class="text-xs uppercase tracking-widest font-bold text-on-surface-variant">Conduit Output</h3>
+</div>
+<p class="text-on-surface font-light leading-relaxed">
+                        The convergence of <span class="text-primary font-medium">neural logic</span> and <span class="text-tertiary font-medium">spectral aesthetics</span> creates a medium where data doesn't just exist—it radiates. In the Llama 3 architecture, weights are transformed into bioluminescent signals that pulse through the obsidian fabric of the interface. This playground serves as the primary gateway...
+                    </p>
+</div>
+</div>
+<!-- Interactive Prompt Area -->
+<div class="mt-auto pt-8 pb-4">
+<div class="max-w-4xl mx-auto w-full relative">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary/20 to-tertiary/20 rounded-[14px] blur-lg"></div>
+<div class="relative bg-surface-container-lowest border border-white/10 rounded-xl p-2 flex items-center gap-4 focus-within:border-primary/50 transition-all duration-300">
+<div class="pl-4">
+<span class="material-symbols-outlined text-zinc-500" data-icon="command">keyboard_command_key</span>
+</div>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface text-lg placeholder:text-zinc-700 font-light py-4" placeholder="Imagine a spectral conduit bridging two realities..." type="text"/>
+<button class="spectral-gradient h-12 px-8 rounded-lg flex items-center gap-2 group transition-all hover:scale-[1.02] active:scale-95">
+<span class="text-on-primary font-bold uppercase text-xs tracking-widest">Generate</span>
+<span class="material-symbols-outlined text-on-primary text-sm group-hover:translate-x-1 transition-transform" data-icon="auto_fix_high">auto_fix_high</span>
+</button>
+</div>
+<div class="flex justify-center gap-6 mt-4">
+<span class="text-[10px] text-zinc-600 uppercase tracking-widest flex items-center gap-2">
+<span class="w-1 h-1 rounded-full bg-zinc-600"></span> 
+                            Token Cost: 0.002
+                        </span>
+<span class="text-[10px] text-zinc-600 uppercase tracking-widest flex items-center gap-2">
+<span class="w-1 h-1 rounded-full bg-zinc-600"></span> 
+                            Latency: 42ms
+                        </span>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Footer -->
+<footer class="w-full py-12 bg-zinc-950 border-t border-white/5 flex flex-col items-center justify-center gap-4 z-50">
+<div class="flex gap-12">
+<a class="text-zinc-600 font-['Inter'] text-[10px] tracking-widest uppercase hover:text-purple-400 transition-colors" href="#">Architecture</a>
+<a class="text-zinc-600 font-['Inter'] text-[10px] tracking-widest uppercase hover:text-purple-400 transition-colors" href="#">Privacy</a>
+<a class="text-zinc-600 font-['Inter'] text-[10px] tracking-widest uppercase hover:text-purple-400 transition-colors" href="#">Nodes</a>
+</div>
+<p class="text-zinc-600 font-['Inter'] text-[10px] tracking-widest uppercase">© 2024 FREEAI SPECTRAL CONDUIT</p>
+</footer>
+</body></html>
