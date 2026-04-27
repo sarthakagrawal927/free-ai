@@ -1,4 +1,14 @@
+import { buildBudgetExhaustedResponse, estimateNeuronCost, tryDebitNeurons } from '../state/neuron-budget';
 import type { ProviderCaller, ProviderEmbeddingCaller } from './types';
+
+class BudgetExhaustedError extends Error {
+  readonly code = 'neuron_budget_exhausted';
+  readonly retryAfter: number;
+  constructor(message: string, retryAfter: number) {
+    super(message);
+    this.retryAfter = retryAfter;
+  }
+}
 
 function normalizeWorkersResponse(result: unknown): string {
   if (result && typeof result === 'object') {
@@ -127,6 +137,17 @@ function extractWorkersAiEmbeddingRows(result: unknown): number[][] {
 }
 
 export const callWorkersAi: ProviderCaller = async (input) => {
+  // Gate every Workers AI invocation through the daily Neuron budget so we
+  // never exceed the 10k/day free quota. Fails open if the DO is unbound.
+  const cost = estimateNeuronCost(input.model);
+  const debit = await tryDebitNeurons(input.env, cost);
+  if (!debit.allowed) {
+    throw new BudgetExhaustedError(
+      `Daily Workers AI Neuron budget exhausted (${debit.used}/9500)`,
+      debit.retryAfter,
+    );
+  }
+
   const payload: Record<string, unknown> = {
     messages: input.messages,
     temperature: input.temperature,
@@ -227,6 +248,18 @@ export const callWorkersAi: ProviderCaller = async (input) => {
 };
 
 export const callWorkersAiEmbeddings: ProviderEmbeddingCaller = async (input) => {
+  const inputChars = Array.isArray(input.input)
+    ? input.input.reduce((sum, item) => sum + String(item).length, 0)
+    : String(input.input ?? '').length;
+  const cost = estimateNeuronCost(input.model, { inputChars });
+  const debit = await tryDebitNeurons(input.env, cost);
+  if (!debit.allowed) {
+    throw new BudgetExhaustedError(
+      `Daily Workers AI Neuron budget exhausted (${debit.used}/9500)`,
+      debit.retryAfter,
+    );
+  }
+
   const payload: Record<string, unknown> = {
     text: input.input,
   };

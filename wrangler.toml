@@ -29,7 +29,8 @@ preview_id = "63c44d03ec1b45098072b9f911f8bc68"
 [durable_objects]
 bindings = [
   { name = "HEALTH_DO", class_name = "HealthStateDO" },
-  { name = "RATE_LIMIT_DO", class_name = "IpRateLimitDO" }
+  { name = "RATE_LIMIT_DO", class_name = "IpRateLimitDO" },
+  { name = "NEURON_BUDGET", class_name = "NeuronBudgetDO" }
 ]
 
 [[d1_databases]]
@@ -40,5 +41,9 @@ database_id = "6e9e2880-7f07-487a-8b55-8b486be3fa32"
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["HealthStateDO", "IpRateLimitDO"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["NeuronBudgetDO"]
 
 [vars]

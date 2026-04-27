@@ -31,6 +31,8 @@ import { deriveRequiredCapabilities, selectCandidates } from './router/select-mo
 import { consumeIpRateLimit, healthLookup, healthRecord, healthSnapshot, nextRoundRobinOffset, providerStats } from './state/client';
 import { HealthStateDO } from './state/health-do';
 import { IpRateLimitDO } from './state/ip-rate-limit-do';
+import { NeuronBudgetDO } from './state/neuron-budget-do';
+import { buildBudgetExhaustedResponse, estimateNeuronCost, getNeuronUsage, tryDebitNeurons } from './state/neuron-budget';
 import { createSseStream, toSseData } from './utils/sse';
 import { buildCompletionEnvelope, createRequestId, getErrorMessage, normalizeMessages } from './utils/request';
 import type {
@@ -1783,6 +1785,13 @@ app.post('/v1/audio/speech-to-speech', async (c) => {
     );
   }
 
+  // Daily Neuron budget gate — fail closed when the cap is hit so we never
+  // exceed the 10k/day Workers AI free tier.
+  const ttsDebit = await tryDebitNeurons(c.env, estimateNeuronCost('@cf/myshell-ai/melotts'));
+  if (!ttsDebit.allowed) {
+    return buildBudgetExhaustedResponse(ttsDebit);
+  }
+
   try {
     const ttsResult = (await c.env.AI.run('@cf/myshell-ai/melotts', {
       prompt: llmText,
@@ -2459,6 +2468,18 @@ app.get('/v1/stats/providers', async (c) => {
   return c.json({ stats });
 });
 
+// Workers AI daily Neuron budget — sole chokepoint for Fleet-wide AI traffic.
+// Hard cap is 9500 Neurons/day (500 buffer below the 10k/day free quota).
+app.get('/v1/budget', async (c) => {
+  const usage = await getNeuronUsage(c.env);
+  if (!usage) {
+    return c.json({
+      error: { message: 'NEURON_BUDGET binding unavailable', type: 'configuration_error' },
+    }, 503);
+  }
+  return c.json(usage);
+});
+
 app.doc('/openapi.json', {
   openapi: '3.0.0',
   info: {
@@ -2480,4 +2501,4 @@ app.notFound((c) => {
 });
 
 export default app;
-export { HealthStateDO, IpRateLimitDO };
+export { HealthStateDO, IpRateLimitDO, NeuronBudgetDO };

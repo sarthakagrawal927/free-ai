@@ -177,6 +177,7 @@ export interface Env {
   GATEWAY_DB: D1Database;
   HEALTH_DO: DurableObjectNamespace;
   RATE_LIMIT_DO: DurableObjectNamespace;
+  NEURON_BUDGET?: DurableObjectNamespace;
   HEALTH_KV: KVNamespace;
   GROQ_API_KEY?: string;
   GEMINI_API_KEY?: string;

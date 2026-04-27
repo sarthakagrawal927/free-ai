@@ -1,3 +1,4 @@
+import { estimateNeuronCost, tryDebitNeurons } from '../state/neuron-budget';
 import type { Env } from '../types';
 
 export interface WorkersAiSttInput {
@@ -17,6 +18,11 @@ export interface WorkersAiSttOutput {
 export async function callWorkersAiStt(input: WorkersAiSttInput): Promise<WorkersAiSttOutput> {
   if (!input.env.AI || typeof input.env.AI.run !== 'function') {
     throw new Error('Workers AI binding not available');
+  }
+
+  const debit = await tryDebitNeurons(input.env, estimateNeuronCost(input.model));
+  if (!debit.allowed) {
+    throw new Error(`Daily Workers AI Neuron budget exhausted (${debit.used}/9500)`);
   }
 
   const buffer = await input.file.arrayBuffer();
