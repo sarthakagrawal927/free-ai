@@ -128,6 +128,11 @@ export class NeuronBudgetDO {
     }
 
     if (path === '/reset') {
+      // Guard: only allow reset from within the same Worker isolate (internal calls).
+      // External HTTP callers cannot set this header through the public internet.
+      if (request.headers.get('x-gateway-internal') !== '1') {
+        return json({ error: 'Forbidden' }, 403);
+      }
       const fresh: BudgetState = { dayKey: utcDayKey(now), used: 0 };
       await this.save(fresh);
       return json({ ok: true, ...fresh });

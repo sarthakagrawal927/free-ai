@@ -365,7 +365,47 @@ app.use('*', async (c, next) => {
   if (c.env.POSTHOG_API_KEY) c.executionCtx.waitUntil(flushPostHog());
 });
 
+// ── Security headers on every response ─────────────────────────────
+app.use('*', async (c, next) => {
+  await next();
+  c.header('X-Content-Type-Options', 'nosniff');
+  c.header('X-Frame-Options', 'DENY');
+  c.header('Referrer-Policy', 'no-referrer');
+});
+
+// ── API key authentication on all /v1 mutation endpoints ───────────
+// GATEWAY_API_KEY must be set as a wrangler secret in production.
+// Requests that set x-gateway-internal bypass auth (internal Worker-to-Worker
+// calls are already network-isolated — the header is added by /v1/responses
+// when it re-dispatches to /v1/chat/completions within the same isolate).
+const AUTH_EXEMPT_GET = new Set([
+  '/v1/analytics',
+  '/v1/stats/providers',
+  '/v1/models',
+  '/v1/dashboard',
+  '/v1/budget',
+]);
+
 app.use('/v1/*', async (c, next) => {
+  const isExemptGet = c.req.method === 'GET' && AUTH_EXEMPT_GET.has(new URL(c.req.url).pathname);
+  const isInternal = c.req.header('x-gateway-internal') === '1';
+
+  if (!isExemptGet && !isInternal && c.env.GATEWAY_API_KEY) {
+    const authHeader = c.req.header('authorization') ?? '';
+    const providedKey = authHeader.startsWith('Bearer ')
+      ? authHeader.slice(7)
+      : c.req.header('x-api-key') ?? '';
+
+    // Constant-time comparison to prevent timing attacks
+    const expected = c.env.GATEWAY_API_KEY;
+    if (providedKey.length !== expected.length || !isConstantTimeEqual(providedKey, expected)) {
+      return c.json(
+        { error: { message: 'Unauthorized', type: 'authentication_error', code: 'invalid_api_key' } },
+        401,
+      );
+    }
+  }
+
   if (c.req.method === 'GET' && RATE_LIMIT_EXEMPT_GET.has(new URL(c.req.url).pathname)) {
     return next();
   }
@@ -519,6 +559,18 @@ function buildChatRoundRobinKey(params: {
 }): string {
   const providerSet = params.candidates.map((candidate) => getModelKey(candidate.provider, candidate.model)).join(',');
   return `chat:${params.endpoint}:${params.min_reasoning_level ?? 'auto'}:${params.stream ? 'stream' : 'nonstream'}:${providerSet}`;
+}
+
+/** Constant-time string comparison — prevents timing oracle on API key checks. */
+function isConstantTimeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  const aBytes = new TextEncoder().encode(a);
+  const bBytes = new TextEncoder().encode(b);
+  let diff = 0;
+  for (let i = 0; i < aBytes.length; i++) {
+    diff |= aBytes[i] ^ bBytes[i];
+  }
+  return diff === 0;
 }
 
 function isSafetyRefusal(completion: Record<string, unknown> | undefined): boolean {
@@ -1547,6 +1599,8 @@ app.openapi(embeddingsRoute, async (c) => {
 });
 
 // ── Speech-to-Text (health-aware routing across providers) ─────────
+const MAX_AUDIO_BYTES = 25 * 1024 * 1024; // 25 MB — matches Groq / Whisper upstream limit
+
 app.post('/v1/audio/transcriptions', async (c) => {
   const formData = await c.req.formData();
   const file = formData.get('file');
@@ -1558,6 +1612,19 @@ app.post('/v1/audio/transcriptions', async (c) => {
           message: '`file` is required (audio file: mp3, mp4, wav, webm, m4a)',
           type: 'invalid_request_error',
           code: 'missing_file',
+        },
+      },
+      400,
+    );
+  }
+
+  if ((file as File).size > MAX_AUDIO_BYTES) {
+    return c.json(
+      {
+        error: {
+          message: `Audio file too large (max ${MAX_AUDIO_BYTES / 1024 / 1024} MB)`,
+          type: 'invalid_request_error',
+          code: 'file_too_large',
         },
       },
       400,
@@ -1627,7 +1694,9 @@ app.post('/v1/audio/transcriptions', async (c) => {
         });
 
         if (!groqResponse.ok) {
-          lastError = `Groq STT error (${groqResponse.status}): ${await groqResponse.text()}`;
+          // Consume body to avoid response leak; do not forward upstream details to caller
+          await groqResponse.body?.cancel();
+          lastError = `Groq STT error (${groqResponse.status})`;
           continue;
         }
 
@@ -1705,6 +1774,19 @@ app.post('/v1/audio/speech-to-speech', async (c) => {
     );
   }
 
+  if ((file as File).size > MAX_AUDIO_BYTES) {
+    return c.json(
+      {
+        error: {
+          message: `Audio file too large (max ${MAX_AUDIO_BYTES / 1024 / 1024} MB)`,
+          type: 'invalid_request_error',
+          code: 'file_too_large',
+        },
+      },
+      400,
+    );
+  }
+
   const voice = (formData.get('voice') as string) || 'en-US-AriaNeural';
   const systemPrompt = formData.get('system_prompt') as string | null;
 
@@ -1720,9 +1802,9 @@ app.post('/v1/audio/speech-to-speech', async (c) => {
   });
 
   if (!sttResponse.ok) {
-    const errBody = await sttResponse.text();
+    // Do not forward raw upstream error body — it may contain provider internals
     return c.json(
-      { error: { message: `STT failed: ${errBody}`, type: 'provider_error', code: 'stt_failed' } },
+      { error: { message: `STT failed (provider error ${sttResponse.status})`, type: 'provider_error', code: 'stt_failed' } },
       502,
     );
   }
