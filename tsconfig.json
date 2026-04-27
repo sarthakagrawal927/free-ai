@@ -1,11 +1,3 @@
 {
-  "extends": "@saas-maker/tsconfig/vite.json",
-  "compilerOptions": {
-    "types": ["@cloudflare/workers-types"],
-    "noPropertyAccessFromIndexSignature": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false
-  },
-  "include": ["src", "test", "e2e", "playground/src", "scripts"],
-  "exclude": ["node_modules", "e2e-live"]
+  "extends": "@saas-maker/tsconfig/vite.json"
 }

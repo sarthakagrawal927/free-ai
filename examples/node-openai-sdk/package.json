@@ -8,6 +8,6 @@
     "start": "node index.mjs"
   },
   "dependencies": {
-    "openai": "^6.34.0"
+    "openai": "6.34.0"
   }
 }
