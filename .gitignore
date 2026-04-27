@@ -19,3 +19,7 @@ artifacts/
 .playwright-mcp/
 .metadata_never_index
 site/package-lock.json
+
+# fallow cache
+.fallow/
+cache.bin
