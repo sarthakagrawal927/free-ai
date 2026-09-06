@@ -3,7 +3,7 @@ export const OPERATOR_HEALTH_HTML = `<!doctype html>
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>AI Gateway - Health</title>
+<title>Free AI - Health</title>
 <style>
   :root {
     color-scheme: light;
@@ -232,7 +232,7 @@ export const MODEL_CATALOG_HTML = `<!doctype html>
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>AI Gateway - Model Catalog</title>
+<title>Free AI - Model Catalog</title>
 <style>
   :root {
     color-scheme: light;

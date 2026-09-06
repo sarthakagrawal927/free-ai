@@ -49,7 +49,7 @@ describe('agent surface catalog', () => {
     );
     expect(index?.status).toBe(200);
     expect(index?.headers.get('content-type')).toContain('text/markdown');
-    await expect(index?.text()).resolves.toContain('# AI Gateway');
+    await expect(index?.text()).resolves.toContain('# Free AI');
     expect(
       handleAgentEdge(
         new Request('https://ai-gateway.sassmaker.com/authentication.md', {
