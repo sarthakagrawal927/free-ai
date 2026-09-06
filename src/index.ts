@@ -3161,7 +3161,7 @@ app.get('/v1/budget', async (c) => {
 app.doc('/openapi.json', {
   openapi: '3.0.0',
   info: {
-    title: 'sass-maker AI Gateway API',
+    title: 'Free AI API',
     version: '1.0.0',
     description:
       'OpenAI-compatible AI gateway with health-aware free-tier routing across Workers AI, Groq, Gemini, Voyage AI embeddings, voice (Whisper STT + Workers AI TTS), and optional OpenRouter/Cerebras.',

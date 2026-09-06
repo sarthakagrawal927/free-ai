@@ -38,7 +38,7 @@ describe('Operator browser UI routes', () => {
     expect(res.headers.get('content-type') ?? '').toContain('text/html');
     expect(res.headers.get('cache-control') ?? '').toContain('no-store');
     const html = await res.text();
-    expect(html).toContain('<title>AI Gateway - Health</title>');
+    expect(html).toContain('<title>Free AI - Health</title>');
     expect(html).toContain('Gateway Health');
     expect(html).toContain("readJson('/health')");
     expect(html).toContain('/v1/routing/status');
@@ -141,7 +141,7 @@ describe('Operator browser UI routes', () => {
       expect(res.status).toBe(200);
       expect(res.headers.get('content-type') ?? '').toContain('text/html');
       const html = await res.text();
-      expect(html).toContain('<title>AI Gateway - Model Catalog</title>');
+      expect(html).toContain('<title>Free AI - Model Catalog</title>');
       expect(html).toContain('Model Catalog');
       expect(html).toContain('Search model, provider, capability');
       expect(html).toContain('Manual only');
@@ -160,11 +160,11 @@ describe('Operator browser UI routes', () => {
   });
 
   it.each([
-    ['/dashboard', '<title>AI Gateway — Live</title>'],
-    ['/live', '<title>AI Gateway — Live</title>'],
-    ['/v1/dashboard', '<title>AI Gateway — Live</title>'],
-    ['/benchmark', '<title>AI Gateway - Benchmark &amp; Cost Optimizer</title>'],
-    ['/v1/benchmark', '<title>AI Gateway - Benchmark &amp; Cost Optimizer</title>'],
+    ['/dashboard', '<title>Free AI — Live</title>'],
+    ['/live', '<title>Free AI — Live</title>'],
+    ['/v1/dashboard', '<title>Free AI — Live</title>'],
+    ['/benchmark', '<title>Free AI - Benchmark &amp; Cost Optimizer</title>'],
+    ['/v1/benchmark', '<title>Free AI - Benchmark &amp; Cost Optimizer</title>'],
   ])('serves the extracted operator surface at %s', async (path, marker) => {
     const res = await fetchRoute(path);
 
@@ -192,7 +192,7 @@ describe('Operator browser UI routes', () => {
     });
 
     expect(res.status).toBe(200);
-    expect(await res.text()).toContain('<title>AI Gateway - Health</title>');
+    expect(await res.text()).toContain('<title>Free AI - Health</title>');
   });
 
   it('redirects the health slash route for API clients', async () => {

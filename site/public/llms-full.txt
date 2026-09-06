@@ -1,10 +1,10 @@
-# AI Gateway — full agent brief
+# Free AI — full agent brief
 
 OpenAI-compatible LLM gateway fronting free-tier models across multiple providers.
 
 ## Index
 
-# AI Gateway (free-ai)
+# Free AI (free-ai)
 
 OpenAI-compatible gateway over free-tier models across providers.
 

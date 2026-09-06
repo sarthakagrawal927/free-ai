@@ -1,4 +1,4 @@
-# AI Gateway
+# Free AI
 
 > OpenAI-compatible LLM gateway fronting free-tier models across multiple providers.
 
@@ -24,4 +24,4 @@
 
 ## Optional
 
-- [Foundry](https://sassmaker.com): Parent fleet showcase
+- [SaaS Maker](https://sassmaker.com): Parent fleet showcase

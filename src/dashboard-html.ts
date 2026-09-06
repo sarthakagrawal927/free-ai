@@ -6,7 +6,7 @@ export const DASHBOARD_HTML = `<!doctype html>
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>AI Gateway — Live</title>
+<title>Free AI — Live</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
   :root {
@@ -206,7 +206,7 @@ export const DASHBOARD_HTML = `<!doctype html>
 <body>
 <div class="app">
   <div class="topbar">
-    <h1><span class="dot"></span>AI Gateway — Live</h1>
+    <h1><span class="dot"></span>Free AI — Live</h1>
     <div class="spacer"></div>
     <select id="groupBySel" title="Choose the analytics breakdown" aria-label="Analytics breakdown">
       <option value="providers" selected>Break down by: Provider</option>
