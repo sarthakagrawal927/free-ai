@@ -504,3 +504,14 @@ This section is maintained by the SaaS Maker Active-AI product/design loop so fu
 | `b26c3e9d` free-ai: add saved-cost and reliability proof strip | done | medium | 2026-05-26 — added `.proof-strip` section to index.astro between hero and features: shows live free-requests count (fetched from public `/v1/stats/providers`), 8+ provider fallback chain, and estimated cost saved vs. GPT-4o mini pricing; no backend changes |
 | `29a6cb34` free-ai: restore explicit Get API key CTA | done | medium | 2026-05-27 — restored explicit 'Get API Key' CTA and icon to landing page hero and nav |
 <!-- ACTIVE-AI-TASK-LOG:END -->
+
+<!-- portfolio-retained-work:2026-09-07 -->
+## Retained work from the portfolio review
+
+These are unresolved requirements retained at the owner’s request. They are not completed features. Work should follow a concrete need and fresh evidence.
+
+### [provider-registry] Catalog drift or coverage gap
+
+Reconcile provider/model availability using live bounded probes; remove stale capabilities without weakening fallback limits.
+
+Original requirements and discussion: [#62](https://github.com/sass-maker/free-ai/issues/62).
