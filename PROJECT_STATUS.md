@@ -1,13 +1,16 @@
 # free-ai — PROJECT STATUS
 
-Last updated: 2026-08-31
+Last updated: 2026-09-07
 
 ## Why / What
 
-The gateway remains live as a retiring compatibility service while Fleet moves
-to project-owned free-provider and local endpoints. The caller migration is
-complete in the current Fleet audit, but no gateway deploy, DNS change, secret
-mutation, provider-resource deletion, or data deletion is authorized.
+The owner’s September 7 direction is to keep the gateway active for now.
+The August 31 retirement assessment below is historical, not current authority.
+Read-only public analytics on September 7 reports September 6–7 traffic
+attributed to AI Game and High Signal, so the earlier claim of no remaining
+callers is contradicted by current telemetry. This does not prove individual
+client deployments or a fresh protected inference request. No deployment,
+provider expansion, credential change or decommission action is authorized.
 
 See [`docs/current/objective.md`](docs/current/objective.md) for scope guardrails.
 
@@ -22,6 +25,14 @@ See [`docs/current/objective.md`](docs/current/objective.md) for scope guardrail
   it does not affect runtime routing or provider behavior.
 
 ## Timeline
+
+- **2026-09-07** — Corrected guest access CTAs to operator-provisioned access
+  requirements and fixed top-level `project_id` in homepage/getting-started
+  and JavaScript chat examples. A test executes the documented JavaScript
+  request through the real OpenAI SDK, Hono auth/router and provider adapter
+  with synthetic upstream HTTP; unauthenticated and unavailable-provider
+  boundaries are also tested. Built landing-to-authentication navigation
+  passes in isolated Chrome. These are local proofs, not live inference.
 
 - **2026-08-31** — Prepared a staged gateway decommission runbook with separate
   approval gates for traffic and domain removal, secret and provider credential

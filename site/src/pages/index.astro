@@ -183,8 +183,8 @@ const rb = '}';
           <span class="status-dot"></span>
           Live health status
         </a>
-        <a class="nav-cta" href="/getting-started/">
-          Get API Key
+        <a class="nav-cta" href="/authentication/">
+          Access requirements
           <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
         </a>
       </div>
@@ -200,15 +200,15 @@ const rb = '}';
           </span>
           sass-maker module &mdash; v1.0
         </div>
-        <h1>Call <em>80+ chat models</em><br/>from one gateway key</h1>
+        <h1>Route to <em>free-tier models</em><br/>with one gateway key</h1>
         <p class="hero-sub afu d3">
           One OpenAI-compatible gateway across 12 free-tier providers.
-          It selects a healthy model and fails over when a provider throttles.
+          Routing depends on configured credentials, model health and remaining quota. Operator-provisioned access; no self-serve signup.
         </p>
         <div class="hero-actions afu d4">
-          <a class="btn btn-primary" href="/getting-started/">
+          <a class="btn btn-primary" href="/authentication/">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.5 3.5a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/><path d="M5.5 6.5l-2 4 4.5 4.5 4-2-2-2-2.5-2.5z"/></svg>
-            Get my free API key
+            Check access requirements
           </a>
           <a class="btn btn-ghost" href={`${gw}/v1/routing/status`} target="_blank">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
@@ -219,11 +219,11 @@ const rb = '}';
       <div class="stat-bar afu d5">
         <div class="stat">
           <div class="stat-value"><span class="accent">12</span></div>
-          <div class="stat-label">Free-tier providers</div>
+          <div class="stat-label">Provider integrations</div>
         </div>
         <div class="stat">
           <div class="stat-value">80<span class="accent">+</span></div>
-          <div class="stat-label">Chat Models</div>
+          <div class="stat-label">Catalog models, not live capacity</div>
         </div>
         <div class="stat">
           <div class="stat-value"><span class="accent">$0</span></div>
@@ -343,6 +343,7 @@ const rb = '}';
   <span class="fl">-H</span> <span class="str">"Content-Type: application/json"</span> \
   <span class="fl">-d</span> <span class="str">'{lb}
   <span class="key">"model"</span>: <span class="val">"auto"</span>,
+  <span class="key">"project_id"</span>: <span class="val">"my_project"</span>,
   <span class="key">"messages"</span>: [{lb}
     <span class="key">"role"</span>: <span class="val">"user"</span>,
     <span class="key">"content"</span>: <span class="val">"Hello!"</span>
@@ -355,6 +356,7 @@ const rb = '}';
   <span class="fl">-H</span> <span class="str">"Content-Type: application/json"</span> \
   <span class="fl">-d</span> <span class="str">'{lb}
   <span class="key">"model"</span>: <span class="val">"@cf/baai/bge-base-en-v1.5"</span>,
+  <span class="key">"project_id"</span>: <span class="val">"my_project"</span>,
   <span class="key">"input"</span>: <span class="val">"Hello world"</span>
 {rb}'</span></div>
         <div id="panel-sdk" class="code-body" style="display:none"><span class="cm">// npm install openai  (already installed if you use OpenAI SDK)</span>
@@ -368,7 +370,7 @@ const rb = '}';
 <span class="cm">// Chat completion — same params as OpenAI</span>
 <span class="key">const</span> <span class="val">chat</span> = <span class="key">await</span> client.chat.completions.<span class="cmd">create</span>({lb}
   <span class="key">model</span>: <span class="str">'auto'</span>,
-  <span class="key">extra_body</span>: {lb} <span class="key">project_id</span>: <span class="str">'my_project'</span> {rb},
+  <span class="key">project_id</span>: <span class="str">'my_project'</span>,
   <span class="key">messages</span>: [{lb} <span class="key">role</span>: <span class="str">'user'</span>, <span class="key">content</span>: <span class="str">'Hello!'</span> {rb}],
 {rb});
 console.<span class="cmd">log</span>(chat.choices[0].message.content);
@@ -376,6 +378,7 @@ console.<span class="cmd">log</span>(chat.choices[0].message.content);
 <span class="cm">// Embeddings</span>
 <span class="key">const</span> <span class="val">emb</span> = <span class="key">await</span> client.embeddings.<span class="cmd">create</span>({lb}
   <span class="key">model</span>: <span class="str">'gemini-embedding-001'</span>,
+  <span class="key">project_id</span>: <span class="str">'my_project'</span>,
   <span class="key">input</span>: <span class="str">'Hello world'</span>,
 {rb});
 console.<span class="cmd">log</span>(emb.data[0].embedding.length + <span class="str">' dims'</span>);</div>

@@ -486,13 +486,13 @@ pnpm wrangler deploy
 ```
 
 <!-- ACTIVE-AI-TASK-LOG:START -->
-## Active AI Task Log
+## Historical AI Task Log
 
-This section is maintained by the SaaS Maker Active-AI product/design loop so future agents do not reopen duplicate UI tasks.
+These historical receipts are context, not a current acceptance checklist.
 
 - Business lane: P1 Explore
 - Rule: do not create another broad "improve the UI" task unless the acceptance criteria differ materially from the tasks listed here.
-- Source of truth for task status: SaaS Maker task board. README entries are durable context only.
+- Current work is tracked in this repository’s GitHub Issues; the SaaS Maker task board is retired.
 
 | Task | Status | Priority | Last known note |
 | --- | --- | --- | --- |
@@ -515,3 +515,30 @@ These are unresolved requirements retained at the owner’s request. They are no
 Reconcile provider/model availability using live bounded probes; remove stale capabilities without weakening fallback limits.
 
 Original requirements and discussion: [#62](https://github.com/sass-maker/free-ai/issues/62).
+
+## Guest and inference qualification — 2026-09-07
+
+The gateway remains active per current owner direction; see the
+[current objective](docs/current/objective.md) for the superseded retirement
+assessment and recent usage evidence. Guest access requires an operator-issued
+key. The public landing now links directly to those requirements and no longer
+promises self-serve key signup. Copied quickstarts send the required top-level
+`project_id`; JavaScript no longer uses Python’s `extra_body` nesting.
+
+Local tests execute the documented JavaScript request through the actual OpenAI
+SDK, gateway auth/router and Groq adapter with a synthetic HTTP response. They
+also verify missing authentication is rejected and an unconfigured requested
+provider is unavailable. A built-site Chrome check follows the access CTA to
+Authentication. No production inference, provider keys, paid call, model download
+or deployment was used; mocked completion is not live provider qualification.
+
+Read-only live routing status reported 79 configured models, one available,
+33 degraded and 18 exhausted at inspection. These counts are a dated snapshot,
+not a capacity promise. The latest catalog job
+[34033261868](https://github.com/sass-maker/free-ai/actions/runs/34033261868)
+failed on September 6; [issue #62](https://github.com/sass-maker/free-ai/issues/62)
+remains open for registry coverage/drift. Historical completed rows were retained
+without re-certifying them; no existing issue was closed.
+Fresh protected inference, consumer deployment verification and authorized
+publication of these source changes remain in
+[issue #65](https://github.com/sass-maker/free-ai/issues/65).
