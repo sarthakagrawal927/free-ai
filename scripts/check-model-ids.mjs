@@ -26,6 +26,7 @@ const JSON_OUT = process.argv.includes('--json');
 // ── Provider API fetchers ────────────────────────────────────────────────────
 
 const MODEL_LIST_TIMEOUT_MS = 10_000;
+const MODEL_LIST_MAX_PAGES = 20;
 const NON_CHAT_MODEL =
   /image|audio|tts|search-preview|deep-research|moderation|guard|content-safety|palmyra|embed|speech|whisper|voxtral|lyria|playai|orpheus/i;
 
@@ -84,6 +85,7 @@ const CATALOG_SPECS = [
   },
   {
     provider: 'gemini',
+    paginated: true,
     secret: 'GEMINI_API_KEY',
     url: () => 'https://generativelanguage.googleapis.com/v1beta/models',
     headers: ({ key }) => ({ 'x-goog-api-key': key }),
@@ -146,6 +148,34 @@ const CATALOG_SPECS = [
   },
 ];
 
+async function fetchCatalogItems(spec, key, fetchImpl) {
+  const url = new URL(spec.url({ key }));
+  const signal = AbortSignal.timeout(MODEL_LIST_TIMEOUT_MS);
+  const items = [];
+  const seenTokens = new Set();
+  for (let page = 0; page < MODEL_LIST_MAX_PAGES; page += 1) {
+    const response = await fetchImpl(url.toString(), {
+      headers: spec.headers({ key }),
+      signal,
+    });
+    if (!response.ok) throw new Error(`catalog returned HTTP ${response.status}`);
+    const body = await response.json();
+    const pageItems = asModelItems(body);
+    if (!pageItems) throw new Error('catalog response did not contain a model array');
+    items.push(...pageItems);
+    if (!spec.paginated || body.nextPageToken === undefined || body.nextPageToken === '') {
+      return items;
+    }
+    if (typeof body.nextPageToken !== 'string' || seenTokens.has(body.nextPageToken)) {
+      throw new Error('catalog pagination token was invalid or repeated');
+    }
+    seenTokens.add(body.nextPageToken);
+    // Treat the token as an opaque query value, never as a provider-supplied URL.
+    url.searchParams.set('pageToken', body.nextPageToken);
+  }
+  throw new Error('catalog pagination exceeded the 20-page safety limit');
+}
+
 async function fetchCatalog(spec, env = process.env, fetchImpl = fetch) {
   if (spec.unsupported) {
     return {
@@ -169,32 +199,7 @@ async function fetchCatalog(spec, env = process.env, fetchImpl = fetch) {
   }
 
   try {
-    const response = await fetchImpl(spec.url({ key }), {
-      headers: spec.headers({ key }),
-      signal: AbortSignal.timeout(MODEL_LIST_TIMEOUT_MS),
-    });
-    if (!response.ok) {
-      return {
-        provider: spec.provider,
-        status: 'error',
-        reason: `catalog returned HTTP ${response.status}`,
-        all: new Set(),
-        addable: new Set(),
-      };
-    }
-
-    const body = await response.json();
-    const items = asModelItems(body);
-    if (!items) {
-      return {
-        provider: spec.provider,
-        status: 'error',
-        reason: 'catalog response did not contain a model array',
-        all: new Set(),
-        addable: new Set(),
-      };
-    }
-
+    const items = await fetchCatalogItems(spec, key, fetchImpl);
     const validItems = items.filter((item) => modelId(item));
     const all = new Set(validItems.map(modelId));
     const addable = new Set(spec.discover ? validItems.filter(spec.discover).map(modelId) : []);

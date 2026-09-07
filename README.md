@@ -539,6 +539,13 @@ not a capacity promise. The latest catalog job
 failed on September 6; [issue #62](https://github.com/sass-maker/free-ai/issues/62)
 remains open for registry coverage/drift. Historical completed rows were retained
 without re-certifying them; no existing issue was closed.
+The catalog checker now follows Gemini's documented `nextPageToken` before
+comparing model IDs. Synthetic two-page tests reproduced false stale-model
+reports from first-page-only reads. A failed/malformed later page, repeated
+token, shared 10-second timeout or 20-page cap leaves the catalog unavailable;
+partial results cannot justify model additions/removals. This fixes a separate
+source defect, not the historical HTTP 400 or missing provider credentials.
+The pagination contract comes from the [official Models API](https://ai.google.dev/api/models#method:-models.list).
 Fresh protected inference, consumer deployment verification and authorized
 publication of these source changes remain in
 [issue #65](https://github.com/sass-maker/free-ai/issues/65).
