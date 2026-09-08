@@ -163,8 +163,10 @@ function reliabilityRank(state: ModelStateSnapshot | undefined): number {
     return 1;
   }
 
-  const degraded =
-    state.successRate < 0.75 || state.shortRetriableFailures > 0 || state.avgLatencyMs > 5_000;
+  // Fast failures are not a better fallback than a slower model that succeeds.
+  // Keep poor success evidence below transient degradation before tier preference.
+  if (state.successRate < 0.75) return 3;
+  const degraded = state.shortRetriableFailures > 0 || state.avgLatencyMs > 5_000;
   return degraded ? 2 : 0;
 }
 

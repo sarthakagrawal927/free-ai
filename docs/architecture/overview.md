@@ -28,6 +28,13 @@ immediately.
 
 ## Scoring formula
 
+Automatic selection first separates healthy evidence, unobserved models,
+temporary degradation (latency or recent retriable failures), and low observed
+success. Reasoning-tier preference cannot move a low-success model ahead of a
+model that still succeeds despite temporary degradation. Explicit model choices,
+capability requirements, cooldowns, and Workers AI's fallback-only position remain
+authoritative.
+
 ```
 coreScore = successRate×0.6 + headroom×0.2 + latencyScore×0.15
           + reasoningFit×0.05 + priority×0.02

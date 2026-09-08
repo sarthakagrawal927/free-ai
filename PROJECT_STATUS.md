@@ -26,6 +26,13 @@ See [`docs/current/objective.md`](docs/current/objective.md) for scope guardrail
 
 ## Timeline
 
+- **2026-09-08** — Reproduced and repaired automatic routing that preferred a
+  zero-success medium-tier model over high-success models with recent latency
+  or retriable-failure degradation. Low observed success now ranks separately
+  below temporary degradation. Explicit overrides and the Workers AI fallback
+  position remain intact. Live request-failure reduction and authorized inference
+  remain tracked in [#65](https://github.com/sass-maker/free-ai/issues/65).
+
 - **2026-09-07** — Corrected guest access CTAs to operator-provisioned access
   requirements and fixed top-level `project_id` in homepage/getting-started
   and JavaScript chat examples. A test executes the documented JavaScript

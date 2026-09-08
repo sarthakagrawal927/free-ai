@@ -120,6 +120,34 @@ describe('computeScore', () => {
 });
 
 describe('selectCandidates', () => {
+  it('prefers successful but temporarily degraded models over a failing preferred tier', () => {
+    const failing = { ...registry[0], provider: 'cerebras' as const, model: 'failing' };
+    const slow = { ...registry[1], id: 'slow', model: 'slow', reasoning: 'high' as const };
+    const recovering = {
+      ...registry[1],
+      id: 'recovering',
+      model: 'recovering',
+      reasoning: 'high' as const,
+    };
+    const recoveringState = snapshot('gemini:recovering', 0.99, 1100);
+    recoveringState.shortRetriableFailures = 1;
+    const states = new Map([
+      ['cerebras:failing', snapshot('cerebras:failing', 0, 190)],
+      ['gemini:slow', snapshot('gemini:slow', 0.89, 8750)],
+      ['gemini:recovering', recoveringState],
+    ]);
+    const candidates = [failing, slow, recovering];
+    const options = { stream: false, now: Date.now() };
+    expect(selectCandidates(candidates, states, options).map((candidate) => candidate.id)).toEqual([
+      'recovering',
+      'slow',
+      'a',
+    ]);
+    expect(selectCandidates(candidates, states, { ...options, modelOverride: 'failing' })).toEqual([
+      failing,
+    ]);
+  });
+
   it('filters out non-streaming candidates for stream requests', () => {
     const selected = selectCandidates(registry, new Map(), {
       min_reasoning_level: 'medium',
