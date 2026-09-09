@@ -75,9 +75,9 @@ describe('classifyError', () => {
     expect(failure).toBe('usage_retriable');
   });
 
-  it('marks 404 as input_nonretriable', () => {
+  it('marks a missing upstream model as provider_fatal', () => {
     const failure = classifyError({ status: 404, message: 'model not found' });
-    expect(failure).toBe('input_nonretriable');
+    expect(failure).toBe('provider_fatal');
   });
 
   it('marks 422 as input_nonretriable', () => {

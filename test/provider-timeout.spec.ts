@@ -152,4 +152,42 @@ describe('provider timeout resilience', () => {
     expect(body.degraded).toBe(true);
     expect(body.x_gateway.attempts).toBe(2);
   });
+  it('tries the next selected model when the upstream model is missing', async () => {
+    mocks.groqMock.mockRejectedValueOnce(
+      Object.assign(new Error('404 status code (no body)'), { status: 404 })
+    );
+    mocks.groqMock.mockResolvedValueOnce({
+      provider: 'groq',
+      model: 'llama-3.1-8b-instant',
+      stream: false,
+      completion: {
+        choices: [
+          { index: 0, message: { role: 'assistant', content: 'ok' }, finish_reason: 'stop' },
+        ],
+      },
+    });
+    const { env } = makeTestEnv({ GROQ_API_KEY: 'g' });
+    const res = await app.fetch(chatRequest(), env, makeCtx());
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { x_gateway: { attempts: number } };
+    expect(body.x_gateway.attempts).toBe(2);
+    expect(mocks.groqMock.mock.calls[0][0].model).not.toBe(mocks.groqMock.mock.calls[1][0].model);
+  });
+
+  it('bounds missing-model fallback and reports an upstream error, not bad input', async () => {
+    mocks.groqMock.mockRejectedValue(Object.assign(new Error('model not found'), { status: 404 }));
+    const { env } = makeTestEnv({ GROQ_API_KEY: 'g' });
+    const res = await app.fetch(chatRequest(), env, makeCtx());
+    expect(res.status).toBe(502);
+    expect(mocks.groqMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not bypass a safety refusal carried by a 404 response', async () => {
+    mocks.groqMock.mockRejectedValue(
+      Object.assign(new Error('content filter refusal'), { status: 404 })
+    );
+    const { env } = makeTestEnv({ GROQ_API_KEY: 'g' });
+    await app.fetch(chatRequest(), env, makeCtx());
+    expect(mocks.groqMock).toHaveBeenCalledTimes(1);
+  });
 });
