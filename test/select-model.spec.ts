@@ -120,6 +120,21 @@ describe('computeScore', () => {
 });
 
 describe('selectCandidates', () => {
+  it('ranks poor-reliability fallbacks by health before preferred tier', () => {
+    const failing = { ...registry[0], id: 'failing' };
+    const recovering = { ...registry[1], id: 'recovering', reasoning: 'high' as const };
+    const states = new Map([
+      ['groq:model-a', snapshot('groq:model-a', 0, 126)],
+      ['gemini:model-b', snapshot('gemini:model-b', 0.74, 1133)],
+      ['workers_ai:model-c', snapshot('workers_ai:model-c', 1, 279)],
+    ]);
+    const selected = selectCandidates([failing, recovering, registry[2]], states, {
+      stream: false,
+      now: Date.now(),
+    });
+    expect(selected.map((candidate) => candidate.id)).toEqual(['recovering', 'failing', 'c']);
+  });
+
   it('prefers successful but temporarily degraded models over a failing preferred tier', () => {
     const failing = { ...registry[0], provider: 'cerebras' as const, model: 'failing' };
     const slow = { ...registry[1], id: 'slow', model: 'slow', reasoning: 'high' as const };
