@@ -1,0 +1,24 @@
+{
+  "observedAt": "2026-09-09T17:28:26.233Z",
+  "sourceCommit": "bcb190a9e88c0afd04ad05cca7ddb020fe5e37ae",
+  "pullRequest": 68,
+  "ciRun": 34382793551,
+  "deploymentRun": 34382941138,
+  "deploymentConclusion": "success",
+  "deploymentId": "db90db49-27de-4d2b-bfde-25aa35a47c24",
+  "versionId": "7de98708-aac4-4bd9-8499-8973072d5518",
+  "trafficPercentage": 100,
+  "routing": {
+    "topProvider": "mistral",
+    "topModel": "mistral-large-latest",
+    "topSuccessRate": 0.69,
+    "availableModels": 1,
+    "degradedModels": 25,
+    "cooldownModels": 5,
+    "exhaustedModels": 21
+  },
+  "consumerReplay": 34383136925,
+  "consumerReplayStatus": "in_progress",
+  "shareable": false,
+  "acceptance": "Release and changed public routing order verified. Provider recovery and useful consumer output remain unverified."
+}
