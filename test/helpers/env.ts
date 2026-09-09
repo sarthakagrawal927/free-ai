@@ -39,6 +39,7 @@ export interface FakeEnvOverrides {
   kv?: Map<string, string>;
   providerStats?: unknown[];
   healthSnapshots?: unknown[];
+  roundRobinOffset?: number;
   // Allow tests to simulate rate-limit denials
   rateLimitDeny?: boolean;
 }
@@ -79,7 +80,7 @@ export function makeTestEnv(overrides: FakeEnvOverrides = {}) {
       return Response.json({ stats: overrides.providerStats ?? [] });
     }
     if (path === '/round-robin-next') {
-      return Response.json({ offset: 0 });
+      return Response.json({ offset: overrides.roundRobinOffset ?? 0 });
     }
     if (path === '/record') {
       return new Response(null, { status: 204 });

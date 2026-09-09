@@ -1,6 +1,6 @@
 # free-ai — PROJECT STATUS
 
-Last updated: 2026-09-07
+Last updated: 2026-09-09
 
 ## Why / What
 
@@ -25,6 +25,16 @@ See [`docs/current/objective.md`](docs/current/objective.md) for scope guardrail
   it does not affect runtime routing or provider behavior.
 
 ## Timeline
+
+- **2026-09-09** — Reproduced a second routing defect through the real request
+  handler: a nonzero round-robin offset promoted a zero-success model, and could
+  even promote fallback-only Workers AI ahead of healthy external providers.
+  Rotation now applies only to the leading healthy external peers in the same
+  reasoning tier. Existing fallback order, capability filters, retries and quotas
+  remain intact. High Signal's bounded retry returned HTTP 502 twice and
+  published nothing; local routing tests do not establish recovered inference.
+  Release and consumer acceptance remain in #65.
+
 
 - **2026-09-08** — Reproduced and repaired automatic routing that preferred a
   zero-success medium-tier model over high-success models with recent latency

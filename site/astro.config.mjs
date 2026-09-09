@@ -26,6 +26,8 @@ const structuredData = {
 };
 
 export default defineConfig({
+  // Preserve the existing inline spacing when upgrading from Astro 6.
+  compressHTML: true,
   site: origin,
   integrations: [
     starlight({

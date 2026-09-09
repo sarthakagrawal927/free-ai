@@ -170,6 +170,27 @@ function reliabilityRank(state: ModelStateSnapshot | undefined): number {
   return degraded ? 2 : 0;
 }
 
+/** Load balance only healthy external peers; later fallback ranks stay ordered. */
+export function healthyRotationPoolSize(
+  selected: ModelCandidate[],
+  stateMap: Map<string, ModelStateSnapshot>
+): number {
+  const first = selected[0];
+  if (!first || first.provider === 'workers_ai') return 0;
+  let size = 0;
+  for (const candidate of selected) {
+    const state = stateMap.get(`${candidate.provider}:${candidate.model}`);
+    if (
+      candidate.provider === 'workers_ai' ||
+      candidate.reasoning !== first.reasoning ||
+      reliabilityRank(state) !== 0
+    )
+      break;
+    size++;
+  }
+  return size;
+}
+
 function candidateMatchesCapabilities(
   candidate: ModelCandidate,
   caps: RequiredCapabilities

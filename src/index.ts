@@ -39,7 +39,11 @@ import { registerTtsGenerationRoute } from './routes/tts-generation';
 import { registerVideoGenerationRoutes } from './routes/video-generation';
 import { buildChatLedgerRecord, queryRoutingLedger, recordRoutingLedger } from './routing/ledger';
 import type { FallbackHop, RoutingOutcome } from './routing/ledger';
-import { deriveRequiredCapabilities, selectCandidates } from './router/select-model';
+import {
+  deriveRequiredCapabilities,
+  healthyRotationPoolSize,
+  selectCandidates,
+} from './router/select-model';
 import {
   consumeIpRateLimit,
   healthLookup,
@@ -1459,19 +1463,22 @@ async function applyRoundRobin(
   c: Context,
   selected: ModelCandidate[],
   endpoint: 'chat.completions' | 'responses',
-  normalized: NormalizedChatRequest
+  normalized: NormalizedChatRequest,
+  poolSize: number
 ) {
+  if (poolSize < 2) return selected;
+  const peers = selected.slice(0, poolSize);
   const roundRobinKey = buildChatRoundRobinKey({
     endpoint,
     min_reasoning_level: normalized.min_reasoning_level,
     stream: normalized.stream,
-    candidates: selected,
+    candidates: peers,
   });
   const offset = await nextRoundRobinOffset(c.env, {
     key: roundRobinKey,
-    size: selected.length,
+    size: peers.length,
   }).catch(() => 0);
-  return rotateByOffset(selected, offset);
+  return [...rotateByOffset(peers, offset), ...selected.slice(poolSize)];
 }
 
 function buildLookupLimits(
@@ -1506,17 +1513,17 @@ async function runCandidateSelection(
   });
   return trace(
     'ai:route',
-    () =>
-      Promise.resolve(
-        selectCandidates(registry, stateMap, {
-          min_reasoning_level: normalized.min_reasoning_level,
-          stream: normalized.stream,
-          now,
-          modelOverride: forcedModel,
-          requiredCapabilities,
-          evaluationMap,
-        })
-      ),
+    () => {
+      const selected = selectCandidates(registry, stateMap, {
+        min_reasoning_level: normalized.min_reasoning_level,
+        stream: normalized.stream,
+        now,
+        modelOverride: forcedModel,
+        requiredCapabilities,
+        evaluationMap,
+      });
+      return Promise.resolve({ selected, poolSize: healthyRotationPoolSize(selected, stateMap) });
+    },
     { context: { project: projectId, model: normalized.model } }
   );
 }
@@ -1595,7 +1602,7 @@ async function selectChatCandidates(
     return { error: chatQuotaExhaustedError(c) };
   }
 
-  let selected = await runCandidateSelection(
+  const selection = await runCandidateSelection(
     c,
     registry,
     normalized,
@@ -1604,9 +1611,10 @@ async function selectChatCandidates(
     Date.now()
   );
 
+  let selected = selection.selected;
   const requestedModel = normalized.model.trim().toLowerCase();
   if (shouldRoundRobin(selected, forcedProvider, forcedModel, requestedModel)) {
-    selected = await applyRoundRobin(c, selected, endpoint, normalized);
+    selected = await applyRoundRobin(c, selected, endpoint, normalized, selection.poolSize);
   }
 
   if (selected.length === 0) {

@@ -147,7 +147,10 @@ AI Neurons are a billed Cloudflare resource. It is a safety net, not a peer —
 never move it up ([overview.md](overview.md#workers-ai-is-intentionally-last)).
 
 When the caller asked for `auto` (no specific model), a round-robin offset from the
-DO rotates the top candidates so load spreads instead of hammering the #1 model.
+DO rotates only the leading healthy external peers in the same reasoning tier.
+Unknown, degraded and low-success candidates keep their fallback order; Workers
+AI stays after external candidates. With fewer than two healthy peers, the
+health-ranked order is unchanged.
 
 ### 7. Try, fall back, record
 
