@@ -26,13 +26,16 @@ See [`docs/current/objective.md`](docs/current/objective.md) for scope guardrail
 
 ## Timeline
 
-- **2026-09-09** — Pending release: High Signal replay 34374070475 reported
+- **2026-09-09** — Released in source f4aa1bef: High Signal replay 34374070475 reported
   upstream 404 wrapped as invalid input. The gateway classified missing upstream
   models as caller errors and stopped before fallback. Chat now advances to the
   next selected candidate for a missing upstream model, within the existing
   two-attempt cap. Exhaustion reports provider failure (502); invalid inputs and
   safety refusals still stop immediately. All 264 tests and `pnpm check` pass.
-  Live consumer recovery remains unverified under #65.
+  Manual deploy 34375302646 passed health smoke; source tag and 100% traffic
+  verified. High Signal replay 34375574748 is running. Live consumer recovery
+  remains unverified under #65.
+  [Release receipt](docs/operations/2026-09-09-missing-model-release.json).
 
 - **2026-09-09** — Reproduced a second routing defect through the real request
   handler: a nonzero round-robin offset promoted a zero-success model, and could

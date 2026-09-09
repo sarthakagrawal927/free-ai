@@ -1,0 +1,16 @@
+{
+  "observedAt": "2026-09-09T16:14:23.64526Z",
+  "sourceCommit": "f4aa1bef4a6d6ca5a00ad2b15cdf0c97abefe2c4",
+  "pullRequest": 67,
+  "ciRun": 34375083165,
+  "deploymentRun": 34375302646,
+  "deploymentConclusion": "success",
+  "deploymentId": "4e86f1b4-f5a3-408b-b19f-51f29251f9fa",
+  "versionId": "76660b48-940e-4274-b941-36f22364e2fa",
+  "trafficPercentage": 100,
+  "smoke": "Hosted health smoke passed",
+  "consumerReplay": 34375574748,
+  "consumerReplayStatus": "in_progress",
+  "shareable": false,
+  "acceptance": "Gateway release verified; protected inference and useful High Signal output remain unverified."
+}
