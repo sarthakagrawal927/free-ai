@@ -37,7 +37,7 @@ function getMessage(error: unknown): string {
 const SAFETY_KEYWORDS = ['safety', 'content filter', 'refus'];
 const RETRIABLE_KEYWORDS = ['rate limit', 'quota', 'timeout', 'overload'];
 const RETRIABLE_STATUSES = new Set([429, 408, 409, 425]);
-const INPUT_ERROR_STATUSES = new Set([400, 404, 422]);
+const INPUT_ERROR_STATUSES = new Set([400, 422]);
 const AUTH_ERROR_STATUSES = new Set([401, 403]);
 
 export function classifyError(error: unknown): FailureClass {
@@ -69,4 +69,9 @@ export function classifyError(error: unknown): FailureClass {
 
 export function isRetriableFailure(failureClass: FailureClass): boolean {
   return failureClass === 'usage_retriable';
+}
+
+/** A missing gateway-selected upstream model is not invalid caller input. */
+export function canFallbackFromMissingModel(error: unknown, failureClass: FailureClass): boolean {
+  return failureClass === 'provider_fatal' && getStatus(error) === 404;
 }

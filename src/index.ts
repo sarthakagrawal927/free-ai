@@ -24,7 +24,11 @@ import {
 import { providerCallers, sttProviderCallers } from './providers';
 import type { ProviderCallResult } from './providers/types';
 import { getProviderQuotaStatuses, providerQuotaAllowsCandidate } from './providers/quota';
-import { classifyError, isRetriableFailure } from './router/classify-error';
+import {
+  canFallbackFromMissingModel,
+  classifyError,
+  isRetriableFailure,
+} from './router/classify-error';
 import { evaluationWeight, parseEvaluationWeights } from './router/evaluation-weights';
 import { registerGatewayAuthMiddleware } from './middleware/gateway-auth';
 import {
@@ -1259,7 +1263,10 @@ function handleChatProviderError(
     now: Date.now(),
   });
 
-  if (!isRetriableFailure(failureClass) || state.attemptCounter >= 2) {
+  if (
+    (!isRetriableFailure(failureClass) && !canFallbackFromMissingModel(error, failureClass)) ||
+    state.attemptCounter >= 2
+  ) {
     throw new AbortError(state.lastErrorMessage);
   }
 

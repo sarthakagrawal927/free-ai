@@ -163,8 +163,11 @@ happened:
 
 - `usage_retriable` (429/408/5xx, rate-limit/timeout text) → record the failure,
   which sets a cooldown in the DO, then advance to the next candidate.
-- `input_nonretriable` / `safety_refusal` / `provider_fatal` → these are logged
-  into the health ring too, feeding the failure breakdown in provider stats.
+- An upstream 404 is `provider_fatal`, not invalid caller input. Chat may advance
+  to the next selected model within the same two-attempt cap; exhausted candidates
+  return an upstream failure. This exception never overrides a safety refusal.
+- Other `input_nonretriable` / `safety_refusal` / `provider_fatal` errors stop
+  fallback. They are logged into the health ring and provider failure stats.
 
 *Why the retry loop is the whole point:* a single 429 from Groq should never fail a
 user's request. The loop makes an unreliable patchwork of free tiers behave like
