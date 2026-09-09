@@ -254,6 +254,9 @@ function rankCandidates(
     const fallbackDiff = fallbackRank(a.candidate, options) - fallbackRank(b.candidate, options);
     if (fallbackDiff !== 0) return fallbackDiff;
     if (a.reliabilityRank !== b.reliabilityRank) return a.reliabilityRank - b.reliabilityRank;
+    // Within poor reliability, observed health matters more than tier preference.
+    // Otherwise a zero-success preferred tier consumes the bounded retry budget.
+    if (a.reliabilityRank === 3 && a.score !== b.score) return b.score - a.score;
     if (a.tierIndex !== b.tierIndex) return a.tierIndex - b.tierIndex;
     return b.score - a.score;
   });

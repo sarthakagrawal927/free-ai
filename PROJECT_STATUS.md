@@ -26,6 +26,17 @@ See [`docs/current/objective.md`](docs/current/objective.md) for scope guardrail
 
 ## Timeline
 
+- **2026-09-09** — Pending degraded-routing repair: live routing ranked a
+  zero-success preferred-tier model before an external model with 74% success.
+  Both fell into the same poor-reliability bucket, where tier preference masked
+  the existing health score. That bucket now ranks by health score first;
+  minimum capabilities, explicit overrides, cooldowns, quotas and Workers AI
+  fallback position are preserved. The reproduced regression fails before the
+  repair and passes after it. High Signal replay 34381655339 recorded one HTTP
+  429 and three HTTP 502 comparison failures, each after two attempts. This
+  ranking repair does not establish provider recovery; release and consumer
+  acceptance remain in #65.
+
 - **2026-09-09** — Released in source f4aa1bef: High Signal replay 34374070475 reported
   upstream 404 wrapped as invalid input. The gateway classified missing upstream
   models as caller errors and stopped before fallback. Chat now advances to the
