@@ -9,8 +9,9 @@ The August 31 retirement assessment below is historical, not current authority.
 Read-only public analytics on September 7 reports September 6–7 traffic
 attributed to AI Game and High Signal, so the earlier claim of no remaining
 callers is contradicted by current telemetry. This does not prove individual
-client deployments or a fresh protected inference request. No deployment,
-provider expansion, credential change or decommission action is authorized.
+client deployments or a fresh protected inference request. Production maintenance
+now has owner approval and uses the existing manual deployment workflow. Provider
+expansion and decommission are outside the current repair.
 
 See [`docs/current/objective.md`](docs/current/objective.md) for scope guardrails.
 
@@ -26,15 +27,18 @@ See [`docs/current/objective.md`](docs/current/objective.md) for scope guardrail
 
 ## Timeline
 
-- **2026-09-11** — Source repair for upstream account failures: live replay found
+- **2026-09-11** — Released repair for upstream account failures: live replay found
   SambaNova returning 402 and ZAI returning 401. Automatic chat previously stopped
   at those failures even with another eligible provider. It now skips the failed
   provider's remaining models and tries another selected provider within the
   existing two-attempt limit. Explicit provider restrictions, gateway authentication,
   safety refusals, generic 403 rejection, capability filters and cost caps remain
   intact. Regression tests reproduced the prior 502 and now pass; the full local
-  quality gate passes all 273 tests. Deployment and live consumer qualification
-  remain pending under issue 65.
+  quality gate passes all 273 tests. Source `d94267b` passed CI 34534016426 and
+  deployment 34534132478; its Worker version serves 100% of traffic. Fresh low,
+  medium and high reasoning JSON requests all returned 200 with the expected
+  object; anonymous inference remained 401. Sustained reliability and current
+  consuming-product qualification remain open under issue 65.
 
 - **2026-09-09** — Released degraded-routing repair in source bcb190a9: live routing ranked a
   zero-success preferred-tier model before an external model with 74% success.
