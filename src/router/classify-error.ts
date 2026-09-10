@@ -71,7 +71,19 @@ export function isRetriableFailure(failureClass: FailureClass): boolean {
   return failureClass === 'usage_retriable';
 }
 
-/** A missing gateway-selected upstream model is not invalid caller input. */
-export function canFallbackFromMissingModel(error: unknown, failureClass: FailureClass): boolean {
-  return failureClass === 'provider_fatal' && getStatus(error) === 404;
+/** These statuses concern the gateway's upstream account, not the caller's credentials. */
+export function isProviderAccountFailure(error: unknown): boolean {
+  const status = getStatus(error);
+  return status === 401 || status === 402;
+}
+
+/** Unavailable upstream accounts/models may fall back; content refusals may not. */
+export function canFallbackFromProviderFailure(
+  error: unknown,
+  failureClass: FailureClass
+): boolean {
+  return (
+    failureClass === 'provider_fatal' &&
+    (isProviderAccountFailure(error) || getStatus(error) === 404)
+  );
 }

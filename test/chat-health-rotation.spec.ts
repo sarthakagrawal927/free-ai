@@ -15,11 +15,15 @@ vi.mock('../src/providers', async (original) => {
     providerCallers: {
       ...(actual.providerCallers as object),
       groq: mocks.call,
+      cohere: mocks.call,
       workers_ai: mocks.call,
     },
   };
 });
-function candidate(model: string, provider: 'groq' | 'workers_ai' = 'groq'): ModelCandidate {
+function candidate(
+  model: string,
+  provider: 'groq' | 'cohere' | 'workers_ai' = 'groq'
+): ModelCandidate {
   return {
     id: model,
     model,
@@ -52,7 +56,7 @@ function health(model: string, successRate = 1, provider = 'groq') {
     shortRetriableFailures: 0,
   };
 }
-async function request(offset: number, snapshots: unknown[]) {
+async function request(offset: number, snapshots: unknown[], headers: Record<string, string> = {}) {
   const { env } = makeTestEnv({
     GROQ_API_KEY: 'synthetic',
     healthSnapshots: snapshots,
@@ -61,7 +65,11 @@ async function request(offset: number, snapshots: unknown[]) {
   return app.fetch(
     new Request('https://gateway.test/v1/chat/completions', {
       method: 'POST',
-      headers: { 'content-type': 'application/json', authorization: 'Bearer test-gateway-key' },
+      headers: {
+        'content-type': 'application/json',
+        authorization: 'Bearer test-gateway-key',
+        ...headers,
+      },
       body: JSON.stringify({
         model: 'auto',
         project_id: 'rotation-regression',
@@ -151,5 +159,79 @@ describe('chat automatic health rotation', () => {
     const response = await request(1, [health('healthy-a'), health('fallback', 1, 'workers_ai')]);
     expect(response.status).toBe(200);
     expect(mocks.call.mock.calls[0][0].provider).toBe('groq');
+  });
+
+  it.each([401, 402])(
+    'skips a provider with upstream %i and uses another selected provider',
+    async (status) => {
+      mocks.registry = [
+        candidate('first'),
+        candidate('same-provider'),
+        candidate('alternate', 'cohere'),
+      ];
+      mocks.call.mockRejectedValueOnce(
+        Object.assign(new Error('upstream account unavailable'), { status })
+      );
+      const response = await request(0, []);
+      expect(response.status).toBe(200);
+      expect(mocks.call.mock.calls.map(([input]) => input.model)).toEqual(['first', 'alternate']);
+      const body = (await response.json()) as {
+        x_gateway: { attempts: number };
+        degraded: boolean;
+      };
+      expect(body.x_gateway.attempts).toBe(2);
+      expect(body.degraded).toBe(true);
+    }
+  );
+
+  it('does not escape a forced provider after upstream authentication fails', async () => {
+    mocks.registry = [
+      candidate('first'),
+      candidate('same-provider'),
+      candidate('alternate', 'cohere'),
+    ];
+    mocks.call.mockRejectedValue(
+      Object.assign(new Error('upstream account unavailable'), { status: 401 })
+    );
+    const response = await request(0, [], { 'x-gateway-force-provider': 'groq' });
+    expect(response.status).toBe(502);
+    expect(mocks.call).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([400, 403, 422])(
+    'does not treat upstream %i as account fallback permission',
+    async (status) => {
+      mocks.registry = [candidate('first'), candidate('alternate', 'cohere')];
+      mocks.call.mockRejectedValue(Object.assign(new Error('request rejected'), { status }));
+      await request(0, []);
+      expect(mocks.call).toHaveBeenCalledTimes(1);
+    }
+  );
+
+  it('preserves safety refusal and the gateway authentication boundary', async () => {
+    mocks.registry = [candidate('first'), candidate('alternate', 'cohere')];
+    mocks.call.mockRejectedValue(
+      Object.assign(new Error('content filter refusal'), { status: 402 })
+    );
+    await request(0, []);
+    expect(mocks.call).toHaveBeenCalledTimes(1);
+    mocks.call.mockClear();
+    const response = await request(0, [], { authorization: 'Bearer invalid' });
+    expect(response.status).toBe(401);
+    expect(mocks.call).not.toHaveBeenCalled();
+  });
+
+  it('stops after two upstream account failures', async () => {
+    mocks.registry = [
+      candidate('first'),
+      candidate('alternate', 'cohere'),
+      candidate('last', 'workers_ai'),
+    ];
+    mocks.call.mockRejectedValue(
+      Object.assign(new Error('upstream account unavailable'), { status: 402 })
+    );
+    const response = await request(0, []);
+    expect(response.status).toBe(502);
+    expect(mocks.call).toHaveBeenCalledTimes(2);
   });
 });

@@ -25,8 +25,9 @@ import { providerCallers, sttProviderCallers } from './providers';
 import type { ProviderCallResult } from './providers/types';
 import { getProviderQuotaStatuses, providerQuotaAllowsCandidate } from './providers/quota';
 import {
-  canFallbackFromMissingModel,
+  canFallbackFromProviderFailure,
   classifyError,
+  isProviderAccountFailure,
   isRetriableFailure,
 } from './router/classify-error';
 import { evaluationWeight, parseEvaluationWeights } from './router/evaluation-weights';
@@ -1264,7 +1265,7 @@ function handleChatProviderError(
   });
 
   if (
-    (!isRetriableFailure(failureClass) && !canFallbackFromMissingModel(error, failureClass)) ||
+    (!isRetriableFailure(failureClass) && !canFallbackFromProviderFailure(error, failureClass)) ||
     state.attemptCounter >= 2
   ) {
     throw new AbortError(state.lastErrorMessage);
@@ -1282,8 +1283,13 @@ function createChatRetryCallback(
   state: ChatRetryState
 ) {
   const ctx: ChatRetryContext = { c, normalized, requestId, projectId, state };
+  let nextCandidate = 0;
+  const unavailableProviders = new Set<TextProvider>();
   return async () => {
-    const candidate = selected[state.attemptCounter];
+    while (selected[nextCandidate] && unavailableProviders.has(selected[nextCandidate].provider)) {
+      nextCandidate += 1;
+    }
+    const candidate = selected[nextCandidate++];
     if (!candidate || state.attemptCounter >= 2) {
       throw new AbortError('No more candidates');
     }
@@ -1314,6 +1320,7 @@ function createChatRetryCallback(
 
       handleChatProviderSuccess(ctx, candidate, providerResult, startedAt);
     } catch (error) {
+      if (isProviderAccountFailure(error)) unavailableProviders.add(candidate.provider);
       handleChatProviderError(ctx, candidate, error, startedAt);
     }
   };

@@ -1,6 +1,6 @@
 # free-ai — PROJECT STATUS
 
-Last updated: 2026-09-09
+Last updated: 2026-09-11
 
 ## Why / What
 
@@ -25,6 +25,16 @@ See [`docs/current/objective.md`](docs/current/objective.md) for scope guardrail
   it does not affect runtime routing or provider behavior.
 
 ## Timeline
+
+- **2026-09-11** — Source repair for upstream account failures: live replay found
+  SambaNova returning 402 and ZAI returning 401. Automatic chat previously stopped
+  at those failures even with another eligible provider. It now skips the failed
+  provider's remaining models and tries another selected provider within the
+  existing two-attempt limit. Explicit provider restrictions, gateway authentication,
+  safety refusals, generic 403 rejection, capability filters and cost caps remain
+  intact. Regression tests reproduced the prior 502 and now pass; the full local
+  quality gate passes all 273 tests. Deployment and live consumer qualification
+  remain pending under issue 65.
 
 - **2026-09-09** — Released degraded-routing repair in source bcb190a9: live routing ranked a
   zero-success preferred-tier model before an external model with 74% success.
